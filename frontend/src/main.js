@@ -1,0 +1,1 @@
+const waveSurfer = require('wavesurfer')

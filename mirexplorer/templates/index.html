@@ -5,7 +5,30 @@
     <h1 class="display-4">{{ app_data["project_name"] }} </h1>
     <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
     <hr class="my-4">
-    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
-    <a class="btn btn-primary btn-lg" href="/contact" role="button">Contact</a>
+{#    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>#}
+{#    <a class="btn btn-primary btn-lg" href="/contact" role="button">Contact</a>#}
   </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <p style="color: green;">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<form method="POST" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+
+    {{ form.file.label }}<br>
+    {{ form.file }}<br>
+
+    {% for error in form.file.errors %}
+        <p style="color: red;">{{ error }}</p>
+    {% endfor %}
+
+    {{ form.submit }}
+</form>
+
+<script src="{{ url_for('static', filename='bundle.js') }}"></script>
 {% endblock %}
