@@ -23,4 +23,3 @@ function createWave(audioFile) {
 }
 
 window.createWave = createWave;
-console.log("Hello from renamed frontend!")

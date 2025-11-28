@@ -1,13 +1,13 @@
 .PHONY: build install run
 
 install:
-	sudo apt update
+	@echo "Installing dependencies..."
 	poetry lock
 	poetry install --no-interaction
-	cd frontend && npm install
+	flask vite install
 
-build: install
-	cd frontend && npx webpack
-
-run: build
-	cd mirexplorer && poetry run python app.py
+dev: install
+	@echo "Starting frontend + backend..."
+	@trap "kill 0" EXIT; \
+		flask vite start & \
+		flask run --debug

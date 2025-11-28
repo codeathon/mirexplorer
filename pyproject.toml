@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "mirexplorer"
+name = "backend"
 version = "0.1"
 authors = ["Huw Cheston <h.cheston@qmul.ac.uk>", "Iran Roman <i.roman@qmul.ac.uk>"]
 license = "CC-BY-4.0"
