@@ -9,11 +9,11 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "wavesurfer": "^1.3.4"
-  },
   "devDependencies": {
     "webpack": "^5.103.0",
     "webpack-cli": "^6.0.1"
+  },
+  "dependencies": {
+    "wavesurfer.js": "^7.11.1"
   }
 }

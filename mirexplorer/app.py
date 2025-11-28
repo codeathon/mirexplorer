@@ -6,7 +6,7 @@ MIRExplorer main app
 
 import os
 
-from flask import Flask, render_template, flash, redirect, url_for
+from flask import Flask, render_template, send_from_directory, url_for
 from werkzeug.utils import secure_filename
 
 from mirexplorer.crud import AudioUpload
@@ -30,6 +30,11 @@ app_data = {
     "keywords": "flask, webapp, template, basic",
 }
 
+
+@app.route("/uploads/<filename>")
+def uploaded_file(filename):
+    return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
+
 @app.route("/", methods=["GET", "POST"])
 def index():
     form = AudioUpload()
@@ -41,11 +46,8 @@ def index():
         save_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
         file.save(save_path)
 
-        flash(f"Uploaded successfully: {filename}", "success")
-        return redirect(url_for("index"))
-
-    else:
-        print(form.validate_on_submit())
+        audio_url = url_for("uploaded_file", filename=filename)
+        return render_template("index.html", form=form, app_data=app_data, audio_url=audio_url)
 
     return render_template("index.html", form=form, app_data=app_data)
 

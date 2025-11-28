@@ -1,34 +1,30 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-<div class="jumbotron">
-    <h1 class="display-4">{{ app_data["project_name"] }} </h1>
-    <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
-    <hr class="my-4">
-{#    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>#}
-{#    <a class="btn btn-primary btn-lg" href="/contact" role="button">Contact</a>#}
-  </div>
+    <script src="{{ url_for('static', filename='bundle.js') }}"></script>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, message in messages %}
-            <p style="color: green;">{{ message }}</p>
-        {% endfor %}
-    {% endif %}
-{% endwith %}
+    <div class="jumbotron">
+        <h1 class="display-4">{{ app_data["project_name"] }} </h1>
+        <hr class="my-4">
 
-<form method="POST" enctype="multipart/form-data">
-    {{ form.hidden_tag() }}
+        <form method="POST" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            {{ form.file.label }}<br>
+            {{ form.file }}<br>
+            {% for error in form.file.errors %}
+                <p style="color: red;">{{ error }}</p>
+            {% endfor %}
+            {{ form.submit }}
+        </form>
 
-    {{ form.file.label }}<br>
-    {{ form.file }}<br>
+    </div>
 
-    {% for error in form.file.errors %}
-        <p style="color: red;">{{ error }}</p>
-    {% endfor %}
+    <div id="waveform"></div>
 
-    {{ form.submit }}
-</form>
+{% if audio_url %}
+    <script>
+        createWave({{ audio_url|tojson }});
+    </script>
+{% endif %}
 
-<script src="{{ url_for('static', filename='bundle.js') }}"></script>
 {% endblock %}
