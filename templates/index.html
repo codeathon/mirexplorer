@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-    <script src="{{ url_for('static', filename='bundle.js') }}"></script>
+    {{ vite_tags() }}
 
     <div class="jumbotron">
         <h1 class="display-4">{{ app_data["project_name"] }} </h1>

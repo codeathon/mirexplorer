@@ -29,7 +29,7 @@ MANIFEST
 
 # Frontend stuff
 frontend/node_modules
-mirexplorer/static
+backend/static
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -112,3 +112,9 @@ venv.bak/
 
 # Ignore uploads
 uploads/
+
+# Vite stuff
+frontend/node_modules
+frontend/dist
+frontend/package-lock.json
+frontend/yarn.lock

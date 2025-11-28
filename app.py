@@ -7,9 +7,10 @@ MIRExplorer main app
 import os
 
 from flask import Flask, render_template, send_from_directory, url_for
+from flask_vite import Vite
 from werkzeug.utils import secure_filename
 
-from mirexplorer.crud import AudioUpload
+from backend.crud import AudioUpload
 
 
 DEVELOPMENT_ENV = True
@@ -17,9 +18,11 @@ DEVELOPMENT_ENV = True
 app = Flask(__name__)
 
 app.config["SECRET_KEY"] = os.urandom(32)
-
+app.config['VITE_FOLDER_PATH'] = 'frontend'
 app.config["UPLOAD_FOLDER"] = os.path.join(os.getcwd(), "uploads")
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
+
+vite = Vite(app)
 
 app_data = {
     "name": "MIRExplorer",

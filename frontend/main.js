@@ -1,7 +1,7 @@
+import "./src/styles.css";
 import WaveSurfer from 'wavesurfer.js';
 
 let wavesurfer = null;
-
 
 function createWave(audioFile) {
     // Destroy previous instance if it exists
@@ -23,3 +23,4 @@ function createWave(audioFile) {
 }
 
 window.createWave = createWave;
+console.log("Hello from renamed frontend!")

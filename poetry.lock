@@ -390,6 +390,21 @@ async = ["asgiref (>=3.2)"]
 dotenv = ["python-dotenv"]
 
 [[package]]
+name = "flask-vite"
+version = "0.6.1"
+description = "Flask+Vite integration."
+optional = false
+python-versions = "<4.0,>=3.9"
+groups = ["main"]
+files = [
+    {file = "flask_vite-0.6.1-py3-none-any.whl", hash = "sha256:5267abdd0bb4c8c9bb5b1a44b1260dc015a3f7e39befcf120babedc386d43558"},
+    {file = "flask_vite-0.6.1.tar.gz", hash = "sha256:1681765668fa9dc7ca985f5ee395b1f7ed1d4db861407cccbcfdaf0346d4112c"},
+]
+
+[package.dependencies]
+flask = ">2"
+
+[[package]]
 name = "flask-wtf"
 version = "1.2.2"
 description = "Form rendering, validation, and CSRF protection for Flask with WTForms."
@@ -1220,4 +1235,4 @@ email = ["email-validator"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "034f1e0091f2d2c51cba7198b9b94b4528a9bd154133103407e0bd1244aeb571"
+content-hash = "95b4eadcd7b7959009f0c4d76299d01f2024d4790a79c3ed3a69b0cf0b4f51d9"

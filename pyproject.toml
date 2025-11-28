@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.10"
 flask = "*"
 flask-wtf = "*"
+flask-vite = "*"
 librosa = "*"
 
 [build-system]
