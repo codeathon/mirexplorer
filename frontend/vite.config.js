@@ -1,3 +1,5 @@
+import { resolve } from 'path';
+
 export default {
   server: {
     port: 3000,
@@ -7,6 +9,14 @@ export default {
   resolve: {
     alias: {
       '@': '/src',
+    }
+  },
+
+  build: {
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'main.jsx')
+      }
     }
   }
 };

@@ -1,7 +1,10 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-    {{ vite_tags() }}
+    <script type="module" src="http://localhost:3000/@vite/client"></script>
+    <script type="module" src="http://localhost:3000/main.jsx"></script>
+
+    <div id="app"></div>
 
     <div class="w-screen h-screen flex flex-col items-center justify-center space-y-4 relative bg-gray-100">
         <a href="https://www.qmul.ac.uk/"><img src="{{  url_for('static', filename='QM_logo_Black.png') }}" alt="Queen Mary University of London Logo" class="qmul-logo"/></a>

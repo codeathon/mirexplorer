@@ -1,13 +1,16 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-    {{ vite_tags() }}
+    <script type="module" src="http://localhost:3000/@vite/client"></script>
+    <script type="module" src="http://localhost:3000/main.jsx"></script>
 
     <div class="jumbotron">
         <h1 class="display-4">{{ app_data["project_name"] }} Analyzer</h1>
         <hr class="my-4">
         <p>Visualizing uploaded audio:</p>
     </div>
+
+    <div id="sidebar-root"></div>
 
     <div id="waveform"></div>
 
