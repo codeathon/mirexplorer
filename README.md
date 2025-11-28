@@ -1,15 +1,16 @@
 # MIRExplorer
 
-Currently a barebones Flask app using Flask, Bootstrap (v5.3.0) and jQuery (v3.6.3).
+Explore music using AI tools.
 
-Make sure you have Python and poetry installed.
+## Installation
+
+Make sure you have Python, poetry, and npm installed.
 
 ```sh
 git clone https://github.com/musicinformationretrieval/mirexplorer.git
 cd mirexplorer
-
-make build
-make run
+make install
+make dev
 ```
 
-Your app should now be running on [localhost:5000](http://localhost:5000/).
+This will run the app locally on [localhost:5000](http://localhost:5000/).
