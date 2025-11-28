@@ -1,0 +1,24 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    {{ vite_tags() }}
+
+    <div class="jumbotron">
+        <h1 class="display-4">{{ app_data["project_name"] }} Analyzer</h1>
+        <hr class="my-4">
+        <p>Visualizing uploaded audio:</p>
+    </div>
+
+    <div id="waveform"></div>
+
+    {% if audio_url %}
+    <script>
+        window.audio_url = {{ audio_url|tojson }};
+    </script>
+    {% else %}
+    <script>
+        window.audio_url = null;
+    </script>
+    {% endif %}
+
+{% endblock %}

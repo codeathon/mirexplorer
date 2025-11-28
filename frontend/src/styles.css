@@ -1,3 +1,73 @@
+@import "./theme.css";
+@import "./fonts.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.qmul-logo {
+    @apply absolute top-4 right-4 w-48
+}
+
+.dropzone-label {
+    @apply flex flex-col items-center justify-center w-full max-w-5xl h-48 bg-gray-100 border-2 border-dashed border-gray-400 rounded-lg cursor-pointer transition-colors duration-200;
+}
+
+/* Drag-over/hover state */
+.dropzone-label.dragover {
+    @apply bg-gray-200;
+}
+
+.dropzone-label:hover {
+    @apply bg-gray-200;
+}
+
+.dropzone-content {
+    @apply flex flex-col items-center justify-center text-center pt-5 pb-6;
+}
+
+.dropzone-icon {
+    @apply w-16 h-16 mb-4 text-gray-600;
+}
+
+.dropzone-text-main {
+    @apply mb-2 text-2xl font-display text-center;
+}
+
+.dropzone-text-sub {
+    @apply text-base font-accent text-gray-500 text-center;
+}
+
+.hidden-input {
+    @apply hidden;
+}
+
+.dropzone-header-main {
+    @apply text-9xl font-display
+}
+
+.dropzone-header-sub {
+    @apply text-5xl font-accent  text-gray-500
+}
+
+.dropzone-links {
+    @apply absolute bottom-12 justify-center
+}
+
+.dropzone-links-text {
+    @apply text-gray-500 hover:underline font-display mx-10 text-lg
+}
+
+.wave-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 14rem; /* h-32 equivalent */
+    overflow: hidden;
+}
+
+.wave-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}

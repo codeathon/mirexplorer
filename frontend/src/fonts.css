@@ -1,0 +1,54 @@
+@font-face {
+	font-family: "Clash Display";
+	src: url("/static/fonts/ClashDisplay-Variable.woff2") format("woff2");
+	font-weight: 200 700;
+	font-style: normal;
+	font-display: swap;
+	font-variation-settings: normal;
+}
+
+@font-face {
+	font-family: "TASA Orbiter Display";
+	src: url("/static/fonts/TASAOrbiterDisplay-Regular.otf") format("opentype");
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "TASA Orbiter Display";
+	src: url("/static/fonts/TASAOrbiterDisplay-Medium.otf") format("opentype");
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "TASA Orbiter Display";
+	src: url("/static/fonts/TASAOrbiterDisplay-SemiBold.otf") format("opentype");
+	font-weight: 600;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "TASA Orbiter Display";
+	src: url("/static/fonts/TASAOrbiterDisplay-Bold.otf") format("opentype");
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "TASA Orbiter Display";
+	src: url("/static/fonts/TASAOrbiterDisplay-Black.otf") format("opentype");
+	font-weight: 900;
+	font-style: normal;
+	font-display: swap;
+}
+
+:root {
+	--font-clash-display: "Clash Display", sans-serif;
+	--font-tasa: "TASA Orbiter Display", serif;
+	/*--font-inter: "Inter", sans-serif;*/
+}

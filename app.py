@@ -6,7 +6,7 @@ MIRExplorer main app
 
 import os
 
-from flask import Flask, render_template, send_from_directory, url_for
+from flask import Flask, render_template, send_from_directory, url_for, request, redirect
 from flask_vite import Vite
 from werkzeug.utils import secure_filename
 
@@ -15,7 +15,7 @@ from backend.crud import AudioUpload
 
 DEVELOPMENT_ENV = True
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="frontend/static")
 
 app.config["SECRET_KEY"] = os.urandom(32)
 app.config['VITE_FOLDER_PATH'] = 'frontend'
@@ -49,10 +49,21 @@ def index():
         save_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
         file.save(save_path)
 
-        audio_url = url_for("uploaded_file", filename=filename)
-        return render_template("index.html", form=form, app_data=app_data, audio_url=audio_url)
+        # Redirect to analyzer page with filename as query param
+        return redirect(url_for("explorer", filename=filename))
 
     return render_template("index.html", form=form, app_data=app_data)
+
+
+@app.route("/explorer")
+def explorer():
+    """Page that displays waveform."""
+    filename = request.args.get("filename")
+    if not filename:
+        return redirect(url_for("index"))
+
+    audio_url = url_for("uploaded_file", filename=filename)
+    return render_template("explorer.html", app_data=app_data, audio_url=audio_url)
 
 
 @app.route("/about")
