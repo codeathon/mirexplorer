@@ -1,16 +1,10 @@
 import os
+
 from flask import Flask
 from flask_vite import Vite
 
+from backend.tasks import get_scheduler
 
-APP_DATA = {
-    "name": "MIRExplorer",
-    "description": "A basic Flask app for exploring audio files",
-    "author": "Huw Cheston",
-    "html_title": "MIRExplorer",
-    "project_name": "MIRExplorer",
-    "keywords": "flask, webapp, template, basic",
-}
 
 def create_flask_app():
     from backend.crud import UPLOADS_FOLDER
@@ -27,11 +21,22 @@ def create_flask_app():
     # Register routes
     app.register_blueprint(main_routes)
 
+    # Create Vite extension
+    Vite(app)
+
+    # Check all extensions have been defined
+    assert "vite" in app.extensions, "vite is not defined"
+    # assert "celery" in app.extensions, "celery is not defined"
+
     return app
 
-
-def create_vite_app(flask_app = None) -> Vite:
-    if flask_app is None:
-        flask_app = create_flask_app()
-    return Vite(flask_app)
-
+APP_DATA = {
+    "name": "MIRExplorer",
+    "description": "A basic Flask app for exploring audio files",
+    "author": "Huw Cheston",
+    "html_title": "MIRExplorer",
+    "project_name": "MIRExplorer",
+    "keywords": "flask, webapp, template, basic",
+}
+FLASK_APP = create_flask_app()
+VITE_APP = FLASK_APP.extensions["vite"]

@@ -4,14 +4,13 @@
 MIRExplorer main app
 """
 
-from backend import create_flask_app, create_vite_app
-
+from backend import FLASK_APP, get_scheduler
 
 DEVELOPMENT_ENV = True
 
-app = create_flask_app()
-vite = create_vite_app(app)
-
 
 if __name__ == "__main__":
-    app.run(debug=DEVELOPMENT_ENV)
+    # Start the task scheduler (runs in same process as app)
+    get_scheduler().start()
+    # Start the app
+    FLASK_APP.run(debug=DEVELOPMENT_ENV)

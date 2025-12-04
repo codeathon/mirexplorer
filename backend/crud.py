@@ -18,7 +18,8 @@ MAX_AUDIO_DURATION = 30    # load only first 30 seconds of audio by default
 AUDIO_SAMPLE_RATE = 22050    # audio resampled to this
 MAX_AUDIO_SAMPLES = round(MAX_AUDIO_DURATION * AUDIO_SAMPLE_RATE)
 
-UPLOADS_FOLDER = Path(__file__).parent / "uploads"
+UPLOADS_FOLDER = Path(__file__).parent.parent / "uploads"
+DEFAULT_FILE_TTL_HOURS = 2    # files live for 2 hours
 
 
 class FileAudioValid:

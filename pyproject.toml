@@ -11,6 +11,8 @@ flask = "*"
 flask-wtf = "*"
 flask-vite = "*"
 librosa = "*"
+apscheduler = "*"
+loguru = "*"
 
 [build-system]
 requires = ["poetry-core"]
