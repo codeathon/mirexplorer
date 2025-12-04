@@ -7,7 +7,7 @@ from backend.tasks import get_scheduler
 
 
 def create_flask_app():
-    from backend.crud import UPLOADS_FOLDER
+    from backend.crud import UPLOADS_FOLDER, clear_uploads
     from backend.routes import main_routes
 
     app = Flask(__name__, static_folder="../frontend/static", template_folder="../templates")
@@ -15,8 +15,11 @@ def create_flask_app():
     # Configuration
     app.config["SECRET_KEY"] = os.urandom(32)
     app.config['VITE_FOLDER_PATH'] = 'frontend'
+
+    # Handle upload folder: create if not existing, and clear everything inside it for a clean start
     app.config["UPLOAD_FOLDER"] = UPLOADS_FOLDER
     os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
+    clear_uploads()
 
     # Register routes
     app.register_blueprint(main_routes)
@@ -29,6 +32,7 @@ def create_flask_app():
     # assert "celery" in app.extensions, "celery is not defined"
 
     return app
+
 
 APP_DATA = {
     "name": "MIRExplorer",

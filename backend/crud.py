@@ -1,10 +1,11 @@
+import os
 from io import BytesIO
 from pathlib import Path
 
 import librosa
 import numpy as np
 import soundfile as sf
-
+from loguru import logger
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired, FileAllowed, FileSize
 from werkzeug.datastructures import FileStorage
@@ -12,14 +13,14 @@ from wtforms import SubmitField
 from wtforms.validators import ValidationError
 
 AUDIO_FILE_FORMATS = ["wav", "aac", "aiff", "flac", "m4a", "mp3", "ogg", "wav", "wma"]
-MAX_SIZE = 16 * 1000000    # 16 MB default
+MAX_SIZE = 16 * 1000000  # 16 MB default
 
-MAX_AUDIO_DURATION = 30    # load only first 30 seconds of audio by default
-AUDIO_SAMPLE_RATE = 22050    # audio resampled to this
+MAX_AUDIO_DURATION = 30  # load only first 30 seconds of audio by default
+AUDIO_SAMPLE_RATE = 22050  # audio resampled to this
 MAX_AUDIO_SAMPLES = round(MAX_AUDIO_DURATION * AUDIO_SAMPLE_RATE)
 
 UPLOADS_FOLDER = Path(__file__).parent.parent / "uploads"
-DEFAULT_FILE_TTL_HOURS = 2    # files live for 2 hours
+DEFAULT_FILE_TTL_HOURS = 2  # files live for 2 hours
 
 
 class FileAudioValid:
@@ -109,4 +110,16 @@ def save_audio(y: np.ndarray, filepath: str) -> np.ndarray:
     """
     Save numpy array of audio to file
     """
-    sf.write(filepath, y, AUDIO_SAMPLE_RATE,)
+    logger.info(f"Writing audio file '{filepath}'")
+    sf.write(filepath, y, AUDIO_SAMPLE_RATE, )
+
+
+def clear_uploads():
+    """
+    Clears ALL uploaded files, without checking TTL
+    """
+
+    for file_path in Path(UPLOADS_FOLDER).iterdir():
+        if file_path.is_file():
+            os.remove(file_path)
+            logger.info(f"Deleted {file_path}")

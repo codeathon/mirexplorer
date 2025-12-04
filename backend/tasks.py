@@ -5,13 +5,13 @@ from datetime import datetime, timedelta
 from apscheduler.schedulers.background import BackgroundScheduler
 from loguru import logger
 
-from backend.crud import UPLOADS_FOLDER, DEFAULT_FILE_TTL_HOURS
-
 
 def clear_old_uploads():
     """
     Clears files in the UPLOADS_FOLDER older than 'hours' hours.
     """
+    from backend.crud import UPLOADS_FOLDER, DEFAULT_FILE_TTL_HOURS
+
     logger.info("Clearing old uploads...")
 
     now = datetime.now()
@@ -36,10 +36,19 @@ TASKS = [
 
 
 def get_scheduler() -> BackgroundScheduler:
+    """
+    Initialise the task scheduler and add all tasks
+    """
+
     scheduler = BackgroundScheduler()
     logger.info(f"Adding tasks to scheduler...")
+
     for task, kwargs in TASKS:
-        if not any(job.name == task.__name__ for job in scheduler.get_jobs()):
+        # Prevent somehow adding tasks twice
+        if any(job.name == task.__name__ for job in scheduler.get_jobs()):
+            logger.error(f"Task '{task.__name__}' already exists!")
+        else:
             logger.info(f"Adding task '{task.__name__}'")
             scheduler.add_job(task, "interval", **kwargs)
+
     return scheduler
