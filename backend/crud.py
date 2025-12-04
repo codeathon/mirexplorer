@@ -9,7 +9,7 @@ from loguru import logger
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired, FileAllowed, FileSize
 from werkzeug.datastructures import FileStorage
-from wtforms import SubmitField
+from wtforms import SubmitField, HiddenField
 from wtforms.validators import ValidationError
 
 AUDIO_FILE_FORMATS = ["wav", "aac", "aiff", "flac", "m4a", "mp3", "ogg", "wav", "wma"]
@@ -78,6 +78,7 @@ class AudioUpload(FlaskForm):
             FileAudioValid(message="File contains invalid or corrupted audio")
         ]
     )
+    recorded_audio = HiddenField("Recorded Audio")
     submit = SubmitField('Upload')
 
 
@@ -99,8 +100,7 @@ def preprocess_audio_on_upload(audio_stream) -> np.ndarray:
     Preprocess an uploaded audio file: convert to mono, resample, and trim to maximum duration
     """
     # Audio should have been validated beforehand, so we know that it is safe
-    audio_buffer = BytesIO(audio_stream.read())
-    y, sr = librosa.load(audio_buffer, sr=AUDIO_SAMPLE_RATE, offset=0, mono=True, duration=MAX_AUDIO_DURATION)
+    y, sr = librosa.load(audio_stream, sr=AUDIO_SAMPLE_RATE, offset=0, mono=True, duration=MAX_AUDIO_DURATION)
 
     # Truncate or pad audio to match desired number of samples
     return pad_or_truncate_array(y, MAX_AUDIO_SAMPLES)

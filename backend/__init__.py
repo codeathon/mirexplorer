@@ -15,6 +15,7 @@ def create_flask_app():
     # Configuration
     app.config["SECRET_KEY"] = os.urandom(32)
     app.config['VITE_FOLDER_PATH'] = 'frontend'
+    app.config["MAX_CONTENT_LENGTH"] = 50 * 1024 * 1024    # allow up to 50 MB uploads, for safety
 
     # Handle upload folder: create if not existing, and clear everything inside it for a clean start
     app.config["UPLOAD_FOLDER"] = UPLOADS_FOLDER

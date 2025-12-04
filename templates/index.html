@@ -3,34 +3,71 @@
 {% block body %}
     <script type="module" src="http://localhost:3000/@vite/client"></script>
     <script type="module" src="http://localhost:3000/main.jsx"></script>
+    <script type="module" src="http://localhost:3000/audioRecorder.jsx"></script>
+
+    <script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
 
     <div id="app"></div>
 
     <div class="w-screen h-screen flex flex-col items-center justify-center space-y-4 relative bg-gray-100">
-        <a href="https://www.qmul.ac.uk/"><img src="{{  url_for('static', filename='QM_logo_Black.png') }}" alt="Queen Mary University of London Logo" class="qmul-logo"/></a>
+        <a href="https://www.qmul.ac.uk/"><img src="{{ url_for('static', filename='QM_logo_Black.png') }}"
+                                               alt="Queen Mary University of London Logo" class="qmul-logo"/></a>
 
         <h1 class="font-accent dropzone-header-main">Music Explorer</h1>
         <h2 class="dropzone-header-sub">Analyse your music using AI!</h2>
 
-        <form id="upload-form" method="POST" class="w-full max-w-xl" enctype="multipart/form-data">
-            {{ form.hidden_tag() }}
-            <label for="dropzone-file" id="dropzone-label" class="dropzone-label">
-                <div class="dropzone-content">
-                    <svg class="dropzone-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="m9 9 10.5-3m0 6.553v3.75a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a1.803 1.803 0 1 1-.99-3.467l2.31-.66a2.25 2.25 0 0 0 1.632-2.163Zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a1.803 1.803 0 0 1-.99-3.467l2.31-.66A2.25 2.25 0 0 0 9 15.553Z"/>
-                    </svg>
-                    <p class="dropzone-text-main">
-                        Drag a file or click to upload!
-                    </p>
-                    <p class="dropzone-text-sub">MP3, WAV, or FLAC (maximum file size 16MB)</p>
-                </div>
-                {{ form.file(class="hidden-input", id="dropzone-file") }}
-            </label>
-        </form>
+        <div class="flex flex-row justify-center items-center w-full space-x-10">
+            <form id="upload-form" method="POST" class="flex justify-center" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                <label for="dropzone-file" id="dropzone-label" class="dropzone-label">
+                    <div class="dropzone-content">
+                        <svg class="dropzone-icon" xmlns="http://www.w3.org/2000/svg" fill="none"
+                             viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                  d="m9 9 10.5-3m0 6.553v3.75a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a1.803 1.803 0 1 1-.99-3.467l2.31-.66a2.25 2.25 0 0 0 1.632-2.163Zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a1.803 1.803 0 0 1-.99-3.467l2.31-.60A2.25 2.25 0 0 0 9 15.553Z"/>
+                        </svg>
+                        <p class="dropzone-text-main">Drag a file or click to upload!</p>
+                        <p class="dropzone-text-sub">MP3, WAV, or FLAC (maximum file size 16MB)</p>
+                    </div>
+                    {{ form.file(class="hidden-input", id="dropzone-file") }}
+                </label>
+            </form>
 
+            <form id="record-form" method="POST" enctype="multipart/form-data" action="{{ url_for('main.index') }}">
+                <label id="record-label" class="dropzone-label cursor-pointer">
+                    <div class="dropzone-content">
+                        <svg id="mic-svg" class="dropzone-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                             stroke-width="1.5" stroke="currentColor">
+                            <defs>
+                                <!-- Clip for filling the mic -->
+                                <clipPath id="mic-clip">
+                                    <rect id="mic-clip-rect" x="0" y="24" width="24" height="0"/>
+                                </clipPath>
+                            </defs>
+
+                            <!-- Filled mic shape -->
+                            <path d="M12 18.75a6.75 6.75 0 0 0 6.75-6.75V7.5a6.75 6.75 0 1 0-13.5 0v4.5A6.75 6.75 0 0 0 12 18.75Zm0 0v3m-3 0h6"
+                                  fill="currentColor" clip-path="url(#mic-clip)" stroke="currentColor"
+                                  stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+                            <!-- Mic outline -->
+                            <path d="M12 18.75a6.75 6.75 0 0 0 6.75-6.75V7.5a6.75 6.75 0 1 0-13.5 0v4.5A6.75 6.75 0 0 0 12 18.75Zm0 0v3m-3 0h6"
+                                  fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                  stroke-linejoin="round"/>
+                        </svg>
+
+
+                        <p class="dropzone-text-main" id="record-text">Click to record audio!</p>
+                        <p class="dropzone-text-sub">Record up to 30 seconds</p>
+                    </div>
+                </label>
+                <button type="submit" hidden>Submit</button>
+            </form>
+        </div>
         <div>
             <p class="dropzone-text-sub">
-                Created as part of the <a href="https://www.ukri.org/councils/epsrc/" class="underline">EPSRC</a> <em>AI Skills Through Music</em> project.
+                Created as part of the <a href="https://www.ukri.org/councils/epsrc/" class="underline">EPSRC</a> <em>AI
+                Skills Through Music</em> project.
             </p>
             <p class="dropzone-text-sub">
                 We do not store your uploaded files.
@@ -45,37 +82,39 @@
                         <stop offset="0%" stop-color="#ff6b6b">
                             <animate attributeName="stop-color"
                                      values="#ff6b6b;#6b83ff;#ff6b6b"
-                                     dur="5s" repeatCount="indefinite" />
+                                     dur="5s" repeatCount="indefinite"/>
                         </stop>
                         <stop offset="100%" stop-color="#f7d794">
                             <animate attributeName="stop-color"
                                      values="#f7d794;#6bffb3;#f7d794"
-                                     dur="5s" repeatCount="indefinite" />
+                                     dur="5s" repeatCount="indefinite"/>
                         </stop>
                     </linearGradient>
 
                     <!-- Mask for top/side blur -->
                     <radialGradient id="topSideFade" cx="50%" cy="100%" r="100%" fx="50%" fy="100%">
-                        <stop offset="0%" stop-color="white" stop-opacity="1" />
-                        <stop offset="50%" stop-color="white" stop-opacity="1" />
-                        <stop offset="100%" stop-color="white" stop-opacity="0" />
+                        <stop offset="0%" stop-color="white" stop-opacity="1"/>
+                        <stop offset="50%" stop-color="white" stop-opacity="1"/>
+                        <stop offset="100%" stop-color="white" stop-opacity="0"/>
                     </radialGradient>
 
                     <mask id="maskFade">
-                        <rect width="100%" height="500%" fill="url(#topSideFade)" />
+                        <rect width="100%" height="500%" fill="url(#topSideFade)"/>
                     </mask>
                 </defs>
 
                 <ellipse cx="50" cy="50" rx="50" ry="200"
                          fill="url(#animatedGradient)"
-                         mask="url(#maskFade)" />
+                         mask="url(#maskFade)"/>
             </svg>
         </div>
 
         <div id="dropzone-links" class="dropzone-links">
             <a href="about.html" class="dropzone-links-text">About this Site</a>
-            <a href="https://www.github.com/musicinformationretrieval/mirexplorer" class="dropzone-links-text">View Source Code</a>
-            <a href="mailto:huwcheston@gmail.com?subject=ESPRC Music Explorer" class="dropzone-links-text">Contact Us</a>
+            <a href="https://www.github.com/musicinformationretrieval/mirexplorer" class="dropzone-links-text">View
+                Source Code</a>
+            <a href="mailto:huwcheston@gmail.com?subject=ESPRC Music Explorer" class="dropzone-links-text">Contact
+                Us</a>
         </div>
     </div>
 {% endblock %}

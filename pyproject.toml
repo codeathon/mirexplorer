@@ -13,6 +13,7 @@ flask-vite = "*"
 librosa = "*"
 apscheduler = "*"
 loguru = "*"
+pydub = "*"
 
 [build-system]
 requires = ["poetry-core"]
