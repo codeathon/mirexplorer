@@ -139,3 +139,9 @@
 .explorer-sidebar-icon {
     @apply w-5 h-5 size-6 mx-3
 }
+
+.alert-danger {
+    border-left: 5px solid #b30000;
+    background-color: #ffe6e6;
+    color: #660000;
+}

@@ -34,7 +34,7 @@ def create_flask_app():
     return app
 
 
-APP_DATA = {
+app_data = {
     "name": "MIRExplorer",
     "description": "A basic Flask app for exploring audio files",
     "author": "Huw Cheston",

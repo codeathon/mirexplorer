@@ -1,6 +1,5 @@
 import "./src/styles.css";
 import WaveSurfer from 'wavesurfer.js';
-import Minimap from 'wavesurfer.js/dist/plugins/minimap.esm.js'
 
 let wavesurfer = null;
 
