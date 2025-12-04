@@ -96,9 +96,11 @@
                     </li>
                 </ul>
             </div>
-            <button id="toggleSidebar" class="absolute bottom-8 -right-6 bg-white flex items-center justify-center rounded shadow">
-                <svg id="sidebarIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="explorer-sidebar-icon">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+            <button id="toggleSidebar"
+                    class="absolute bottom-8 -right-6 bg-white flex items-center justify-center rounded shadow">
+                <svg id="sidebarIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                     stroke-width="1.5" stroke="currentColor" class="explorer-sidebar-icon">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"/>
                 </svg>
             </button>
         </aside>
@@ -113,9 +115,9 @@
             </div>
         </div>
 
-        <div class="flex-1 flex justify-center items-center">
-            <div class="w-full" id="waveform">
-            </div>
+        <div class="waveform-container">
+            <div class="w-full" id="waveform"></div>
+            <div class="waveform-time" id="waveform-time">0:00</div>
         </div>
 
         {% if audio_url %}

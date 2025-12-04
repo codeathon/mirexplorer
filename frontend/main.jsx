@@ -1,5 +1,6 @@
 import "./src/styles.css";
 import WaveSurfer from 'wavesurfer.js';
+import Minimap from 'wavesurfer.js/dist/plugins/minimap.esm.js'
 
 let wavesurfer = null;
 
@@ -17,10 +18,27 @@ function createWave(audioFile) {
         container: '#waveform',
         waveColor: '#ef9b97',
         progressColor: '#ef6055',
-        height: 376
+        height: 376,
     });
 
     wavesurfer.load(audioFile);
+
+    wavesurfer.on('interaction', () => {
+        wavesurfer.playPause()
+    })
+
+    const formatTime = (seconds) => {
+        const minutes = Math.floor(seconds / 60)
+        const secondsRemainder = Math.round(seconds) % 60
+        const paddedSeconds = `0${secondsRemainder}`.slice(-2)
+        return `${minutes}:${paddedSeconds}`
+    }
+
+    console.log(wavesurfer.p)
+
+    const timeEl = document.getElementById('waveform-time')
+    console.log(timeEl)
+    wavesurfer.on('timeupdate', (currentTime) => (timeEl.textContent = formatTime(currentTime)))
 }
 
 globalThis.createWave = createWave;

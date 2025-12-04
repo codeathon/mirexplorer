@@ -1,5 +1,6 @@
 @import "./theme.css";
 @import "./fonts.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -54,35 +55,35 @@
 }
 
 .dropzone-header-main {
-  @apply text-9xl font-display;
-  position: relative;
+    @apply text-9xl font-display;
+    position: relative;
 }
 
 .dropzone-header-main::after,
 .dropzone-header-main::before {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 2px;
-  background: linear-gradient(to right, #ff6b6b, #6bffb3);
-  left: 0;
-  transform: scaleX(0);
-  transition: transform 0.6s ease-out;
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(to right, #ff6b6b, #6bffb3);
+    left: 0;
+    transform: scaleX(0);
+    transition: transform 0.6s ease-out;
 }
 
 .dropzone-header-main::before {
-  top: -5px;
-  transform-origin: left;
+    top: -5px;
+    transform-origin: left;
 }
 
 .dropzone-header-main::after {
-  bottom: -5px;
-  transform-origin: right;
+    bottom: -5px;
+    transform-origin: right;
 }
 
 .dropzone-header-main:hover::after,
 .dropzone-header-main:hover::before {
-  transform: scaleX(1);
+    transform: scaleX(1);
 }
 
 .wave-container {
@@ -90,7 +91,7 @@
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 14rem; /* h-32 equivalent */
+    height: 14rem;
     overflow: hidden;
 }
 
@@ -98,6 +99,21 @@
     width: 100%;
     height: 100%;
     display: block;
+}
+
+
+.waveform-container {
+    @apply flex-1 flex justify-center items-center relative
+}
+
+.waveform-time {
+    @apply text-xl font-accent text-white;
+    position: absolute;
+    z-index: 11;
+    top: 48.5%;
+    left: 97.5%;
+    pointer-events: none;
+    background: rgba(0, 0, 0, 0.5);
 }
 
 .explorer-sidebar-container {
