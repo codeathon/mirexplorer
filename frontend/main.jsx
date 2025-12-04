@@ -15,8 +15,9 @@ function createWave(audioFile) {
     // Create new instance
     wavesurfer = WaveSurfer.create({
         container: '#waveform',
-        waveColor: 'violet',
-        progressColor: 'purple'
+        waveColor: '#ef9b97',
+        progressColor: '#ef6055',
+        height: 376
     });
 
     wavesurfer.load(audioFile);
@@ -81,5 +82,29 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    const toggleBtn = document.getElementById("toggleSidebar");
+    const sidebar = document.getElementById("sidebar");
+    const icon = document.getElementById("sidebarIcon");
+
+    toggleBtn.addEventListener("click", () => {
+        const isOpen = sidebar.classList.contains("translate-x-0");
+
+        if (isOpen) {
+            // close sidebar
+            sidebar.classList.remove("translate-x-0");
+            sidebar.classList.add("-translate-x-full");
+
+            // rotate arrow to point right
+            icon.style.transform = "rotate(180deg)";
+        } else {
+            // open sidebar
+            sidebar.classList.remove("-translate-x-full");
+            sidebar.classList.add("translate-x-0");
+
+            // rotate arrow to point left
+            icon.style.transform = "rotate(0deg)";
+        }
+    });
 
 });
