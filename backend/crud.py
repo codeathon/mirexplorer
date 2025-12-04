@@ -1,4 +1,5 @@
 from io import BytesIO
+from pathlib import Path
 
 import librosa
 import numpy as np
@@ -16,6 +17,8 @@ MAX_SIZE = 16 * 1000000    # 16 MB default
 MAX_AUDIO_DURATION = 30    # load only first 30 seconds of audio by default
 AUDIO_SAMPLE_RATE = 22050    # audio resampled to this
 MAX_AUDIO_SAMPLES = round(MAX_AUDIO_DURATION * AUDIO_SAMPLE_RATE)
+
+UPLOADS_FOLDER = Path(__file__).parent / "uploads"
 
 
 class FileAudioValid:
