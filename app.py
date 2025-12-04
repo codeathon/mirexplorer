@@ -5,12 +5,14 @@ MIRExplorer main app
 """
 
 import os
+from pathlib import Path
+from uuid import uuid4
 
 from flask import Flask, render_template, send_from_directory, url_for, request, redirect
 from flask_vite import Vite
 from werkzeug.utils import secure_filename
 
-from backend.crud import AudioUpload
+from backend.crud import AudioUpload, preprocess_audio_on_upload, save_audio
 
 
 DEVELOPMENT_ENV = True
@@ -41,16 +43,34 @@ def uploaded_file(filename):
 @app.route("/", methods=["GET", "POST"])
 def index():
     form = AudioUpload()
+
+    # This checks to make sure, e.g., that the audio is valid, and throws an error if not
     if form.validate_on_submit():
+
+        # Grab the filepath uploaded to the form
         file = form.file.data
         filename = secure_filename(file.filename)
 
-        # TODO: handle renaming file here
-        save_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
-        file.save(save_path)
+        # Extract extension from filepath
+        #  We will have already validated this extension so don't need to do it again
+        ext = Path(filename).suffix.lower()
+
+        # Create temporary filename to upload to
+        temp_filename = str(uuid4()) + ext
+        save_path = os.path.join(app.config["UPLOAD_FOLDER"], temp_filename)
+
+        # Preprocess the audio file, truncate to desired length, etc
+        file_prep = preprocess_audio_on_upload(file)
+
+        # Save the preprocessed file
+        save_audio(file_prep, save_path)
 
         # Redirect to analyzer page with filename as query param
-        return redirect(url_for("explorer", filename=filename))
+        return redirect(url_for("explorer", filename=temp_filename))
+
+    # TODO: throw an error to the user here
+    else:
+        pass
 
     return render_template("index.html", form=form, app_data=app_data)
 
