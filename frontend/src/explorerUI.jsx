@@ -5,9 +5,14 @@ let sampleRate = 22050;
 let defaultFMin = 200
 let defaultFMax = 8000
 let defaultSpectType = "Linear"
+let defaultColour = '#ef9b97'
 
 let wavesurfer = null;
 let spectsurfer = null;
+
+
+let currentShown = "wave"
+
 
 function cleanContainer() {
     // Destroy previous instances if it exists
@@ -42,27 +47,68 @@ async function finaliseSurfer(surfer) {
     )
 }
 
+function getCurrentChosenColour() {
+    // get current color from picker
+    let currentColour = document.getElementById("explorer-colour-picker").getAttribute("data-current-color")
+    if (!currentColour) {
+        currentColour = defaultColour
+    }
+    return currentColour.toLowerCase()
+}
+
+
+function getProgressColour(currentColour) {
+    // progress colour will be +/-50 added to R/G/B, depending on total sum
+    let currentRgb = hexToRgb(currentColour)
+    let totalSum = currentRgb.r + currentRgb.g + currentRgb.b
+
+    let progCol;
+
+    if (totalSum > (255 * 1.5)) {
+        progCol = {
+            r: Math.max(currentRgb.r - 50, 0),
+            g: Math.max(currentRgb.g - 50, 0),
+            b: Math.max(currentRgb.b - 50, 0)
+        }
+    } else {
+        progCol = {
+            r: Math.min(currentRgb.r + 50, 255),
+            g: Math.min(currentRgb.g + 50, 255),
+            b: Math.min(currentRgb.b + 50, 255)
+        }
+    }
+    return rgbToHex(progCol.r, progCol.g, progCol.b)
+}
 
 async function createWave(audioFile) {
     cleanContainer()
+
+    // get currently chosen color
+    let currentColour = getCurrentChosenColour()
+
+    // progress colour will be +/-50 added to R/G/B, depending on total sum
+    let currentProgressColour = getProgressColour(currentColour)
+
     // Create new instance
     wavesurfer = WaveSurfer.create({
         container: '#waveform',
-        waveColor: '#ef9b97',
-        progressColor: '#ef6055',
+        waveColor: currentColour,
+        progressColor: currentProgressColour,
         height: 376,
         sampleRate: sampleRate
     });
+
     await wavesurfer.load(audioFile);
     await finaliseSurfer(wavesurfer)
 }
 
-function generateCmap() {
+function generateCmap(r, g, b) {
     const colorArray = [];
 
     // Define the background and most intense colours
+    //  background colour is always constant, intense (foreground) dynamic based on colour picker element
     const background = {r: 245 / 255, g: 245 / 255, b: 245 / 255, alpha: 1};
-    const intense = {r: 239 / 255, g: 155 / 255, b: 151 / 255, alpha: 1};
+    const intense = {r: r / 255, g: g / 255, b: b / 255, alpha: 1};
 
     // Function to interpolate between two colours
     function interpolateColor(start, end, t) {
@@ -84,23 +130,49 @@ function generateCmap() {
     return colorArray
 }
 
+function componentToHex(c) {
+    let hex = c.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+}
+
+function rgbToHex(r, g, b) {
+    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+
+function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
+}
+
 async function createSpect(
     audioFile,
     spectFMin = defaultFMin,
     spectFMax = defaultFMax,
-    spectType = defaultSpectType
+    spectType = defaultSpectType,
 ) {
     console.log("Creating spectrogram: ", spectFMin, spectFMax, spectType)
 
+    let currentColour = getCurrentChosenColour()
+    let currentProg = getProgressColour(currentColour)
+
     cleanContainer()
-    const cArr = generateCmap()
     wavesurfer = WaveSurfer.create({
         container: '#waveform',
-        waveColor: '#ef9b97',
-        progressColor: '#ef6055',
+        waveColor: currentProg, //
+        progressColor: currentProg,
         sampleRate: sampleRate,
         height: 0
     })
+
+    // generate the cmap
+    // need to parse hex color input to RGB values
+    let rgb = hexToRgb(currentColour)
+    const cArr = generateCmap(rgb.r, rgb.g, rgb.b)
+
     spectsurfer = Spectrogram.create({
         colorMap: cArr,
         labels: false,
@@ -124,11 +196,13 @@ async function handleChangeView(selection) {
 
     // create waveform if not existing
     if (textContent === "Waveform") {
+        currentShown = "wave"
         toggleSpectrogramOptions(false)
         await createWave(window.audio_url)
     }
     // create spectrogram otherwise
     else if (textContent === "Spectrogram") {
+        currentShown = "spect"
         toggleSpectrogramOptions(true)
         await createSpect(window.audio_url)
     }
@@ -170,6 +244,7 @@ function toggleSpectrogramOptions(show) {
     function updateSelect() {
         createSpect(window.audio_url, fMinSlider.value, fMaxSlider.value, spectTypeSelect.value)
     }
+
     const updateSelectDebounced = debounce(updateSelect, 1000);
 
     function updateSliderTooltip(slider, label) {
@@ -177,6 +252,7 @@ function toggleSpectrogramOptions(show) {
         // recreate the spectrogram with the new values
         createSpect(window.audio_url, fMinSlider.value, fMaxSlider.value, spectTypeSelect.value)
     }
+
     const updateSliderTooltipDebounced = debounce(updateSliderTooltip, 1000);
 
     fMinSlider.addEventListener("input", function () {
@@ -213,8 +289,26 @@ function toggleSidebar() {
     }
 }
 
+async function colourChanged() {
+    // for waveforms, we can update the surfer without having to recreate it
+    if (currentShown === "wave") {
+        let currentColour = getCurrentChosenColour()
+        let currentProg = getProgressColour(currentColour)
+        wavesurfer.setOptions({
+            waveColor: currentColour,
+            progressColor: currentProg
+        })
+    }
+    // for spectrograms, we need to recreate it
+    // see https://github.com/katspaugh/wavesurfer.js/discussions/3095
+    else {
+        await createSpect(window.audio_url)
+    }
+}
+
 
 globalThis.createWave = createWave;
+window.colourChanged = colourChanged;
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -244,5 +338,6 @@ document.addEventListener('DOMContentLoaded', () => {
     viewAsOptions.forEach(option => {
         option.addEventListener('click', () => handleChangeView(option));
     });
+
 
 });
