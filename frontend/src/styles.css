@@ -5,8 +5,8 @@
 @tailwind components;
 @tailwind utilities;
 
-.qmul-logo {
-    @apply absolute top-4 right-4 w-48
+.dropzone-brand-logos {
+    @apply max-w-[228px] h-auto opacity-40 mb-8 mt-0;
 }
 
 .dropzone-label {
@@ -46,7 +46,7 @@
 }
 
 .dropzone-links {
-    @apply absolute bottom-12 justify-center
+    @apply absolute bottom-6 justify-center
 }
 
 .dropzone-links-text {
@@ -54,8 +54,7 @@
 }
 
 .dropzone-header-main {
-    @apply text-9xl font-display;
-    position: relative;
+    @apply text-9xl font-display relative;
 }
 
 .dropzone-header-main::after,
