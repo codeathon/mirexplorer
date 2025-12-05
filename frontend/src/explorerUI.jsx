@@ -4,7 +4,7 @@ import Spectrogram from 'wavesurfer.js/dist/plugins/spectrogram.esm.js'
 let sampleRate = 22050;
 let defaultFMin = 200
 let defaultFMax = 8000
-let defaultSpectType = "mel"
+let defaultSpectType = "Linear"
 
 let wavesurfer = null;
 let spectsurfer = null;
@@ -90,8 +90,9 @@ async function createSpect(
     spectFMax = defaultFMax,
     spectType = defaultSpectType
 ) {
-    cleanContainer()
+    console.log("Creating spectrogram: ", spectFMin, spectFMax, spectType)
 
+    cleanContainer()
     const cArr = generateCmap()
     wavesurfer = WaveSurfer.create({
         container: '#waveform',
@@ -105,7 +106,7 @@ async function createSpect(
         labels: false,
         height: 376,
         splitChannels: false,
-        scale: spectType,
+        scale: spectType.toLowerCase(),
         useWebWorker: true,
         frequencyMin: spectFMin,
         frequencyMax: spectFMax,
@@ -146,12 +147,14 @@ function toggleSpectrogramOptions(show) {
     const fMaxSlider = document.getElementById("fMax");
     const fMinLabel = document.getElementById("tooltip-fMin")
     const fMaxLabel = document.getElementById("tooltip-fMax")
+    const spectTypeSelect = document.getElementById("spectTypeSelect")
 
     // set defaults for slider
     fMinSlider.value = defaultFMin
     fMaxSlider.value = defaultFMax
     fMinLabel.innerHTML = `${defaultFMin} Hz`
     fMaxLabel.innerHTML = `${defaultFMax} Hz`
+    spectTypeSelect.value = defaultSpectType
 
     let debounceTimer;
 
@@ -163,14 +166,18 @@ function toggleSpectrogramOptions(show) {
             }, delay);
         };
     }
+
+    function updateSelect() {
+        createSpect(window.audio_url, fMinSlider.value, fMaxSlider.value, spectTypeSelect.value)
+    }
+    const updateSelectDebounced = debounce(updateSelect, 1000);
+
     function updateSliderTooltip(slider, label) {
         label.innerHTML = `${slider.value} Hz`
         // recreate the spectrogram with the new values
-        createSpect(window.audio_url, fMinSlider.value, fMaxSlider.value)
+        createSpect(window.audio_url, fMinSlider.value, fMaxSlider.value, spectTypeSelect.value)
     }
-
-
-    const updateSliderTooltipDebounced = debounce(updateSliderTooltip, 300); // Adjust 300ms as needed
+    const updateSliderTooltipDebounced = debounce(updateSliderTooltip, 1000);
 
     fMinSlider.addEventListener("input", function () {
         updateSliderTooltipDebounced(fMinSlider, fMinLabel);
@@ -179,7 +186,9 @@ function toggleSpectrogramOptions(show) {
     fMaxSlider.addEventListener("input", function () {
         updateSliderTooltipDebounced(fMaxSlider, fMaxLabel);
     });
-
+    spectTypeSelect.addEventListener("change", function () {
+        updateSelectDebounced()
+    })
 }
 
 function toggleSidebar() {

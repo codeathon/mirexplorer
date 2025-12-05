@@ -100,8 +100,8 @@
             </button>
         </aside>
 
-        <div id="spectrogramOptions" class="absolute bottom-4 right-96 w-72 hidden">
-            <div class="flex gap-6">
+        <div id="spectrogramOptions" class="absolute bottom-4 right-80 w-72 hidden">
+            <div class="flex gap-8">
                 <div class="flex flex-col items-center">
                     <div class="explorer-spectoptions-tooltip">
                         <label id="tooltip-fMin" class="explorer-spectoptions-label">200 Hz</label>
@@ -118,8 +118,17 @@
                            class="z-10 pointer-events-auto">
                     <label for="fMax" class="explorer-spectoptions-label">Maximum Hz</label>
                 </div>
+                <div class="flex flex-col items-center">
+                    <label class="explorer-spectoptions-label"> Spectrogram Type</label>
+                    <select id="spectTypeSelect" class="w-32">
+                        <option class="explorer-spectoptions-label" selected>Linear</option>
+                        <option class="explorer-spectoptions-label">Log</option>
+                        <option class="explorer-spectoptions-label">Mel</option>
+                    </select>
+                </div>
             </div>
         </div>
+
 
         <button id="viewAsBtn" class="explorer-sidebar-labels explorer-viewas-button">
             View as
