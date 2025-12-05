@@ -131,7 +131,7 @@
 }
 
 .explorer-sidebar-labels {
-    @apply flex font-accent items-center gap-4 hover:text-blue-gray-300 text-xl
+    @apply flex font-accent items-center gap-4  text-xl
 }
 
 .explorer-sidebar-icon {

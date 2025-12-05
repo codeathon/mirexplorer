@@ -10,8 +10,8 @@ let defaultColour = '#ef9b97'
 let wavesurfer = null;
 let spectsurfer = null;
 
-
 let currentShown = "wave"
+let hoverColour = defaultColour
 
 
 function cleanContainer() {
@@ -290,16 +290,17 @@ function toggleSidebar() {
 }
 
 async function colourChanged() {
+    hoverColour = getCurrentChosenColour()
+
     // for waveforms, we can update the surfer without having to recreate it
     if (currentShown === "wave") {
-        let currentColour = getCurrentChosenColour()
-        let currentProg = getProgressColour(currentColour)
+        let currentProg = getProgressColour(hoverColour)
         wavesurfer.setOptions({
-            waveColor: currentColour,
+            waveColor: hoverColour,
             progressColor: currentProg
         })
     }
-    // for spectrograms, we need to recreate it
+        // for spectrograms, we need to recreate it
     // see https://github.com/katspaugh/wavesurfer.js/discussions/3095
     else {
         await createSpect(window.audio_url)
@@ -339,5 +340,16 @@ document.addEventListener('DOMContentLoaded', () => {
         option.addEventListener('click', () => handleChangeView(option));
     });
 
+    // dynamically set hover style for all labels
+    const elements = document.querySelectorAll('.explorer-sidebar-labels');
+    elements.forEach(hoverElement => {
+        hoverElement.addEventListener('mouseover', () => {
+            hoverElement.style.transition = 'color 0.1s ease';
+            hoverElement.style.color = hoverColour;
+        });
+        hoverElement.addEventListener('mouseout', () => {
+            hoverElement.style.color = '';
+        });
+    });
 
 });
