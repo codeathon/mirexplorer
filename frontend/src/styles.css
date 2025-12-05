@@ -101,7 +101,7 @@
 
 
 .waveform-container {
-    @apply flex-1 flex justify-center items-center relative
+    @apply flex justify-center items-center relative h-14 w-full mt-96;
 }
 
 .waveform-time {
@@ -136,6 +136,18 @@
 
 .explorer-sidebar-icon {
     @apply w-5 h-5 size-6 mx-3
+}
+
+.explorer-viewas-button {
+    @apply fixed bottom-6 right-6 px-4 py-3 rounded-lg bg-gray-200 hover:bg-gray-300 shadow-lg z-50
+}
+
+.explorer-viewas-option {
+    @apply px-3 py-2 rounded hover:bg-gray-100 text-sm block
+}
+
+.explorer-spectoptions-label {
+    @apply text-base font-accent text-black text-center;
 }
 
 .alert-danger {
