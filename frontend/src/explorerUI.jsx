@@ -303,7 +303,10 @@ async function colourChanged() {
         // for spectrograms, we need to recreate it
     // see https://github.com/katspaugh/wavesurfer.js/discussions/3095
     else {
-        await createSpect(window.audio_url)
+        const fMinSlider = document.getElementById("fMin");
+        const fMaxSlider = document.getElementById("fMax");
+        const spectTypeSelect = document.getElementById("spectTypeSelect")
+        await createSpect(window.audio_url, fMinSlider.value, fMaxSlider.value, spectTypeSelect.value)
     }
 }
 
