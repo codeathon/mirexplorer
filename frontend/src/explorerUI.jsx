@@ -147,6 +147,12 @@ function toggleSpectrogramOptions(show) {
     const fMinLabel = document.getElementById("tooltip-fMin")
     const fMaxLabel = document.getElementById("tooltip-fMax")
 
+    // set defaults for slider
+    fMinSlider.value = defaultFMin
+    fMaxSlider.value = defaultFMax
+    fMinLabel.innerHTML = `${defaultFMin} Hz`
+    fMaxLabel.innerHTML = `${defaultFMax} Hz`
+
     let debounceTimer;
 
     function debounce(func, delay) {
@@ -162,6 +168,7 @@ function toggleSpectrogramOptions(show) {
         // recreate the spectrogram with the new values
         createSpect(window.audio_url, fMinSlider.value, fMaxSlider.value)
     }
+
 
     const updateSliderTooltipDebounced = debounce(updateSliderTooltip, 300); // Adjust 300ms as needed
 
