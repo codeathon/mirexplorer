@@ -8,8 +8,10 @@ let dataArray = null;
 let sourceNode = null;
 let animationId = null;
 let recordingTimeout = null;
+let maxRecordingDuration = 30_000;    // stop after 30 seconds
 
 let displayedVolume = 0;
+const micVolumeScaling = 10;
 const smoothing = 0.1;
 const bottomOffset = 5;
 const maxHeight = 18;
@@ -125,7 +127,7 @@ function animateVolume() {
 
     displayedVolume += (rms - displayedVolume) * smoothing;
 
-    const height = Math.min(displayedVolume * maxHeight * 3, maxHeight);
+    const height = Math.min(displayedVolume * maxHeight * micVolumeScaling, maxHeight);
     const y = 24 - bottomOffset - height;
 
     micClipRect.setAttribute('y', y);
@@ -151,7 +153,7 @@ async function startRecording() {
 
     recordingTimeout = setTimeout(() => {
         if (isRecording) stopRecording();
-    }, 30_000); // auto-stop after 30s
+    }, maxRecordingDuration);
 }
 
 function stopRecording() {

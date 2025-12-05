@@ -35,6 +35,7 @@ def index():
         try:
             file_prep = preprocess_audio_on_upload(save_path)
             save_audio(file_prep, Path(save_path).with_suffix(".wav"))
+            os.remove(save_path)
             return redirect(url_for("main.explorer", filename=str(Path(temp_filename).with_suffix(".wav"))))
 
         except Exception as e:
