@@ -2,10 +2,12 @@ import WaveSurfer from 'wavesurfer.js';
 import Spectrogram from 'wavesurfer.js/dist/plugins/spectrogram.esm.js'
 
 let sampleRate = 22050;
+let gridResolutionSecs = 5
 let defaultFMin = 200
 let defaultFMax = 8000
 let defaultSpectType = "Linear"
 let defaultColour = '#ef9b97'
+let defaultHeight = 376
 
 let wavesurfer = null;
 let spectsurfer = null;
@@ -64,6 +66,49 @@ function handleLoopButton() {
 
 }
 
+function addGrid() {
+    const waveformContainer = document.querySelector('.waveform-container');
+    const duration = wavesurfer.getDuration();
+    const containerWidth = waveformContainer.offsetWidth;
+
+    waveformContainer.querySelectorAll('.explorer-gridline-major').forEach(line => line.remove());
+    waveformContainer.querySelectorAll('.explorer-gridline-text').forEach(line => line.remove());
+    waveformContainer.querySelectorAll('.explorer-gridline-minor').forEach(line => line.remove());
+
+    let currentTime = 0;
+    while (currentTime <= duration) {
+        const position = (currentTime / duration) * containerWidth;
+
+        const line = document.createElement('div');
+        line.classList.add('explorer-gridline-major');
+        line.style.left = `${position}px`;
+
+        const lineText = document.createElement("div");
+        lineText.classList.add("explorer-gridline-text");
+        lineText.innerText = `0:${String(currentTime).padStart(2, '0')}`;
+        lineText.style.left = `${position + 5}px`;
+
+        waveformContainer.appendChild(line);
+        waveformContainer.appendChild(lineText);
+
+        currentTime += gridResolutionSecs;
+    }
+
+    let maxTime = Math.round(duration)
+    for (const i of Array(maxTime).keys()) {
+        if (i % gridResolutionSecs !== 0) {
+            const position = (i / duration) * containerWidth;
+
+            const lineMinor = document.createElement('div');
+            lineMinor.classList.add('explorer-gridline-minor');
+            lineMinor.style.left = `${position}px`;
+
+            waveformContainer.appendChild(lineMinor);
+        }
+    }
+
+}
+
 
 async function finaliseSurfer(surfer) {
     surfer.on('seek',
@@ -96,6 +141,8 @@ async function finaliseSurfer(surfer) {
             surfer.pause()
         }
     });
+
+    addGrid()
 }
 
 function getCurrentChosenColour() {
@@ -145,7 +192,7 @@ async function createWave(audioFile) {
         container: '#waveform',
         waveColor: currentColour,
         progressColor: currentProgressColour,
-        height: 376,
+        height: defaultHeight,
         sampleRate: sampleRate
     });
 
@@ -227,7 +274,7 @@ async function createSpect(
     spectsurfer = Spectrogram.create({
         colorMap: cArr,
         labels: false,
-        height: 376,
+        height: defaultHeight,
         splitChannels: false,
         scale: spectType.toLowerCase(),
         useWebWorker: true,
@@ -430,5 +477,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // dynamically set hover style for all labels
     const elements = document.querySelectorAll('.explorer-sidebar-labels');
     elements.forEach(hoverElement => addHoverStyle(hoverElement));
+
+    // gridlines: watch on resize of container
+    const waveformContainer = document.querySelector('.waveform-container');
+    const observer = new ResizeObserver(() => {
+        addGrid();
+    });
+    observer.observe(waveformContainer);
 
 });

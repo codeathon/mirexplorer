@@ -150,6 +150,25 @@
     @apply text-base font-accent text-black text-center;
 }
 
+.explorer-gridline-major {
+    @apply z-50 bg-gray-600 absolute w-2;
+    width: 2px;
+    top: 196px;
+    height: 20px;
+}
+
+.explorer-gridline-minor {
+    @apply z-50 bg-gray-800 absolute w-1;
+    width: 1px;
+    top: 211px;
+    height: 5px
+}
+
+.explorer-gridline-text {
+    @apply z-50 absolute font-accent;
+    top: 194px;
+}
+
 .alert-danger {
     border-left: 5px solid #b30000;
     background-color: #ffe6e6;
