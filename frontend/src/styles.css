@@ -108,7 +108,7 @@
     @apply text-xl font-accent text-white;
     position: absolute;
     z-index: 11;
-    top: 48.5%;
+    top: 25%;
     left: 97.5%;
     pointer-events: none;
     background: rgba(0, 0, 0, 0.5);

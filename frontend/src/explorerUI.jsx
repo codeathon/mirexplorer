@@ -71,11 +71,19 @@ async function finaliseSurfer(surfer) {
             let currentTime = position * wavesurfer.getDuration();
             surfer.seekTo(currentTime)
         });
-    const timeEl = document.getElementById('waveform-time')
-    surfer.on(
-        'timeupdate',
-        (currentTime) => (timeEl.textContent = formatTime(currentTime))
-    )
+
+    // time functionality
+    const timeEl = document.getElementById('waveform-time');
+    const waveformContainer = document.querySelector('.waveform-container');
+    surfer.on('timeupdate', (currentTime) => {
+        timeEl.textContent = formatTime(currentTime);
+        const duration = surfer.getDuration();
+        const containerWidth = waveformContainer.clientWidth;
+        let leftPos = (currentTime / duration) * containerWidth;
+        leftPos = Math.min(leftPos, containerWidth - timeEl.offsetWidth);
+        timeEl.style.position = 'absolute';
+        timeEl.style.left = `${leftPos}px`;
+    });
 
     // looping functionality
     surfer.on('finish', function () {
