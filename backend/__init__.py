@@ -20,7 +20,7 @@ def create_flask_app():
     # Handle upload folder: create if not existing, and clear everything inside it for a clean start
     app.config["UPLOAD_FOLDER"] = UPLOADS_FOLDER
     os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
-    clear_uploads()
+    # clear_uploads()
 
     # Register routes
     app.register_blueprint(main_routes)

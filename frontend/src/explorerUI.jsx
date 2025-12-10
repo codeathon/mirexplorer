@@ -10,6 +10,9 @@ let defaultColour = '#ef9b97'
 let wavesurfer = null;
 let spectsurfer = null;
 
+export { wavesurfer }
+export { spectsurfer }
+
 let currentShown = "wave"
 let hoverColour = defaultColour
 

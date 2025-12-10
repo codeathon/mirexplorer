@@ -1,4 +1,5 @@
 import os
+from functools import lru_cache
 from io import BytesIO
 from pathlib import Path
 
@@ -21,6 +22,12 @@ MAX_AUDIO_SAMPLES = round(MAX_AUDIO_DURATION * AUDIO_SAMPLE_RATE)
 
 UPLOADS_FOLDER = Path(__file__).parent.parent / "uploads"
 DEFAULT_FILE_TTL_HOURS = 2  # files live for 2 hours
+
+
+@lru_cache(maxsize=32)
+def load_audio(stream) -> np.ndarray:
+    y, sr = librosa.load(stream, sr=AUDIO_SAMPLE_RATE, offset=0, mono=True, duration=MAX_AUDIO_DURATION)
+    return y
 
 
 class FileAudioValid:
@@ -100,8 +107,7 @@ def preprocess_audio_on_upload(audio_stream) -> np.ndarray:
     Preprocess an uploaded audio file: convert to mono, resample, and trim to maximum duration
     """
     # Audio should have been validated beforehand, so we know that it is safe
-    y, sr = librosa.load(audio_stream, sr=AUDIO_SAMPLE_RATE, offset=0, mono=True, duration=MAX_AUDIO_DURATION)
-
+    y = load_audio(audio_stream)
     # Truncate or pad audio to match desired number of samples
     return pad_or_truncate_array(y, MAX_AUDIO_SAMPLES)
 

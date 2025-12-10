@@ -3,12 +3,13 @@ from pathlib import Path
 from uuid import uuid4
 from io import BytesIO
 
-from flask import render_template, request, redirect, url_for, send_from_directory, Blueprint, flash
+from flask import render_template, request, redirect, url_for, send_from_directory, Blueprint, flash, jsonify
+from werkzeug.exceptions import HTTPException
 from werkzeug.utils import secure_filename
 from loguru import logger
 
 from backend import app_data
-from backend.crud import AudioUpload, preprocess_audio_on_upload, save_audio, UPLOADS_FOLDER
+from backend.crud import AudioUpload, preprocess_audio_on_upload, save_audio, UPLOADS_FOLDER, load_audio
 
 # Create a blueprint
 main_routes = Blueprint("main", __name__)
@@ -67,6 +68,29 @@ def index():
                     logger.error(error_inner)
 
     return render_template("index.html", form=form, app_data=app_data)
+
+@main_routes.errorhandler(Exception)
+def handle_exception(e):
+    # If it's an HTTPException, preserve the error code
+    if isinstance(e, HTTPException):
+        return jsonify(error=str(e)), e.code
+    # Otherwise it's a real crash
+    return jsonify(error=str(e)), 500
+
+
+@main_routes.route("/trigger_action", methods=["POST"])
+def trigger_action():
+    """
+    Handles actions within the explorer: route to the correct function and return results to frontend as a JSON
+    """
+    from backend.analyse import route_to_function
+
+    js = request.get_json()
+    caller = route_to_function(js["action"])
+    audio_loaded = load_audio(Path(UPLOADS_FOLDER) / Path(js["audio_url"]).name)
+    call_out = caller(audio_loaded)
+    logger.info(call_out)
+    return jsonify({"success": True, "out": call_out}), 200
 
 
 @main_routes.route("/explorer")
