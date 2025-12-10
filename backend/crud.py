@@ -94,9 +94,9 @@ def pad_or_truncate_array(y: np.ndarray, val: int) -> np.ndarray:
     Pad or truncate `y` to match `val`. Right-padding used, with zeros
     """
     # Truncate or pad audio to match desired number of samples
-    if len(y) < val:
-        return np.pad(y, (0, val - len(y)), mode='constant', constant_values=0)
-    elif len(y) > val:
+    # if len(y) < val:
+    #     return np.pad(y, (0, val - len(y)), mode='constant', constant_values=0)
+    if len(y) > val:
         return y[:val]
     else:
         return y
