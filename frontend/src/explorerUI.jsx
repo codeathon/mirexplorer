@@ -66,7 +66,20 @@ function handleLoopButton() {
 
 }
 
+function makeLinspace(startValue, stopValue, cardinality) {
+    startValue = Number(startValue)
+    stopValue = Number(stopValue)
+
+    let arr = [];
+    let step = (stopValue - startValue) / (cardinality - 1);
+    for (let i = 0; i < cardinality; i++) {
+        arr.push(startValue + (step * i));
+    }
+    return arr;
+}
+
 function addGrid() {
+    // all of this handles horizontal (time) grid
     const waveformContainer = document.querySelector('.waveform-container');
     const duration = wavesurfer.getDuration();
     const containerWidth = waveformContainer.offsetWidth;
@@ -105,6 +118,60 @@ function addGrid() {
 
             waveformContainer.appendChild(lineMinor);
         }
+    }
+
+    // now move on to handling vertical (frequency/amplitude) grid
+    // this is dependent on what is currently shown
+    // remove all current vertical grid
+    waveformContainer.querySelectorAll('.explorer-gridline-major-vertical').forEach(line => line.remove());
+    waveformContainer.querySelectorAll('.explorer-gridline-vertical-text').forEach(line => line.remove());
+    waveformContainer.querySelectorAll('.explorer-gridline-minor-vertical').forEach(line => line.remove());
+
+
+    let displayVal = [1, 0.5, 0, -0.5];
+    let yText = "Amplitude"
+
+    if (currentShown === "spect") {
+        yText = "Frequency (Hz)"
+        const fMinSlider = document.getElementById("fMin");
+        const fMaxSlider = document.getElementById("fMax");
+        displayVal = makeLinspace(fMaxSlider.value, fMinSlider.value, 5).slice(0, -1)
+    }
+
+    // title
+    let yAxLabel = document.getElementById("explorer-yaxis-text")
+    yAxLabel.innerText = yText
+
+    // major ticks
+    let iterVal = [1, 0.75, 0.5, 0.25];
+
+    for (const val in iterVal) {
+        const vertPosition = (iterVal[val] * defaultHeight) - 160;
+
+        const majTick = document.createElement("div");
+        majTick.classList.add("explorer-gridline-major-vertical")
+        majTick.style.bottom = `${vertPosition}px`;
+
+        waveformContainer.appendChild(majTick)
+
+        const majTickText = document.createElement("div")
+        majTickText.classList.add("explorer-gridline-vertical-text")
+        majTickText.innerText = String(displayVal[val])
+        majTickText.style.bottom = `${vertPosition - 12}px`;
+
+        waveformContainer.appendChild(majTickText)
+    }
+
+    // minor ticks
+    let iterValMinor = [0.875, 0.625, 0.375, 0.125];
+    for (const val in iterValMinor) {
+        const vertPosition = (iterValMinor[val] * defaultHeight) - 160;
+
+        const minTick = document.createElement("div");
+        minTick.classList.add("explorer-gridline-minor-vertical")
+        minTick.style.bottom = `${vertPosition}px`;
+
+        waveformContainer.appendChild(minTick)
     }
 
 }

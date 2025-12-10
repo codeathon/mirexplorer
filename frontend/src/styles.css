@@ -115,7 +115,7 @@
 }
 
 .explorer-sidebar-container {
-    @apply w-80 h-screen shadow-lg flex flex-col justify-between;
+    @apply w-80 h-screen shadow-lg flex flex-col justify-between z-50;
 }
 
 .translate-x-0 {
@@ -147,7 +147,7 @@
 }
 
 .explorer-spectoptions-label {
-    @apply text-base font-accent text-black text-center;
+    @apply text-base font-accent text-black text-center z-30;
 }
 
 .explorer-gridline-major {
@@ -155,6 +155,26 @@
     width: 2px;
     top: 196px;
     height: 20px;
+}
+
+.explorer-gridline-major-vertical {
+    @apply z-50 bg-gray-600 absolute;
+    left: -0.5em;
+    width: 20px;
+    height: 2px;
+}
+
+.explorer-gridline-minor-vertical {
+    @apply z-50 bg-gray-800 absolute;
+    left: 0;
+    width: 5px;
+    height: 1px;
+}
+
+.explorer-gridline-vertical-text {
+    @apply z-50 absolute font-accent text-lg;
+    left: 1.0em;
+
 }
 
 .explorer-gridline-minor {
@@ -165,8 +185,12 @@
 }
 
 .explorer-gridline-text {
-    @apply z-50 absolute font-accent;
+    @apply z-50 absolute font-accent text-lg;
     top: 194px;
+}
+
+.explorer-axislabel {
+    @apply absolute font-accent text-xl flex justify-center z-50;
 }
 
 .alert-danger {
