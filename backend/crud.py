@@ -13,7 +13,7 @@ from werkzeug.datastructures import FileStorage
 from wtforms import SubmitField, HiddenField
 from wtforms.validators import ValidationError
 
-AUDIO_FILE_FORMATS = ["wav", "aac", "aiff", "flac", "m4a", "mp3", "ogg", "wav", "wma"]
+AUDIO_FILE_FORMATS = ["wav", "aac", "aiff", "flac", "m4a", "mp3", "ogg", "wma", "webm"]
 MAX_SIZE = 16 * 1000000  # 16 MB default
 
 MAX_AUDIO_DURATION = 30  # load only first 30 seconds of audio by default

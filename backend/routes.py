@@ -25,7 +25,7 @@ def index():
     form = AudioUpload()
 
     filo = request.files.get("file")
-    if filo:
+    if filo and filo.filename == "recorded_audio.webm":
         filename = secure_filename(filo.filename)
         ext = Path(filename).suffix.lower()
         temp_filename = str(uuid4()) + ext
