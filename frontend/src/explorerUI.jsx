@@ -10,11 +10,13 @@ let defaultColour = '#ef9b97'
 let wavesurfer = null;
 let spectsurfer = null;
 
-export { wavesurfer }
-export { spectsurfer }
+export {wavesurfer}
+export {spectsurfer}
 
 let currentShown = "wave"
 let hoverColour = defaultColour
+
+let looping = false
 
 
 function cleanContainer() {
@@ -39,15 +41,53 @@ function formatTime(seconds) {
 }
 
 
+function handlePlayButton() {
+    const playIcon = document.getElementById("explorer-play-icon");
+    if (wavesurfer.isPlaying()) {
+        playIcon.style.strokeWidth = "1.5";
+        wavesurfer.pause()
+    } else {
+        playIcon.style.strokeWidth = "2.5";
+        wavesurfer.play()
+    }
+}
+
+function handleLoopButton() {
+    const loopIcon = document.getElementById("explorer-loop-icon");
+
+    looping = !looping
+    if (looping) {
+        loopIcon.style.strokeWidth = "2.5"
+    } else {
+        loopIcon.style.strokeWidth = "1.5"
+    }
+
+}
+
+
 async function finaliseSurfer(surfer) {
-    surfer.on('interaction', () => {
-        wavesurfer.playPause()
-    })
+    surfer.on('seek',
+        function (position) {
+            let currentTime = position * wavesurfer.getDuration();
+            surfer.seekTo(currentTime)
+        });
     const timeEl = document.getElementById('waveform-time')
     surfer.on(
         'timeupdate',
         (currentTime) => (timeEl.textContent = formatTime(currentTime))
     )
+
+    // looping functionality
+    surfer.on('finish', function () {
+        if (looping) {
+            surfer.seekTo(0.0);
+            surfer.play();
+        } else {
+            const playIcon = document.getElementById("explorer-play-icon");
+            playIcon.style.strokeWidth = "1.5";
+            surfer.pause()
+        }
+    });
 }
 
 function getCurrentChosenColour() {
@@ -295,6 +335,12 @@ function toggleSidebar() {
 async function colourChanged() {
     hoverColour = getCurrentChosenColour()
 
+    // // update play/pause buttons
+    // if (wavesurfer.isPlaying()) {
+    //     const playIcon = document.getElementById("explorer-play-icon");
+    //     playIcon.style.fill = hoverColour;
+    // }
+
     // for waveforms, we can update the surfer without having to recreate it
     if (currentShown === "wave") {
         let currentProg = getProgressColour(hoverColour)
@@ -313,6 +359,16 @@ async function colourChanged() {
     }
 }
 
+function addHoverStyle(hoverElement) {
+    hoverElement.addEventListener('mouseover', () => {
+        hoverElement.style.transition = 'color 0.1s ease';
+        hoverElement.style.color = hoverColour;
+    });
+    hoverElement.addEventListener('mouseout', () => {
+        hoverElement.style.color = '';
+    })
+}
+
 
 globalThis.createWave = createWave;
 window.colourChanged = colourChanged;
@@ -327,6 +383,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // sidebar open/close button
     const toggleBtn = document.getElementById("toggleSidebar");
     toggleBtn.addEventListener("click", () => toggleSidebar());
+
+    // play button
+    const playBtn = document.getElementById("explorer-play-button");
+    playBtn.onclick = handlePlayButton;
+    addHoverStyle(playBtn);
+
+    // loop button
+    const loopBtn = document.getElementById("explorer-loop-button");
+    loopBtn.onclick = handleLoopButton;
+    addHoverStyle(loopBtn);
+
+    // rewind button
+    const rewindBtn = document.getElementById("explorer-rewind-button")
+    rewindBtn.onclick = function () {
+        wavesurfer.seekTo(0.0)
+    }
+    addHoverStyle(rewindBtn)
 
     // View as button (spectrogram/waveform)
     const viewAsHover = document.getElementById('viewAsBtn');
@@ -348,14 +421,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // dynamically set hover style for all labels
     const elements = document.querySelectorAll('.explorer-sidebar-labels');
-    elements.forEach(hoverElement => {
-        hoverElement.addEventListener('mouseover', () => {
-            hoverElement.style.transition = 'color 0.1s ease';
-            hoverElement.style.color = hoverColour;
-        });
-        hoverElement.addEventListener('mouseout', () => {
-            hoverElement.style.color = '';
-        });
-    });
+    elements.forEach(hoverElement => addHoverStyle(hoverElement));
 
 });

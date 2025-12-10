@@ -131,7 +131,7 @@
 }
 
 .explorer-sidebar-labels {
-    @apply flex font-accent items-center gap-4  text-xl
+    @apply flex font-accent items-center gap-4 text-xl
 }
 
 .explorer-sidebar-icon {
@@ -139,7 +139,7 @@
 }
 
 .explorer-viewas-button {
-    @apply fixed bottom-6 right-6 px-4 py-3 rounded-lg bg-gray-200 hover:bg-gray-300 shadow-lg z-50
+    @apply fixed bottom-6 right-6 px-4 py-3 rounded-lg bg-gray-200 border-2 border-gray-300 hover:bg-gray-300 shadow-lg z-50
 }
 
 .explorer-viewas-option {
@@ -154,4 +154,8 @@
     border-left: 5px solid #b30000;
     background-color: #ffe6e6;
     color: #660000;
+}
+
+.explorer-play-pause-container {
+    @apply flex flex-row items-center justify-between absolute top-4 right-36 w-36 px-2 h-9 bg-gray-200 border-2 border-gray-300 rounded-lg shadow-lg;
 }
