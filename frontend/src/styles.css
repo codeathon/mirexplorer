@@ -101,7 +101,7 @@
 
 
 .waveform-container {
-    @apply flex justify-center items-center relative h-14 w-full mt-96;
+    @apply flex justify-center items-center relative h-14 w-full mt-96 ml-80;
 }
 
 .waveform-time {
@@ -115,7 +115,7 @@
 }
 
 .explorer-sidebar-container {
-    @apply w-80 h-screen shadow-md flex flex-col justify-between;
+    @apply w-80 h-screen shadow-lg flex flex-col justify-between;
 }
 
 .translate-x-0 {

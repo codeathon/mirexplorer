@@ -389,8 +389,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // sidebar open/close button
-    const toggleBtn = document.getElementById("toggleSidebar");
-    toggleBtn.addEventListener("click", () => toggleSidebar());
+    // const toggleBtn = document.getElementById("toggleSidebar");
+    // toggleBtn.addEventListener("click", () => toggleSidebar());
 
     // play button
     const playBtn = document.getElementById("explorer-play-button");
