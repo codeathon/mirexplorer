@@ -153,7 +153,7 @@
 .explorer-gridline-major {
     @apply z-50 bg-gray-600 absolute w-2;
     width: 2px;
-    top: 196px;
+    top: 217px;
     height: 20px;
 }
 
@@ -172,22 +172,30 @@
 }
 
 .explorer-gridline-vertical-text {
-    @apply z-50 absolute font-accent text-lg;
-    left: 1.0em;
-    display: table;
+    @apply z-50 absolute font-accent text-white text-center;
+    left: 0.5em;
+
+    display: flex;             /* make flex container */
+    justify-content: center;   /* horizontal centering */
+    align-items: center;       /* vertical centering */
+
+    font-size: 16px;
+    width: 2em;                /* give a fixed width so centering works */
+    height: 24px;              /* adjust height as needed */
 }
+
 
 .explorer-gridline-minor {
     @apply z-50 bg-gray-800 absolute w-1;
     width: 1px;
-    top: 211px;
+    top: 217px;
     height: 5px
 }
 
 .explorer-gridline-text {
     @apply z-50 absolute font-accent text-lg;
-    top: 188px;
-    display:inline-block;
+    top: 217px;
+    display: inline-block;
 }
 
 .explorer-axislabel {

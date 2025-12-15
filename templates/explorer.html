@@ -134,7 +134,7 @@
                     <label class="explorer-spectoptions-label"> Spectrogram Type</label>
                     <select id="spectTypeSelect" class="w-32 max-w-32 z-30">
                         <option class="explorer-spectoptions-label" selected>Linear</option>
-{#                        <option class="explorer-spectoptions-label">Log</option>#}
+                        <option class="explorer-spectoptions-label">Log</option>
                         <option class="explorer-spectoptions-label">Mel</option>
                     </select>
                 </div>
@@ -199,19 +199,19 @@
         </div>
 
         <div class="waveform-container z-0">
-            <canvas part="wave-labels" height="752" width="110" style="position: absolute; z-index: 9; width: 55px; height: 100%;"></canvas>
             <div class="w-full" id="waveform"></div>
+            <div id="wave-yaxis-backing" class="z-30 bg-gray-900 w-14 absolute h-[670%] opacity-50" style="left: 0; top: -160px"></div>
             <div class="full-width-line z-50 bg-gray-600 h-0.5 w-full absolute" style="
                 left: 0;
                 top: 215px;
             "></div>
-            <div class="full-height-line z-50 bg-gray-600 h-[650%] w-0.5 absolute" style="
+            <div class="full-height-line z-50 bg-gray-600 h-[700%] w-0.5 absolute" style="
                 left: 0;
                 top: -161px;
             "></div>
             <div id="explorer-yaxis-text" class="explorer-axislabel ml-3" style="left: -0.5em; top: -200px">Amplitude</div>
             <div class="waveform-time" id="waveform-time">0:00</div>
-            <div class="explorer-axislabel w-1/2" style="top: 230px">Time (seconds)</div>
+            <div class="explorer-axislabel w-1/2" style="top: 240px">Time (seconds)</div>
         </div>
 
         {% if audio_url %}

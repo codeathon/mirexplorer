@@ -85,6 +85,9 @@ function addGrid() {
     const duration = wavesurfer.getDuration();
     const containerWidth = waveformContainer.offsetWidth;
 
+    const waveYAxBack = document.getElementById("wave-yaxis-backing")
+    waveYAxBack.hidden = currentShown === "spect";
+
     waveformContainer.querySelectorAll('.explorer-gridline-major').forEach(line => line.remove());
     waveformContainer.querySelectorAll('.explorer-gridline-text').forEach(line => line.remove());
     waveformContainer.querySelectorAll('.explorer-gridline-minor').forEach(line => line.remove());
@@ -97,23 +100,15 @@ function addGrid() {
         const line = document.createElement('div');
         line.classList.add('explorer-gridline-major');
         line.style.left = `${position}px`;
+        waveformContainer.appendChild(line);
 
         const lineText = document.createElement("div");
         lineText.classList.add("explorer-gridline-text");
-        if (currentShown === "spect") {
-            lineText.classList.add("text-white")
-            lineText.style.backgroundColor = "rgba(0, 0, 0, 0.5)"
-        }
-
         lineText.innerText = `0:${String(currentTime).padStart(2, '0')}`;
         lineText.style.left = `${position + 5}px`;
+        waveformContainer.appendChild(lineText);
 
         currentTime += gridResolutionSecs;
-        waveformContainer.appendChild(line);
-        if (currentTime === gridResolutionSecs && currentShown === "spect") {
-        } else {
-            waveformContainer.appendChild(lineText);
-        }
     }
 
     let maxTime = Math.round(duration)
@@ -137,16 +132,10 @@ function addGrid() {
     waveformContainer.querySelectorAll('.explorer-gridline-minor-vertical').forEach(line => line.remove());
 
 
-    let displayVal = [1, 0.5, 0, -0.5];
+    let displayVal = [1, 0.5, 0, -0.5, -1.0];
     let yText = "Amplitude"
-    let colour = "text-black"
-
     if (currentShown === "spect") {
         yText = "Frequency (Hz)"
-        const fMinSlider = document.getElementById("fMin");
-        const fMaxSlider = document.getElementById("fMax");
-        displayVal = makeLinspace(fMaxSlider.value, fMinSlider.value, 5).slice(0, -1)
-        colour = "text-white"
     }
 
     // title
@@ -158,42 +147,16 @@ function addGrid() {
     }
 
     // major ticks
-    let iterVal = [1, 0.75, 0.5, 0.25];
+    let iterVal = [0.95, 0.75, 0.5, 0.25, 0.05];
 
     for (const val in iterVal) {
-        const vertPosition = (iterVal[val] * defaultHeight) - 160;
-
-        const majTick = document.createElement("div");
-        majTick.classList.add("explorer-gridline-major-vertical")
-        majTick.style.bottom = `${vertPosition}px`;
-
-        waveformContainer.appendChild(majTick)
-
+        let vertPosition = (iterVal[val] * defaultHeight) - 160;
         const majTickText = document.createElement("div")
         majTickText.classList.add("explorer-gridline-vertical-text")
         majTickText.innerText = String(displayVal[val])
         majTickText.style.bottom = `${vertPosition - 12}px`;
-        majTickText.classList.add(colour)
-
-        if (currentShown === "spect") {
-            majTickText.style.backgroundColor = "rgba(0, 0, 0, 0.5)"
-        }
-
         waveformContainer.appendChild(majTickText)
     }
-
-    // minor ticks
-    let iterValMinor = [0.875, 0.625, 0.375, 0.125];
-    for (const val in iterValMinor) {
-        const vertPosition = (iterValMinor[val] * defaultHeight) - 160;
-
-        const minTick = document.createElement("div");
-        minTick.classList.add("explorer-gridline-minor-vertical")
-        minTick.style.bottom = `${vertPosition}px`;
-
-        waveformContainer.appendChild(minTick)
-    }
-
 }
 
 
@@ -378,7 +341,7 @@ async function createSpect(
     spectFMin = Number(spectFMin)
     spectFMax = Number(spectFMax)
 
-    console.log("Creating spectrogram: ", spectFMin, typeof(spectFMin), spectFMax, typeof(spectFMax), spectType)
+    console.log("Creating spectrogram: ", spectFMin, typeof (spectFMin), spectFMax, typeof (spectFMax), spectType)
 
     let currentColour = getCurrentChosenColour()
     let currentProg = getProgressColour(currentColour)
@@ -529,6 +492,11 @@ function addHoverStyle(hoverElement) {
     })
 }
 
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+
 function modifySpectLabels() {
     const originalFillText = CanvasRenderingContext2D.prototype.fillText;
 
@@ -542,10 +510,10 @@ function modifySpectLabels() {
                 if (num < 100) {
                     num = num * 1000;
                 }
-                text = String(num)
+                text = numberWithCommas(num)
             }
 
-            this.font = '12px "TASA Orbiter Display", serif';
+            this.font = '16px "TASA Orbiter Display", serif';
             this.fillStyle = "#fff";
         }
         x += 5
