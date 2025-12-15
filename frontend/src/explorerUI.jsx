@@ -165,18 +165,50 @@ async function finaliseSurfer(surfer) {
     // time functionality
     const timeEl = document.getElementById('waveform-time');
     const waveformContainer = document.querySelector('.waveform-container');
+
+    // hand icons
+    let handIcons = document.getElementsByClassName("hand-marker");
+
     surfer.on('timeupdate', (currentTime) => {
-        timeEl.textContent = formatTime(currentTime);
+        const containerWidth = waveformContainer.offsetWidth;
         const duration = surfer.getDuration();
-        const containerWidth = waveformContainer.clientWidth;
+
+        // move the slider
         let leftPos = (currentTime / duration) * containerWidth;
         leftPos = Math.min(leftPos, containerWidth - timeEl.offsetWidth);
         timeEl.style.position = 'absolute';
         timeEl.style.left = `${leftPos}px`;
 
-        // if we have any beat hand markers, update the nearest one
+        // highlight closest beat hand if we have any
+        if (handIcons.length > 0) {
+            let closestHand = null;
+            let minDistance = Infinity;
 
+            const containerRect = waveformContainer.getBoundingClientRect();
+
+            for (let hi of handIcons) {
+                const handRect = hi.getBoundingClientRect();
+                const handLeft = handRect.left - containerRect.left;
+                const distance = leftPos - handLeft;
+
+                const svgPath = hi.querySelector('svg path');
+                if (svgPath) svgPath.setAttribute('stroke', 'lightgray');
+
+                if (distance >= 0 && distance < minDistance) {  // only left-side hands
+                    minDistance = distance;
+                    closestHand = hi;
+                }
+            }
+
+
+            if (closestHand) {
+                const svgPath = closestHand.querySelector('svg path');
+                // update using the hover colour
+                if (svgPath) svgPath.setAttribute('stroke', hoverColour);
+            }
+        }
     });
+
 
     // looping functionality
     surfer.on('finish', function () {
@@ -209,7 +241,6 @@ function getCurrentChosenColour() {
     }
     return currentColour.toLowerCase()
 }
-
 
 function getProgressColour(currentColour) {
     // progress colour will be +/-50 added to R/G/B, depending on total sum
@@ -545,6 +576,11 @@ function addBeatPluginPill() {
 }
 
 
+function removeBeatHandMarkers() {
+    let handIcons = Array.from(document.getElementsByClassName("hand-marker"));
+    handIcons.forEach(hi => hi.remove());
+}
+
 function removeBeatMarkers() {
     beats = null
     document.getElementById("plugin-beats").remove();
@@ -554,20 +590,16 @@ function removeBeatMarkers() {
         })
         beatsRegions.destroy()
     }
-    let handIcons = Array.from(document.getElementsByClassName("hand-marker"));
-    handIcons.forEach(hi => hi.remove());
+    removeBeatHandMarkers()
 }
 
 function addBeatHandMarkers() {
-    // remove existing icons
-    let handIcons = Array.from(document.getElementsByClassName("hand-marker"));
-    handIcons.forEach(hi => hi.remove());
+    removeBeatHandMarkers();
 
-    const container = document.getElementById("waveform-container")
+    const container = document.getElementById("waveform-container");
     const containerWidth = container.offsetWidth;
-    const duration = wavesurfer.getDuration(); // total audio duration in seconds
+    const duration = wavesurfer.getDuration();
 
-    // Add hand icon
     beats.forEach(mark => {
         const hand = document.createElement("div");
         hand.className = "hand-marker";
@@ -577,15 +609,15 @@ function addBeatHandMarkers() {
             </svg>
         `;
 
-        // Calculate horizontal pixel position manually
         const px = (mark / duration) * containerWidth;
         hand.style.position = "absolute";
         hand.style.left = `${px - 5}px`;
         hand.style.top = "-175px";
         hand.style.pointerEvents = "none";
         container.appendChild(hand);
-    })
+    });
 }
+
 
 function addBeatMarkers(response = null) {
     if (beats === null && response != null) {
