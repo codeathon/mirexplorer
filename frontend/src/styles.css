@@ -147,7 +147,7 @@
 }
 
 .explorer-spectoptions-label {
-    @apply text-base font-accent text-black text-center z-30;
+    @apply text-base font-accent text-black text-center z-30 cursor-pointer;
 }
 
 .explorer-gridline-major {
@@ -210,4 +210,16 @@
 
 .explorer-play-pause-container {
     @apply flex flex-row items-center justify-between absolute top-4 right-36 w-36 px-2 h-9 bg-gray-200 border-2 border-gray-300 rounded-lg shadow-lg;
+}
+
+.explorer-plugin-pill {
+    @apply inline-flex flex-nowrap items-center bg-white border border-gray-200 pl-3 rounded-full p-1.5 pe-3
+}
+
+.explorer-plugin-pill-text {
+    @apply whitespace-nowrap text-lg font-accent pl-2 text-gray-800
+}
+
+.explorer-plugin-pill-close {
+    @apply font-accent text-lg p-0 ml-[4px] cursor-pointer bg-transparent border-none
 }

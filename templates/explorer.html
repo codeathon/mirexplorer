@@ -118,7 +118,7 @@
                         <label id="tooltip-fMin" class="explorer-spectoptions-label">200 Hz</label>
                     </div>
                     <input type="range" id="fMin" name="fMin" min="0" max="4000" value="200" step="100"
-                           class="z-10 pointer-events-auto max-w-32">
+                           class="z-10 pointer-events-auto cursor-pointer max-w-32">
                     <label for="fMin" class="explorer-spectoptions-label">Minimum Hz</label>
                 </div>
                 <div class="flex flex-col items-center">
@@ -126,12 +126,12 @@
                         <label id="tooltop-fMax" class="explorer-spectoptions-label">8000 Hz</label>
                     </div>
                     <input type="range" id="fMax" name="fMax" min="5000" max="11000" value="8000" step="100"
-                           class="z-10 pointer-events-auto max-w-32">
+                           class="z-10 pointer-events-auto cursor-pointer max-w-32">
                     <label for="fMax" class="explorer-spectoptions-label">Maximum Hz</label>
                 </div>
                 <div class="flex flex-col items-center">
                     <label class="explorer-spectoptions-label"> Spectrogram Type</label>
-                    <select id="spectTypeSelect" class="w-32 max-w-32 z-30">
+                    <select id="spectTypeSelect" class="cursor-pointer w-32 max-w-32 z-30">
                         <option class="explorer-spectoptions-label" selected>Linear</option>
                         <option class="explorer-spectoptions-label">Log</option>
                         <option class="explorer-spectoptions-label">Mel</option>
@@ -199,7 +199,8 @@
 
         <div class="waveform-container z-0">
             <div class="w-full" id="waveform"></div>
-            <div id="wave-yaxis-backing" class="z-30 bg-gray-900 w-14 absolute h-[670%] opacity-50" style="left: 0; top: -160px"></div>
+            <div id="wave-yaxis-backing" class="z-30 bg-gray-900 w-14 absolute h-[670%] opacity-50"
+                 style="left: 0; top: -160px"></div>
             <div class="full-width-line z-50 bg-gray-600 h-0.5 w-full absolute" style="
                 left: 0;
                 top: 215px;
@@ -208,10 +209,13 @@
                 left: 0;
                 top: -161px;
             "></div>
-            <div id="explorer-yaxis-text" class="explorer-axislabel ml-3" style="left: -0.5em; top: -200px">Amplitude</div>
+            <div id="explorer-yaxis-text" class="explorer-axislabel ml-3" style="left: -0.5em; top: -200px">Amplitude
+            </div>
             <div class="waveform-time" id="waveform-time">0:00</div>
             <div class="explorer-axislabel w-1/2" style="top: 240px">Time (seconds)</div>
         </div>
+
+        <div id="plugins-interface" class="inline-flex flex-wrap gap-2 absolute" style="left: 325px; top: 15px"></div>
 
         {% if audio_url %}
             <script>

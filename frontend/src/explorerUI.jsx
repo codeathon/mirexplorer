@@ -450,13 +450,21 @@ async function colourChanged() {
     }
 }
 
-function addHoverStyle(hoverElement) {
+function addHoverStyle(hoverElement, transformElement = null) {
+    if (transformElement === null) {
+        transformElement = [hoverElement]
+    }
+
     hoverElement.addEventListener('mouseover', () => {
-        hoverElement.style.transition = 'color 0.1s ease';
-        hoverElement.style.color = hoverColour;
+        transformElement.forEach(te => {
+            te.style.transition = 'color 0.1s ease';
+            te.style.color = hoverColour;
+        })
     });
     hoverElement.addEventListener('mouseout', () => {
-        hoverElement.style.color = '';
+        transformElement.forEach(te => {
+            te.style.color = '';
+        })
     })
 }
 
@@ -489,6 +497,56 @@ function modifySpectLabels() {
     };
 }
 
+
+function addBeatPluginPill() {
+    const container = document.getElementById("plugins-interface");
+
+    const pluginDiv = document.createElement("div");
+    pluginDiv.id = "plugin-beats";
+    pluginDiv.classList.add("explorer-plugin-pill");
+
+    const svgNS = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(svgNS, "svg");
+    svg.setAttribute("xmlns", svgNS);
+    svg.setAttribute("viewBox", "0 0 16 16");
+    svg.setAttribute("fill", "#000000");
+    svg.id = "plugin-beats-icon";
+    svg.setAttribute("height", "16");
+    svg.setAttribute("width", "16");
+
+    const path = document.createElementNS(svgNS, "path");
+    path.setAttribute("d", "m12.8297625 6.92526875 2.1870375 -2.4059c0.3337625 -0.376225 0.1350875 -0.972675 -0.3576125 -1.0736125 -0.22319375 -0.045725 -0.4540875 0.028125 -0.609325 0.19488125l-1.67825 1.84566875 -1.4046625 -4.41571875c-0.17118125 -0.54333125 -0.67575625 -0.91225 -1.24541875 -0.91058125h-3.44388125c-0.56965625 -0.00166875 -1.07423125 0.36725 -1.2454125 0.91058125L0.8745875 14.13725C0.6065 14.98005 1.23559375 15.84015625 2.12 15.84h11.76c0.88440625 0.00015625 1.5135 -0.85995 1.2454125 -1.70275Zm-0.19763125 3.68806875h-3.1556l2.3373 -2.57086875ZM6.27765 1.466675h3.44388125l1.63333125 5.13683125 -3.6439625 4.00983125H3.36705ZM2.12 14.53333125 2.95136875 11.92H13.0478125l0.8321875 2.61333125Z");
+    path.setAttribute("stroke-width", "0.0625");
+    svg.appendChild(path);
+
+    const textDiv = document.createElement("div");
+    textDiv.id = "plugin-beats-text";
+    textDiv.classList.add("explorer-plugin-pill-text");
+    textDiv.innerText = "Beats";
+
+    const closeBtn = document.createElement("button");
+    closeBtn.classList.add("explorer-plugin-pill-close")
+    closeBtn.innerText = "×";
+
+    closeBtn.addEventListener("click", () => {
+        beats = null
+        container.removeChild(pluginDiv);
+        beatsRegions.regions.forEach(region => {
+            region.remove()
+        })
+        beatsRegions.destroy()
+    });
+
+    pluginDiv.appendChild(svg);
+    pluginDiv.appendChild(textDiv);
+    pluginDiv.appendChild(closeBtn)
+
+    container.appendChild(pluginDiv);
+
+    addHoverStyle(pluginDiv, [textDiv, svg])
+}
+
+
 function addBeatMarkers(response = null) {
     if (beats === null && response != null) {
         beats = response.out
@@ -505,6 +563,11 @@ function addBeatMarkers(response = null) {
             region.remove()
         })
         beatsRegions.destroy()
+    }
+
+    // create the pill for the plugin if it doesn't already exist
+    if (document.getElementById("plugin-beats") === null) {
+        addBeatPluginPill()
     }
 
     // register the plugin with the surfer
