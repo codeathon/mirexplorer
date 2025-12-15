@@ -134,6 +134,10 @@
     @apply flex font-accent items-center gap-4 text-xl
 }
 
+.explorer-sidebar-parent-label {
+    @apply flex font-accent items-center gap-4 text-xl
+}
+
 .explorer-sidebar-icon {
     @apply w-5 h-5 size-6 mx-3
 }
@@ -222,4 +226,12 @@
 
 .explorer-plugin-pill-close {
     @apply font-accent text-lg p-0 ml-[4px] cursor-pointer bg-transparent border-none
+}
+
+.explorer-sidebar-dropdown {
+    @apply ml-10 flex flex-col gap-2 text-lg font-accent opacity-0 max-h-0 overflow-hidden transition-all duration-200;
+}
+
+.explorer-sidebar-dropdown.open {
+    @apply opacity-100 max-h-32;
 }

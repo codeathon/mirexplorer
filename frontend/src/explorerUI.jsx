@@ -596,7 +596,7 @@ function removeBeatMarkers() {
 
     // load up original audio, without clicks
     wavesurfer.load(window.audio_url)
-    spectsurfer.load(window.audio_url)
+    // spectsurfer.load(window.audio_url)
 }
 
 function addBeatHandMarkers() {
@@ -676,7 +676,7 @@ function addBeatMarkers(response = null) {
 
 
 function routeFrontendResponse(actionName) {
-    if (actionName === "Pattern Recognition") {
+    if (actionName === "Beat Tracking") {
         return addBeatMarkers
     } else {
         throw new Error(`Action ${actionName} unknown`)
@@ -726,6 +726,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // const toggleBtn = document.getElementById("toggleSidebar");
     // toggleBtn.addEventListener("click", () => toggleSidebar());
 
+    document.querySelectorAll(".explorer-dropdown-button").forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const parent = btn.closest("li");
+            const menu = parent.querySelector(".explorer-sidebar-dropdown");
+            const chevron = btn.querySelector(".explorer-dropdown-chevron");
+
+            menu.classList.toggle("open");
+            chevron.classList.toggle("rotate-180");
+        });
+    });
+
     // play button
     const playBtn = document.getElementById("explorer-play-button");
     playBtn.onclick = handlePlayButton;
@@ -764,6 +775,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // dynamically set hover style for all labels
     const elements = document.querySelectorAll('.explorer-sidebar-labels');
     elements.forEach(hoverElement => addHoverStyle(hoverElement));
+    const elements_ = document.querySelectorAll('.explorer-sidebar-parent-label');
+    elements_.forEach(hoverElement => addHoverStyle(hoverElement));
 
     // gridlines: watch on resize of container
     const waveformContainer = document.querySelector('.waveform-container');

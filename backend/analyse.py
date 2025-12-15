@@ -22,7 +22,7 @@ def beat_track(audio, filename):
 
 
 def route_to_function(function_name) -> Callable:
-    if function_name == 'Pattern Recognition':
+    if function_name == 'Beat Tracking':
         return beat_track
     else:
         raise ValueError(f"Invalid function name: '{function_name}'")
