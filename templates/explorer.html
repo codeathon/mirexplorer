@@ -134,7 +134,7 @@
                     <label class="explorer-spectoptions-label"> Spectrogram Type</label>
                     <select id="spectTypeSelect" class="w-32 max-w-32 z-30">
                         <option class="explorer-spectoptions-label" selected>Linear</option>
-                        <option class="explorer-spectoptions-label">Log</option>
+{#                        <option class="explorer-spectoptions-label">Log</option>#}
                         <option class="explorer-spectoptions-label">Mel</option>
                     </select>
                 </div>
@@ -199,6 +199,7 @@
         </div>
 
         <div class="waveform-container z-0">
+            <canvas part="wave-labels" height="752" width="110" style="position: absolute; z-index: 9; width: 55px; height: 100%;"></canvas>
             <div class="w-full" id="waveform"></div>
             <div class="full-width-line z-50 bg-gray-600 h-0.5 w-full absolute" style="
                 left: 0;

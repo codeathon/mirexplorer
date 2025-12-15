@@ -28,6 +28,7 @@ function cleanContainer() {
     }
     if (spectsurfer) {
         spectsurfer.destroy()
+        wavesurfer.destroy()
     }
 
     // Clear the container
@@ -90,6 +91,7 @@ function addGrid() {
 
     let currentTime = 0;
     while (currentTime <= duration) {
+
         const position = (currentTime / duration) * containerWidth;
 
         const line = document.createElement('div');
@@ -98,13 +100,20 @@ function addGrid() {
 
         const lineText = document.createElement("div");
         lineText.classList.add("explorer-gridline-text");
+        if (currentShown === "spect") {
+            lineText.classList.add("text-white")
+            lineText.style.backgroundColor = "rgba(0, 0, 0, 0.5)"
+        }
+
         lineText.innerText = `0:${String(currentTime).padStart(2, '0')}`;
         lineText.style.left = `${position + 5}px`;
 
-        waveformContainer.appendChild(line);
-        waveformContainer.appendChild(lineText);
-
         currentTime += gridResolutionSecs;
+        waveformContainer.appendChild(line);
+        if (currentTime === gridResolutionSecs && currentShown === "spect") {
+        } else {
+            waveformContainer.appendChild(lineText);
+        }
     }
 
     let maxTime = Math.round(duration)
@@ -130,17 +139,23 @@ function addGrid() {
 
     let displayVal = [1, 0.5, 0, -0.5];
     let yText = "Amplitude"
+    let colour = "text-black"
 
     if (currentShown === "spect") {
         yText = "Frequency (Hz)"
         const fMinSlider = document.getElementById("fMin");
         const fMaxSlider = document.getElementById("fMax");
         displayVal = makeLinspace(fMaxSlider.value, fMinSlider.value, 5).slice(0, -1)
+        colour = "text-white"
     }
 
     // title
     let yAxLabel = document.getElementById("explorer-yaxis-text")
     yAxLabel.innerText = yText
+
+    if (currentShown === "spect") {
+        return
+    }
 
     // major ticks
     let iterVal = [1, 0.75, 0.5, 0.25];
@@ -158,6 +173,11 @@ function addGrid() {
         majTickText.classList.add("explorer-gridline-vertical-text")
         majTickText.innerText = String(displayVal[val])
         majTickText.style.bottom = `${vertPosition - 12}px`;
+        majTickText.classList.add(colour)
+
+        if (currentShown === "spect") {
+            majTickText.style.backgroundColor = "rgba(0, 0, 0, 0.5)"
+        }
 
         waveformContainer.appendChild(majTickText)
     }
@@ -176,6 +196,20 @@ function addGrid() {
 
 }
 
+
+async function waitForShadowRoot() {
+    return new Promise(resolve => {
+        const check = () => {
+            const host = document.querySelector('#waveform > div');
+            if (host && host.shadowRoot) {
+                resolve(host.shadowRoot);
+            } else {
+                requestAnimationFrame(check);
+            }
+        };
+        check();
+    });
+}
 
 async function finaliseSurfer(surfer) {
     surfer.on('seek',
@@ -209,8 +243,29 @@ async function finaliseSurfer(surfer) {
         }
     });
 
+    // don't know why this needs to be added here
+    // but the grid resizing breaks without it
     addGrid()
+
+    // progress bar
+    // await updateCursorColour()
 }
+
+async function updateCursorColour(retries = 10, delay = 1) {
+    const shadow = await waitForShadowRoot();
+    const progressBar = shadow.querySelector('.cursor');
+
+    if (progressBar) {
+        progressBar.style.width = "3px";
+        progressBar.style.backgroundColor = hoverColour;
+    } else if (retries > 0) {
+        await new Promise(res => setTimeout(res, delay));
+        await updateCursorColour(retries - 1, delay);
+    } else {
+        console.warn("Failed to find cursor after multiple attempts");
+    }
+}
+
 
 function getCurrentChosenColour() {
     // get current color from picker
@@ -319,7 +374,11 @@ async function createSpect(
     spectFMax = defaultFMax,
     spectType = defaultSpectType,
 ) {
-    console.log("Creating spectrogram: ", spectFMin, spectFMax, spectType)
+    // type coersion
+    spectFMin = Number(spectFMin)
+    spectFMax = Number(spectFMax)
+
+    console.log("Creating spectrogram: ", spectFMin, typeof(spectFMin), spectFMax, typeof(spectFMax), spectType)
 
     let currentColour = getCurrentChosenColour()
     let currentProg = getProgressColour(currentColour)
@@ -340,7 +399,8 @@ async function createSpect(
 
     spectsurfer = Spectrogram.create({
         colorMap: cArr,
-        labels: false,
+        labels: true,
+        labelsBackground: "rgba(0, 0, 0, 0.5)",
         height: defaultHeight,
         splitChannels: false,
         scale: spectType.toLowerCase(),
@@ -389,8 +449,8 @@ function toggleSpectrogramOptions(show) {
     const spectTypeSelect = document.getElementById("spectTypeSelect")
 
     // set defaults for slider
-    fMinSlider.value = defaultFMin
-    fMaxSlider.value = defaultFMax
+    fMinSlider.value = Number(defaultFMin)
+    fMaxSlider.value = Number(defaultFMax)
     fMinLabel.innerHTML = `${defaultFMin} Hz`
     fMaxLabel.innerHTML = `${defaultFMax} Hz`
     spectTypeSelect.value = defaultSpectType
@@ -407,7 +467,7 @@ function toggleSpectrogramOptions(show) {
     }
 
     function updateSelect() {
-        createSpect(window.audio_url, fMinSlider.value, fMaxSlider.value, spectTypeSelect.value)
+        createSpect(window.audio_url, Number(fMinSlider.value), Number(fMaxSlider.value), spectTypeSelect.value)
     }
 
     const updateSelectDebounced = debounce(updateSelect, 1000);
@@ -415,7 +475,7 @@ function toggleSpectrogramOptions(show) {
     function updateSliderTooltip(slider, label) {
         label.innerHTML = `${slider.value} Hz`
         // recreate the spectrogram with the new values
-        createSpect(window.audio_url, fMinSlider.value, fMaxSlider.value, spectTypeSelect.value)
+        createSpect(window.audio_url, Number(fMinSlider.value), Number(fMaxSlider.value), spectTypeSelect.value)
     }
 
     const updateSliderTooltipDebounced = debounce(updateSliderTooltip, 1000);
@@ -430,28 +490,6 @@ function toggleSpectrogramOptions(show) {
     spectTypeSelect.addEventListener("change", function () {
         updateSelectDebounced()
     })
-}
-
-function toggleSidebar() {
-    const sidebar = document.getElementById("sidebar");
-    const icon = document.getElementById("sidebarIcon");
-    const isOpen = sidebar.classList.contains("translate-x-0");
-
-    if (isOpen) {
-        // close sidebar
-        sidebar.classList.remove("translate-x-0");
-        sidebar.classList.add("-translate-x-full");
-
-        // rotate arrow to point right
-        icon.style.transform = "rotate(180deg)";
-    } else {
-        // open sidebar
-        sidebar.classList.remove("-translate-x-full");
-        sidebar.classList.add("translate-x-0");
-
-        // rotate arrow to point left
-        icon.style.transform = "rotate(0deg)";
-    }
 }
 
 async function colourChanged() {
@@ -491,17 +529,36 @@ function addHoverStyle(hoverElement) {
     })
 }
 
+function modifySpectLabels() {
+    const originalFillText = CanvasRenderingContext2D.prototype.fillText;
+
+    CanvasRenderingContext2D.prototype.fillText = function (text, x, y, maxWidth) {
+        const canvas = this.canvas;
+        if (canvas?.getAttribute?.("part") === "spec-labels") {
+            if (String(text).toLowerCase().includes("hz")) {
+                text = ""
+            } else if (String(text).toLowerCase().includes(".")) {
+                let num = Number(text) * 1000
+                if (num < 100) {
+                    num = num * 1000;
+                }
+                text = String(num)
+            }
+
+            this.font = '12px "TASA Orbiter Display", serif';
+            this.fillStyle = "#fff";
+        }
+        x += 5
+        return originalFillText.call(this, text, x, y, maxWidth);
+    };
+}
+
 
 globalThis.createWave = createWave;
 window.colourChanged = colourChanged;
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    // start with a waveform by default
-    if (window.audio_url) {
-        createWave(window.audio_url);
-    }
-
     // sidebar open/close button
     // const toggleBtn = document.getElementById("toggleSidebar");
     // toggleBtn.addEventListener("click", () => toggleSidebar());
@@ -551,5 +608,13 @@ document.addEventListener('DOMContentLoaded', () => {
         addGrid();
     });
     observer.observe(waveformContainer);
+
+    // start with a waveform by default
+    if (window.audio_url) {
+        createWave(window.audio_url);
+    }
+
+    // observe spectrogram labels, change font size
+    modifySpectLabels();
 
 });

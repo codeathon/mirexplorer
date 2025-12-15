@@ -174,7 +174,7 @@
 .explorer-gridline-vertical-text {
     @apply z-50 absolute font-accent text-lg;
     left: 1.0em;
-
+    display: table;
 }
 
 .explorer-gridline-minor {
@@ -186,7 +186,8 @@
 
 .explorer-gridline-text {
     @apply z-50 absolute font-accent text-lg;
-    top: 194px;
+    top: 188px;
+    display:inline-block;
 }
 
 .explorer-axislabel {
