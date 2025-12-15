@@ -1,5 +1,6 @@
 import WaveSurfer from 'wavesurfer.js';
 import Spectrogram from 'wavesurfer.js/dist/plugins/spectrogram.esm.js'
+import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.esm.js'
 
 let sampleRate = 22050;
 let gridResolutionSecs = 5
@@ -19,6 +20,10 @@ let currentShown = "wave"
 let hoverColour = defaultColour
 
 let looping = false
+
+let beats = null
+let beatColour = "#0000007F"
+let beatsRegions = null
 
 
 function cleanContainer() {
@@ -67,18 +72,6 @@ function handleLoopButton() {
 
 }
 
-function makeLinspace(startValue, stopValue, cardinality) {
-    startValue = Number(startValue)
-    stopValue = Number(stopValue)
-
-    let arr = [];
-    let step = (stopValue - startValue) / (cardinality - 1);
-    for (let i = 0; i < cardinality; i++) {
-        arr.push(startValue + (step * i));
-    }
-    return arr;
-}
-
 function addGrid() {
     // all of this handles horizontal (time) grid
     const waveformContainer = document.querySelector('.waveform-container');
@@ -94,6 +87,9 @@ function addGrid() {
 
     let currentTime = 0;
     while (currentTime <= duration) {
+        if (currentTime >= 30) {
+            break
+        }
 
         const position = (currentTime / duration) * containerWidth;
 
@@ -159,21 +155,6 @@ function addGrid() {
     }
 }
 
-
-async function waitForShadowRoot() {
-    return new Promise(resolve => {
-        const check = () => {
-            const host = document.querySelector('#waveform > div');
-            if (host && host.shadowRoot) {
-                resolve(host.shadowRoot);
-            } else {
-                requestAnimationFrame(check);
-            }
-        };
-        check();
-    });
-}
-
 async function finaliseSurfer(surfer) {
     surfer.on('seek',
         function (position) {
@@ -212,23 +193,10 @@ async function finaliseSurfer(surfer) {
 
     // progress bar
     // await updateCursorColour()
+
+    // add beats if present
+    addBeatMarkers()
 }
-
-async function updateCursorColour(retries = 10, delay = 1) {
-    const shadow = await waitForShadowRoot();
-    const progressBar = shadow.querySelector('.cursor');
-
-    if (progressBar) {
-        progressBar.style.width = "3px";
-        progressBar.style.backgroundColor = hoverColour;
-    } else if (retries > 0) {
-        await new Promise(res => setTimeout(res, delay));
-        await updateCursorColour(retries - 1, delay);
-    } else {
-        console.warn("Failed to find cursor after multiple attempts");
-    }
-}
-
 
 function getCurrentChosenColour() {
     // get current color from picker
@@ -521,6 +489,79 @@ function modifySpectLabels() {
     };
 }
 
+function addBeatMarkers(response = null) {
+    if (beats === null && response != null) {
+        beats = response.out
+        console.log("Setting beats")
+    } else if (beats === null && response === null) {
+        return
+    } else {
+        console.log("Using saved beats")
+    }
+
+    // remove any old regions and destroy the old plugin
+    if (beatsRegions != null) {
+        beatsRegions.regions.forEach(region => {
+            region.remove()
+        })
+        beatsRegions.destroy()
+    }
+
+    // register the plugin with the surfer
+    beatsRegions = RegionsPlugin.create()
+    wavesurfer.registerPlugin(beatsRegions)
+
+    // update beat regions
+    beats.forEach(mark => {
+        beatsRegions.addRegion({
+            start: mark,
+            color: beatColour
+        })
+    })
+}
+
+
+function routeFrontendResponse(actionName) {
+    if (actionName === "Pattern Recognition") {
+        return addBeatMarkers
+    } else {
+        throw new Error(`Action ${actionName} unknown`)
+    }
+}
+
+function addFuncsToSidebarLinks() {
+    // for each
+    const sidebarLinks = document.querySelectorAll('.explorer-sidebar-labels');
+    sidebarLinks.forEach(link => {
+        link.addEventListener('click', async function (e) {
+            e.preventDefault();
+            const action = this.innerText.trim();
+            fetch('/trigger_action', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({action: action, audio_url: window.audio_url})
+            })
+                .then(async response => {
+                    if (!response.ok) {
+                        let responseText = await response.text()
+                        throw new Error('Backend response was not ok' + responseText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Backend response:', data);
+                    let funcToCall = routeFrontendResponse(action)
+                    let funcResponse = funcToCall(data)
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+    });
+}
+
 
 globalThis.createWave = createWave;
 window.colourChanged = colourChanged;
@@ -584,5 +625,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // observe spectrogram labels, change font size
     modifySpectLabels();
+
+    // add backend functionality to siderbar links
+    addFuncsToSidebarLinks()
 
 });
