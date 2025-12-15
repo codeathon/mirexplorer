@@ -173,6 +173,9 @@ async function finaliseSurfer(surfer) {
         leftPos = Math.min(leftPos, containerWidth - timeEl.offsetWidth);
         timeEl.style.position = 'absolute';
         timeEl.style.left = `${leftPos}px`;
+
+        // if we have any beat hand markers, update the nearest one
+
     });
 
     // looping functionality
@@ -529,12 +532,7 @@ function addBeatPluginPill() {
     closeBtn.innerText = "×";
 
     closeBtn.addEventListener("click", () => {
-        beats = null
-        container.removeChild(pluginDiv);
-        beatsRegions.regions.forEach(region => {
-            region.remove()
-        })
-        beatsRegions.destroy()
+        removeBeatMarkers()
     });
 
     pluginDiv.appendChild(svg);
@@ -546,6 +544,48 @@ function addBeatPluginPill() {
     addHoverStyle(pluginDiv, [textDiv, svg])
 }
 
+
+function removeBeatMarkers() {
+    beats = null
+    document.getElementById("plugin-beats").remove();
+    if (beatsRegions != null) {
+        beatsRegions.regions.forEach(region => {
+            region.remove()
+        })
+        beatsRegions.destroy()
+    }
+    let handIcons = Array.from(document.getElementsByClassName("hand-marker"));
+    handIcons.forEach(hi => hi.remove());
+}
+
+function addBeatHandMarkers() {
+    // remove existing icons
+    let handIcons = Array.from(document.getElementsByClassName("hand-marker"));
+    handIcons.forEach(hi => hi.remove());
+
+    const container = document.getElementById("waveform-container")
+    const containerWidth = container.offsetWidth;
+    const duration = wavesurfer.getDuration(); // total audio duration in seconds
+
+    // Add hand icon
+    beats.forEach(mark => {
+        const hand = document.createElement("div");
+        hand.className = "hand-marker";
+        hand.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" fill="#000000" viewBox="0 0 16 16" height="12" width="12">
+                <path stroke="lightgray" transform="scale(1, -1) translate(0, -16)" d="M6.75 1a0.75 0.75 0 0 1 0.75 0.75V8a0.5 0.5 0 0 0 1 0V5.467l0.086 -0.004c0.317 -0.012 0.637 -0.008 0.816 0.027 0.134 0.027 0.294 0.096 0.448 0.182 0.077 0.042 0.15 0.147 0.15 0.314V8a0.5 0.5 0 1 0 1 0V6.435l0.106 -0.01c0.316 -0.024 0.584 -0.01 0.708 0.04 0.118 0.046 0.3 0.207 0.486 0.43 0.081 0.096 0.15 0.19 0.2 0.259V8.5a0.5 0.5 0 0 0 1 0v-1h0.342a1 1 0 0 1 0.995 1.1l-0.271 2.715a2.5 2.5 0 0 1 -0.317 0.991l-1.395 2.442a0.5 0.5 0 0 1 -0.434 0.252H6.035a0.5 0.5 0 0 1 -0.416 -0.223l-1.433 -2.15a1.5 1.5 0 0 1 -0.243 -0.666l-0.345 -3.105a0.5 0.5 0 0 1 0.399 -0.546L5 8.11V9a0.5 0.5 0 0 0 1 0V1.75A0.75 0.75 0 0 1 6.75 1M8.5 4.466V1.75a1.75 1.75 0 1 0 -3.5 0v5.34l-1.2 0.24a1.5 1.5 0 0 0 -1.196 1.636l0.345 3.106a2.5 2.5 0 0 0 0.405 1.11l1.433 2.15A1.5 1.5 0 0 0 6.035 16h6.385a1.5 1.5 0 0 0 1.302 -0.756l1.395 -2.441a3.5 3.5 0 0 0 0.444 -1.389l0.271 -2.715a2 2 0 0 0 -1.99 -2.199h-0.581a5 5 0 0 0 -0.195 -0.248c-0.191 -0.229 -0.51 -0.568 -0.88 -0.716 -0.364 -0.146 -0.846 -0.132 -1.158 -0.108l-0.132 0.012a1.26 1.26 0 0 0 -0.56 -0.642 2.6 2.6 0 0 0 -0.738 -0.288c-0.31 -0.062 -0.739 -0.058 -1.05 -0.046zm2.094 2.025" stroke-width="1"></path>
+            </svg>
+        `;
+
+        // Calculate horizontal pixel position manually
+        const px = (mark / duration) * containerWidth;
+        hand.style.position = "absolute";
+        hand.style.left = `${px - 5}px`;
+        hand.style.top = "-175px";
+        hand.style.pointerEvents = "none";
+        container.appendChild(hand);
+    })
+}
 
 function addBeatMarkers(response = null) {
     if (beats === null && response != null) {
@@ -578,9 +618,17 @@ function addBeatMarkers(response = null) {
     beats.forEach(mark => {
         beatsRegions.addRegion({
             start: mark,
-            color: beatColour
+            color: beatColour,
+            drag: false
         })
     })
+
+    // add hand icons, watch for resize
+    const waveformContainer = document.querySelector('.waveform-container');
+    const observer = new ResizeObserver(() => {
+        addBeatHandMarkers();
+    });
+    observer.observe(waveformContainer);
 }
 
 
