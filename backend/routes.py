@@ -69,6 +69,7 @@ def index():
 
     return render_template("index.html", form=form, app_data=app_data)
 
+
 @main_routes.errorhandler(Exception)
 def handle_exception(e):
     # If it's an HTTPException, preserve the error code
@@ -87,10 +88,18 @@ def trigger_action():
 
     js = request.get_json()
     caller = route_to_function(js["action"])
-    audio_loaded = load_audio(Path(UPLOADS_FOLDER) / Path(js["audio_url"]).name)
-    call_out = caller(audio_loaded)
-    logger.info(call_out)
-    return jsonify({"success": True, "out": call_out}), 200
+
+    audio_fpath = Path(UPLOADS_FOLDER) / Path(js["audio_url"]).name
+    audio_loaded = load_audio(audio_fpath)
+
+    # Make the call
+    try:
+        call_out = caller(audio_loaded, audio_fpath)
+    except Exception as e:
+        logger.error(f"Error processing audio file: {e}", category="danger")
+        return jsonify(dict(success=False, error=str(e))), 500
+    else:
+        return jsonify(dict(success=True, out=call_out)), 200
 
 
 @main_routes.route("/explorer")

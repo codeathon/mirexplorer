@@ -89,14 +89,21 @@ class AudioUpload(FlaskForm):
     submit = SubmitField('Upload')
 
 
+def truncate_array(y: np.ndarray, val: int) -> np.ndarray:
+    if len(y) > val:
+        return y[:val]
+    else:
+        return y
+
+
 def pad_or_truncate_array(y: np.ndarray, val: int) -> np.ndarray:
     """
     Pad or truncate `y` to match `val`. Right-padding used, with zeros
     """
     # Truncate or pad audio to match desired number of samples
-    # if len(y) < val:
-    #     return np.pad(y, (0, val - len(y)), mode='constant', constant_values=0)
-    if len(y) > val:
+    if len(y) < val:
+        return np.pad(y, (0, val - len(y)), mode='constant', constant_values=0)
+    elif len(y) > val:
         return y[:val]
     else:
         return y
@@ -109,7 +116,7 @@ def preprocess_audio_on_upload(audio_stream) -> np.ndarray:
     # Audio should have been validated beforehand, so we know that it is safe
     y = load_audio(audio_stream)
     # Truncate or pad audio to match desired number of samples
-    return pad_or_truncate_array(y, MAX_AUDIO_SAMPLES)
+    return truncate_array(y, MAX_AUDIO_SAMPLES)
 
 
 def save_audio(y: np.ndarray, filepath: str) -> np.ndarray:

@@ -170,10 +170,9 @@ async function finaliseSurfer(surfer) {
     let handIcons = document.getElementsByClassName("hand-marker");
 
     surfer.on('timeupdate', (currentTime) => {
-        const containerWidth = waveformContainer.offsetWidth;
+        timeEl.textContent = formatTime(currentTime);
         const duration = surfer.getDuration();
-
-        // move the slider
+        const containerWidth = waveformContainer.clientWidth;
         let leftPos = (currentTime / duration) * containerWidth;
         leftPos = Math.min(leftPos, containerWidth - timeEl.offsetWidth);
         timeEl.style.position = 'absolute';
@@ -226,9 +225,6 @@ async function finaliseSurfer(surfer) {
     // but the grid resizing breaks without it
     addGrid()
 
-    // progress bar
-    // await updateCursorColour()
-
     // add beats if present
     addBeatMarkers()
 }
@@ -265,6 +261,13 @@ function getProgressColour(currentColour) {
     return rgbToHex(progCol.r, progCol.g, progCol.b)
 }
 
+function getClickPath(filepath) {
+    const parts = filepath.split('/');
+    const filenameWithExt = parts.pop();
+    const [filename, extension] = filenameWithExt.split('.');
+    return [...parts, `${filename}_clicks.${extension}`].join('/');
+}
+
 async function createWave(audioFile) {
     cleanContainer()
 
@@ -282,7 +285,6 @@ async function createWave(audioFile) {
         height: defaultHeight,
         sampleRate: sampleRate
     });
-
     await wavesurfer.load(audioFile);
     await finaliseSurfer(wavesurfer)
 }
@@ -591,6 +593,10 @@ function removeBeatMarkers() {
         beatsRegions.destroy()
     }
     removeBeatHandMarkers()
+
+    // load up original audio, without clicks
+    wavesurfer.load(window.audio_url)
+    spectsurfer.load(window.audio_url)
 }
 
 function addBeatHandMarkers() {
@@ -661,6 +667,11 @@ function addBeatMarkers(response = null) {
         addBeatHandMarkers();
     });
     observer.observe(waveformContainer);
+
+    // load up click track
+    wavesurfer.load(getClickPath(window.audio_url))
+    wavesurfer.pause()
+    wavesurfer.seekTo(0.0);
 }
 
 
