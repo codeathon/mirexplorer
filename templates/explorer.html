@@ -6,7 +6,8 @@
     <script type="module" src="http://localhost:3000/src/explorerUI.jsx"></script>
     <script type="module" src="http://localhost:3000/src/jsColor.jsx"></script>
 
-    <div class="flex h-screen bg-gray-100 relative">
+    <div class="explorer-overlay" id="explorer-overlay"></div>
+    <div id="explorer-content" class="flex h-screen bg-gray-100 relative">
         <aside id="sidebar"
                class="explorer-sidebar-container transform transition-transform duration-300 translate-x-0 absolute left-0 top-0 z-50 bg-white">
 
@@ -149,7 +150,7 @@
             <div class="px-4 py-6">
                 <ul class="flex flex-col gap-5">
                     <li>
-                        <a href="#" class="explorer-sidebar-labels">
+                        <a href="#" class="explorer-sidebar-parent-label" id="explorer-show-info-popup">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                  stroke="currentColor" class="explorer-sidebar-icon">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -159,9 +160,9 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="explorer-sidebar-labels">
+                        <a href="/" class="explorer-sidebar-parent-label">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                 stroke="currentColor" class="explorer-sidebar-icon">
+                                 stroke="currentColor" class="explorer-sidebar-icon" href="#">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                       d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                             </svg>

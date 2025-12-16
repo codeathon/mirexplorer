@@ -717,6 +717,42 @@ function addFuncsToSidebarLinks() {
 }
 
 
+function showInfoPopup() {
+    // todo: this should be more of a tutorial, with multiple steps
+    // we can use a moving div that "unblurs" particular elements to advance to the next stage
+    const infoPopup = document.createElement('div');
+    infoPopup.classList.add('info-popup');
+    infoPopup.innerHTML = `
+                <h2>Music Explorer</h2>
+                <p>
+                    Use the buttons along the sidebar to learn more about your recording.
+                </p>
+            `;
+
+    const closeBtn = document.createElement("button");
+    closeBtn.innerText = "×";
+    closeBtn.addEventListener("click", () => {
+        closeInfoPopup()
+    });
+
+    infoPopup.appendChild(closeBtn)
+
+    document.body.appendChild(infoPopup);
+    infoPopup.style.display = 'block';
+    document.getElementById('explorer-overlay').style.display = 'block';
+    document.getElementById('explorer-content').classList.add('blurred');
+}
+
+function closeInfoPopup() {
+    const infoPopup = document.querySelector('.info-popup');
+    if (infoPopup) {
+        infoPopup.style.display = 'none';
+        document.body.removeChild(infoPopup);
+    }
+    document.getElementById('explorer-overlay').style.display = 'none';
+    document.getElementById('explorer-content').classList.remove('blurred');
+}
+
 globalThis.createWave = createWave;
 window.colourChanged = colourChanged;
 
@@ -736,6 +772,10 @@ document.addEventListener('DOMContentLoaded', () => {
             chevron.classList.toggle("rotate-180");
         });
     });
+
+    // about link
+    const aboutBtn = document.getElementById("explorer-show-info-popup");
+    aboutBtn.onclick = showInfoPopup;
 
     // play button
     const playBtn = document.getElementById("explorer-play-button");

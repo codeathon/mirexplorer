@@ -179,13 +179,13 @@
     @apply z-50 absolute font-accent text-white text-center;
     left: 0.5em;
 
-    display: flex;             /* make flex container */
-    justify-content: center;   /* horizontal centering */
-    align-items: center;       /* vertical centering */
+    display: flex; /* make flex container */
+    justify-content: center; /* horizontal centering */
+    align-items: center; /* vertical centering */
 
     font-size: 16px;
-    width: 2em;                /* give a fixed width so centering works */
-    height: 24px;              /* adjust height as needed */
+    width: 2em; /* give a fixed width so centering works */
+    height: 24px; /* adjust height as needed */
 }
 
 
@@ -234,4 +234,62 @@
 
 .explorer-sidebar-dropdown.open {
     @apply opacity-100 max-h-32;
+}
+
+.popupContent {
+    @apply flex items-center justify-start gap-[10px];
+}
+
+.popupText {
+    @apply flex flex-col gap-[10px];
+}
+
+.popupText div {
+    @apply flex items-center gap-[10px];
+}
+
+.popupText button {
+    @apply border-none cursor-pointer m-0 border-r-[5px];
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+.popupText button:hover {
+    background-color: #ddd;
+}
+
+.popupText em {
+    @apply m-0;
+    font-style: italic;
+}
+
+.info-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    display: none;
+    z-index: 1000;
+    text-align: center;
+    width: 500px;
+}
+
+.info-popup h2 {
+    @apply mb-[15px] font-display text-xl
+}
+
+.info-popup p {
+    @apply font-accent
+}
+
+.info-popup button {
+    @apply font-accent text-lg p-0 ml-[4px] cursor-pointer bg-transparent border-none absolute right-10 top-5
+}
+
+.blurred {
+    @apply blur-lg
 }
