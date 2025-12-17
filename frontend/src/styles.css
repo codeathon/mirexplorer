@@ -59,24 +59,19 @@
 
 .dropzone-header-main::after,
 .dropzone-header-main::before {
+    @apply w-[100%] h-[2px] left-0 absolute;
     content: '';
-    position: absolute;
-    width: 100%;
-    height: 2px;
     background: linear-gradient(to right, #ff6b6b, #6bffb3);
-    left: 0;
     transform: scaleX(0);
     transition: transform 0.6s ease-out;
 }
 
 .dropzone-header-main::before {
-    top: -5px;
-    transform-origin: left;
+    @apply -top-[5px] origin-left;
 }
 
 .dropzone-header-main::after {
-    bottom: -5px;
-    transform-origin: right;
+    @apply -bottom-[5px] origin-right;
 }
 
 .dropzone-header-main:hover::after,
@@ -85,18 +80,11 @@
 }
 
 .wave-container {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 14rem;
-    overflow: hidden;
+    @apply absolute bottom-0 left-0 w-[100%] h-[14rem] overflow-hidden;
 }
 
 .wave-svg {
-    width: 100%;
-    height: 100%;
-    display: block;
+    @apply w-[100%] h-[100%] block
 }
 
 
@@ -105,13 +93,7 @@
 }
 
 .waveform-time {
-    @apply text-xl font-accent text-white;
-    position: absolute;
-    z-index: 11;
-    top: 25%;
-    left: 97.5%;
-    pointer-events: none;
-    background: rgba(0, 0, 0, 0.5);
+    @apply text-xl font-accent text-white absolute z-10 top-[25%] left-[97.5%] pointer-events-none bg-black bg-opacity-50;
 }
 
 .explorer-sidebar-container {
@@ -155,51 +137,27 @@
 }
 
 .explorer-gridline-major {
-    @apply z-50 bg-gray-600 absolute w-2;
-    width: 2px;
-    top: 217px;
-    height: 20px;
+    @apply z-50 bg-gray-600 absolute w-[2px] top-[217px] h-[20px];
 }
 
 .explorer-gridline-major-vertical {
-    @apply z-50 bg-gray-600 absolute;
-    left: -0.5em;
-    width: 20px;
-    height: 2px;
+    @apply z-50 bg-gray-600 absolute left-[-0.5em] w-[20px] h-[2px];
 }
 
 .explorer-gridline-minor-vertical {
-    @apply z-50 bg-gray-800 absolute;
-    left: 0;
-    width: 5px;
-    height: 1px;
+    @apply z-50 bg-gray-800 absolute left-0 w-[5px] h-[1px];
 }
 
 .explorer-gridline-vertical-text {
-    @apply z-50 absolute font-accent text-white text-center;
-    left: 0.5em;
-
-    display: flex; /* make flex container */
-    justify-content: center; /* horizontal centering */
-    align-items: center; /* vertical centering */
-
-    font-size: 16px;
-    width: 2em; /* give a fixed width so centering works */
-    height: 24px; /* adjust height as needed */
+    @apply z-50 absolute font-accent text-white text-center flex justify-center items-center font-[16px] w-[2em] h-[24px] left-[0.5em] pointer-events-none;
 }
 
-
 .explorer-gridline-minor {
-    @apply z-50 bg-gray-800 absolute w-1;
-    width: 1px;
-    top: 217px;
-    height: 5px
+    @apply z-50 bg-gray-800 absolute w-[1px] top-[217px] h-[5px];
 }
 
 .explorer-gridline-text {
-    @apply z-50 absolute font-accent text-lg;
-    top: 217px;
-    display: inline-block;
+    @apply z-50 absolute font-accent text-lg top-[217px] inline-block;
 }
 
 .explorer-axislabel {
@@ -207,9 +165,7 @@
 }
 
 .alert-danger {
-    border-left: 5px solid #b30000;
-    background-color: #ffe6e6;
-    color: #660000;
+    @apply border-l-[5px] border-l-[#b30000] bg-[#ffe6e6] text-[#660000] font-accent;
 }
 
 .explorer-play-pause-container {
@@ -236,50 +192,12 @@
     @apply opacity-100 max-h-32;
 }
 
-.popupContent {
-    @apply flex items-center justify-start gap-[10px];
-}
-
-.popupText {
-    @apply flex flex-col gap-[10px];
-}
-
-.popupText div {
-    @apply flex items-center gap-[10px];
-}
-
-.popupText button {
-    @apply border-none cursor-pointer m-0 border-r-[5px];
-    padding: 10px 20px;
-    font-size: 16px;
-}
-
-.popupText button:hover {
-    background-color: #ddd;
-}
-
-.popupText em {
-    @apply m-0;
-    font-style: italic;
-}
-
 .info-popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
-    display: none;
-    z-index: 1000;
-    text-align: center;
-    width: 500px;
+    @apply fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-5 w-[500px] text-center rounded-lg shadow-lg hidden z-[1000];
 }
 
 .info-popup h2 {
-    @apply mb-[15px] font-display text-xl
+    @apply mb-[15px] font-display text-2xl
 }
 
 .info-popup p {
