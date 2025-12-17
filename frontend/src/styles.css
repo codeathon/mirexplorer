@@ -161,7 +161,7 @@
 }
 
 .explorer-axislabel {
-    @apply absolute font-accent text-xl flex justify-center z-50;
+    @apply absolute font-display text-xl flex justify-center z-50;
 }
 
 .alert-danger {
@@ -210,4 +210,29 @@
 
 .blurred {
     @apply blur-lg
+}
+
+.text-gradient-lines::before,
+.text-gradient-lines::after {
+  content: '';
+  @apply absolute left-0 w-full;
+  height: 0.12em;
+  background: linear-gradient(to right, #ff6b6b, #6bffb3);
+  transform: scaleX(0);
+  transition: transform 0.4s ease-out;
+}
+
+.text-gradient-lines::before {
+  top: -0.25em;
+  transform-origin: left;
+}
+
+.text-gradient-lines::after {
+  bottom: -0.25em;
+  transform-origin: right;
+}
+
+.text-gradient-lines:hover::before,
+.text-gradient-lines:hover::after {
+  transform: scaleX(1);
 }

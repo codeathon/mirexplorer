@@ -156,7 +156,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                       d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"/>
                             </svg>
-                            About
+                            Help
                         </a>
                     </li>
                     <li>
@@ -171,15 +171,11 @@
                     </li>
                 </ul>
             </div>
-            {#            <button id="toggleSidebar"#}
-            {#                    class="absolute bottom-8 -right-6 bg-white flex items-center justify-center rounded shadow">#}
-            {#                <svg id="sidebarIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"#}
-            {#                     stroke-width="1.5" stroke="currentColor" class="explorer-sidebar-icon">#}
-            {#                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"/>#}
-            {#                </svg>#}
-            {#            </button>#}
         </aside>
 
+        <div id="explorer-current-shown-label" class="text-gradient-lines absolute right-[150px] bottom-9 font-display text-xl z-30">
+            Waveform
+        </div>
         <div id="spectrogramOptions" class="absolute bottom-4 right-80 w-72 hidden">
             <div class="flex gap-8">
                 <div class="flex flex-col items-center">
@@ -278,10 +274,10 @@
                 left: 0;
                 top: -161px;
             "></div>
-            <div id="explorer-yaxis-text" class="explorer-axislabel ml-3" style="left: -0.5em; top: -205px">Amplitude
+            <div id="explorer-yaxis-text" class="explorer-axislabel text-gradient-lines ml-3" style="left: -0.5em; top: -205px">Amplitude
             </div>
             <div class="waveform-time" id="waveform-time">0:00</div>
-            <div class="explorer-axislabel w-1/2" style="top: 240px">Time (seconds)</div>
+            <div class="explorer-axislabel text-gradient-lines" style="top: 250px">Time (seconds)</div>
         </div>
 
         <div id="plugins-interface" class="inline-flex flex-wrap gap-2 absolute" style="left: 325px; top: 15px"></div>

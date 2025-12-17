@@ -403,11 +403,18 @@ async function handleChangeView(selection) {
 
 function toggleSpectrogramOptions(show) {
     let spectOpt = document.getElementById("spectrogramOptions")
+    let currentShownLabel = document.getElementById("explorer-current-shown-label")
+
     if (show) {
         spectOpt.classList.remove("hidden")
-    } else if (!("hidden" in spectOpt.classList)) {
+        currentShownLabel.innerText = "Spectrogram"
+        currentShownLabel.style.right = "620px"
+    } else {
         spectOpt.classList.add("hidden")
+        currentShownLabel.innerText = "Waveform"
+        currentShownLabel.style.right = "150px"
     }
+
 
     const fMinSlider = document.getElementById("fMin");
     const fMaxSlider = document.getElementById("fMax");
@@ -418,8 +425,8 @@ function toggleSpectrogramOptions(show) {
     // set defaults for slider
     fMinSlider.value = Number(defaultFMin)
     fMaxSlider.value = Number(defaultFMax)
-    fMinLabel.innerHTML = `${defaultFMin} Hz`
-    fMaxLabel.innerHTML = `${defaultFMax} Hz`
+    fMinLabel.innerHTML = `${numberWithCommas(defaultFMin)} Hz`
+    fMaxLabel.innerHTML = `${numberWithCommas(defaultFMax)} Hz`
     spectTypeSelect.value = defaultSpectType
 
     let debounceTimer;
@@ -437,15 +444,15 @@ function toggleSpectrogramOptions(show) {
         createSpect(window.audio_url, Number(fMinSlider.value), Number(fMaxSlider.value), spectTypeSelect.value)
     }
 
-    const updateSelectDebounced = debounce(updateSelect, 1000);
+    const updateSelectDebounced = debounce(updateSelect, 500);
 
     function updateSliderTooltip(slider, label) {
-        label.innerHTML = `${slider.value} Hz`
+        label.innerHTML = `${numberWithCommas(slider.value)} Hz`
         // recreate the spectrogram with the new values
         createSpect(window.audio_url, Number(fMinSlider.value), Number(fMaxSlider.value), spectTypeSelect.value)
     }
 
-    const updateSliderTooltipDebounced = debounce(updateSliderTooltip, 1000);
+    const updateSliderTooltipDebounced = debounce(updateSliderTooltip, 500);
 
     fMinSlider.addEventListener("input", function () {
         updateSliderTooltipDebounced(fMinSlider, fMinLabel);
@@ -528,7 +535,7 @@ function modifySpectLabels() {
             this.font = '16px "TASA Orbiter Display", serif';
             this.fillStyle = "#fff";
         }
-        x += 5
+        x += 10
         return originalFillText.call(this, text, x, y, maxWidth);
     };
 }
