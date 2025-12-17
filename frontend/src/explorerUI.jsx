@@ -836,4 +836,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // add backend functionality to siderbar links
     addFuncsToSidebarLinks()
 
+    // Immediately show the about button
+    aboutBtn.click()
 });
