@@ -781,6 +781,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const playBtn = document.getElementById("explorer-play-button");
     playBtn.onclick = handlePlayButton;
     addHoverStyle(playBtn);
+    // trigger on space press
+    document.addEventListener('keydown', function (e) {
+        if (e.keyCode === 32) {
+            playBtn.click()
+        }
+    });
 
     // loop button
     const loopBtn = document.getElementById("explorer-loop-button");
@@ -793,6 +799,13 @@ document.addEventListener('DOMContentLoaded', () => {
         wavesurfer.seekTo(0.0)
     }
     addHoverStyle(rewindBtn)
+    // trigger on right arrow or backspace press
+    document.addEventListener('keydown', function (e) {
+        if (e.keyCode === 37 || e.keyCode === 8) {
+            rewindBtn.click()
+        }
+    });
+
 
     // View as button (spectrogram/waveform)
     const viewAsHover = document.getElementById('viewAsBtn');
