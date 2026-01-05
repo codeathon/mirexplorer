@@ -157,18 +157,30 @@ async function finaliseSurfer(surfer) {
     // looping region
     surfer.registerPlugin(loopRegion)
     loopRegion.enableDragSelection({
-        content: "Loop",
+        content: " ",
         resize: true,
         drag: true,
         loop: true
     })
+
     loopRegion.on('region-created', (newRegion) => {
+        // Remove all other regions
         Object.values(loopRegion.regions).forEach(region => {
             if (region.id !== newRegion.id) {
                 region.remove();
             }
         });
+
+        const shadow = document.querySelector('#waveform > div').shadowRoot;
+        const regionContent = shadow.querySelector('[part="region-content"]');
+        if (regionContent) {
+            regionContent.textContent = "Loop"
+            regionContent.style.fontFamily = '"TASA Orbiter Display", serif'
+            regionContent.style.fontWeight = "400"
+        }
+
     });
+
 
     // time functionality
     const timeEl = document.getElementById('waveform-time');
@@ -181,7 +193,7 @@ async function finaliseSurfer(surfer) {
         const duration = surfer.getDuration();
         const containerWidth = waveformContainer.clientWidth;
         let leftPos = (currentTime / duration) * containerWidth;
-        leftPos = Math.min(leftPos, containerWidth - timeEl.offsetWidth);
+        leftPos = Math.min(leftPos, containerWidth - timeEl.offsetWidth - 1);
 
         timeEl.textContent = String(Math.round(currentTime));
         timeEl.style.position = 'absolute';
@@ -221,6 +233,10 @@ async function finaliseSurfer(surfer) {
             if (currentTime < looper.start || currentTime > looper.end) {
                 surfer.seekTo(looper.start / duration)
             }
+        }
+
+        if (currentTime >= duration) {
+            handlePlayButton()
         }
     });
 
