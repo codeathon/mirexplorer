@@ -1,5 +1,4 @@
 import os
-from functools import lru_cache
 from io import BytesIO
 from pathlib import Path
 
@@ -13,6 +12,8 @@ from werkzeug.datastructures import FileStorage
 from wtforms import SubmitField, HiddenField
 from wtforms.validators import ValidationError
 
+from backend.extensions import cache
+
 AUDIO_FILE_FORMATS = ["wav", "aac", "aiff", "flac", "m4a", "mp3", "ogg", "wma", "webm"]
 MAX_SIZE = 16 * 1000000  # 16 MB default
 
@@ -24,7 +25,7 @@ UPLOADS_FOLDER = Path(__file__).parent.parent / "uploads"
 DEFAULT_FILE_TTL_HOURS = 2  # files live for 2 hours
 
 
-@lru_cache(maxsize=32)
+@cache.memoize()
 def load_audio(stream) -> np.ndarray:
     y, sr = librosa.load(stream, sr=AUDIO_SAMPLE_RATE, offset=0, mono=True, duration=MAX_AUDIO_DURATION)
     return y

@@ -1,9 +1,20 @@
 import os
 
 from flask import Flask
-from flask_vite import Vite
 
+from backend.extensions import cache, vite
 from backend.tasks import get_scheduler
+
+
+FLASK_CONFIG = {
+    "DEBUG": True,
+    "SECRET_KEY": os.urandom(32),
+    "VITE_FOLDER_PATH": "frontend",
+    "MAX_CONTENT_LENGTH": 50 * 1024 * 1024,   # allow up to 50 MB uploads, for safety
+    # Flask-Caching related configs
+    "CACHE_TYPE": "SimpleCache",
+    "CACHE_DEFAULT_TIMEOUT": 1800    # cache results for 30 minutes
+}
 
 
 def create_flask_app():
@@ -13,9 +24,7 @@ def create_flask_app():
     app = Flask(__name__, static_folder="../frontend/static", template_folder="../templates")
 
     # Configuration
-    app.config["SECRET_KEY"] = os.urandom(32)
-    app.config['VITE_FOLDER_PATH'] = 'frontend'
-    app.config["MAX_CONTENT_LENGTH"] = 50 * 1024 * 1024    # allow up to 50 MB uploads, for safety
+    app.config.from_mapping(FLASK_CONFIG)
 
     # Handle upload folder: create if not existing, and clear everything inside it for a clean start
     app.config["UPLOAD_FOLDER"] = UPLOADS_FOLDER
@@ -25,11 +34,13 @@ def create_flask_app():
     # Register routes
     app.register_blueprint(main_routes)
 
-    # Create Vite extension
-    Vite(app)
+    # Initialise extensions
+    vite.init_app(app)
+    cache.init_app(app)
 
     # Check all extensions have been defined
     assert "vite" in app.extensions, "vite is not defined"
+    assert "cache" in app.extensions, "cache is not defined"
     # assert "celery" in app.extensions, "celery is not defined"
 
     return app
@@ -44,4 +55,3 @@ app_data = {
     "keywords": "flask, webapp, template, basic",
 }
 FLASK_APP = create_flask_app()
-VITE_APP = FLASK_APP.extensions["vite"]
