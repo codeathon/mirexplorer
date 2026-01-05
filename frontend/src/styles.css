@@ -193,15 +193,18 @@
 }
 
 .info-popup {
-    @apply fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-5 w-[500px] text-center rounded-lg shadow-lg hidden z-[1000];
+    @apply fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-5 w-[1000px] text-left rounded-lg shadow-lg hidden z-[1000];
 }
 
 .info-popup h2 {
-    @apply mb-[15px] font-display text-2xl
+    @apply mb-[15px] font-display text-2xl text-center
 }
 
 .info-popup p {
-    @apply font-accent
+    @apply font-accent p-0 text-lg;
+    line-height: 1;
+    margin-top: 0.75rem;
+    margin-bottom: 0;
 }
 
 .info-popup button {
