@@ -8,6 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 flask = "*"
+Flask-Caching = "*"
 flask-wtf = "*"
 flask-vite = "*"
 librosa = "*"
@@ -15,6 +16,7 @@ apscheduler = "*"
 loguru = "*"
 pydub = "*"
 python-dotenv = "*"
+yarl = "*"
 
 [build-system]
 requires = ["poetry-core"]
