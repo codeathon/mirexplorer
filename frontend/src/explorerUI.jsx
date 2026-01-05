@@ -30,6 +30,8 @@ let beats = null
 let beatColour = "#0000007F"
 let beatsRegions = null
 
+let loopRegion = RegionsPlugin.create()
+
 
 function cleanContainer() {
     // Destroy previous instances if it exists
@@ -152,9 +154,20 @@ function addGrid() {
 }
 
 async function finaliseSurfer(surfer) {
-    surfer.on('seek', function (position) {
-        let currentTime = position * wavesurfer.getDuration();
-        surfer.seekTo(currentTime)
+    // looping region
+    surfer.registerPlugin(loopRegion)
+    loopRegion.enableDragSelection({
+        content: "Loop",
+        resize: true,
+        drag: true,
+        loop: true
+    })
+    loopRegion.on('region-created', (newRegion) => {
+        Object.values(loopRegion.regions).forEach(region => {
+            if (region.id !== newRegion.id) {
+                region.remove();
+            }
+        });
     });
 
     // time functionality
@@ -202,20 +215,15 @@ async function finaliseSurfer(surfer) {
                 if (svgPath) svgPath.setAttribute('stroke', hoverColour);
             }
         }
-    });
 
-
-    // looping functionality
-    surfer.on('finish', function () {
         if (looping) {
-            surfer.seekTo(0.0);
-            surfer.play();
-        } else {
-            const playIcon = document.getElementById("explorer-play-icon");
-            playIcon.style.strokeWidth = "1.5";
-            surfer.pause()
+            let looper = loopRegion.regions[0]
+            if (currentTime < looper.start || currentTime > looper.end) {
+                surfer.seekTo(looper.start / duration)
+            }
         }
     });
+
 
     // don't know why this needs to be added here
     // but the grid resizing breaks without it
@@ -277,7 +285,7 @@ async function createWave(audioFile) {
         waveColor: currentColour,
         progressColor: currentProgressColour,
         height: defaultHeight,
-        sampleRate: sampleRate
+        sampleRate: sampleRate,
     });
     await wavesurfer.load(audioFile);
     await finaliseSurfer(wavesurfer)
@@ -339,8 +347,11 @@ async function createSpect(audioFile, spectFMin = defaultFMin, spectFMax = defau
 
     cleanContainer()
     wavesurfer = WaveSurfer.create({
-        container: '#waveform', waveColor: currentProg, //
-        progressColor: currentProg, sampleRate: sampleRate, height: 0
+        container: '#waveform',
+        waveColor: currentProg,
+        progressColor: currentProg,
+        sampleRate: sampleRate,
+        height: 0,
     })
 
     // generate the cmap
@@ -452,12 +463,6 @@ function toggleSpectrogramOptions(show) {
 
 async function colourChanged() {
     hoverColour = getCurrentChosenColour()
-
-    // // update play/pause buttons
-    // if (wavesurfer.isPlaying()) {
-    //     const playIcon = document.getElementById("explorer-play-icon");
-    //     playIcon.style.fill = hoverColour;
-    // }
 
     // for waveforms, we can update the surfer without having to recreate it
     if (state.currentShown === "wave") {
@@ -735,12 +740,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const playBtn = document.getElementById("explorer-play-button");
     playBtn.onclick = handlePlayButton;
     addHoverStyle(playBtn);
-    // trigger on space press
-    document.addEventListener('keydown', function (e) {
-        if (e.keyCode === 32) {
-            playBtn.click()
-        }
-    });
 
     // loop button
     const loopBtn = document.getElementById("explorer-loop-button");
@@ -772,6 +771,10 @@ document.addEventListener('DOMContentLoaded', () => {
             ) {
                 wavesurfer.play();
             }
+        }
+        // space/enter button: play/pause audio
+        if (e.key === "Enter" || e.key === " ") {
+            playBtn.click()
         }
     });
 
