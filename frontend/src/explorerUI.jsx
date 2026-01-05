@@ -16,7 +16,12 @@ let spectsurfer = null;
 export {wavesurfer}
 export {spectsurfer}
 
-let currentShown = "wave"
+// explorerUI.jsx
+let state = {
+    currentShown: "wave"
+};
+export {state};
+
 let hoverColour = defaultColour
 
 let looping = false
@@ -39,15 +44,6 @@ function cleanContainer() {
     // Clear the container
     document.getElementById('waveform').innerHTML = '';
 }
-
-
-function formatTime(seconds) {
-    const minutes = Math.floor(seconds / 60)
-    const secondsRemainder = Math.round(seconds) % 60
-    const paddedSeconds = `0${secondsRemainder}`.slice(-2)
-    return `${minutes}:${paddedSeconds}`
-}
-
 
 function handlePlayButton() {
     const playIcon = document.getElementById("explorer-play-icon");
@@ -79,7 +75,7 @@ function addGrid() {
     const containerWidth = waveformContainer.offsetWidth;
 
     const waveYAxBack = document.getElementById("wave-yaxis-backing")
-    waveYAxBack.hidden = currentShown === "spect";
+    waveYAxBack.hidden = state.currentShown === "spect";
 
     waveformContainer.querySelectorAll('.explorer-gridline-major').forEach(line => line.remove());
     waveformContainer.querySelectorAll('.explorer-gridline-text').forEach(line => line.remove());
@@ -100,7 +96,7 @@ function addGrid() {
 
         const lineText = document.createElement("div");
         lineText.classList.add("explorer-gridline-text");
-        lineText.innerText = `0:${String(currentTime).padStart(2, '0')}`;
+        lineText.innerText = String(currentTime);
         lineText.style.left = `${position + 5}px`;
         waveformContainer.appendChild(lineText);
 
@@ -130,7 +126,7 @@ function addGrid() {
 
     let displayVal = [1, 0.5, 0, -0.5, -1.0];
     let yText = "Amplitude"
-    if (currentShown === "spect") {
+    if (state.currentShown === "spect") {
         yText = "Frequency (Hz)"
     }
 
@@ -138,7 +134,7 @@ function addGrid() {
     let yAxLabel = document.getElementById("explorer-yaxis-text")
     yAxLabel.innerText = yText
 
-    if (currentShown === "spect") {
+    if (state.currentShown === "spect") {
         return
     }
 
@@ -156,11 +152,10 @@ function addGrid() {
 }
 
 async function finaliseSurfer(surfer) {
-    surfer.on('seek',
-        function (position) {
-            let currentTime = position * wavesurfer.getDuration();
-            surfer.seekTo(currentTime)
-        });
+    surfer.on('seek', function (position) {
+        let currentTime = position * wavesurfer.getDuration();
+        surfer.seekTo(currentTime)
+    });
 
     // time functionality
     const timeEl = document.getElementById('waveform-time');
@@ -170,11 +165,12 @@ async function finaliseSurfer(surfer) {
     let handIcons = document.getElementsByClassName("hand-marker");
 
     surfer.on('timeupdate', (currentTime) => {
-        timeEl.textContent = formatTime(currentTime);
         const duration = surfer.getDuration();
         const containerWidth = waveformContainer.clientWidth;
         let leftPos = (currentTime / duration) * containerWidth;
         leftPos = Math.min(leftPos, containerWidth - timeEl.offsetWidth);
+
+        timeEl.textContent = String(Math.round(currentTime));
         timeEl.style.position = 'absolute';
         timeEl.style.left = `${leftPos}px`;
 
@@ -247,9 +243,7 @@ function getProgressColour(currentColour) {
 
     if (totalSum > (255 * 1.5)) {
         progCol = {
-            r: Math.max(currentRgb.r - 50, 0),
-            g: Math.max(currentRgb.g - 50, 0),
-            b: Math.max(currentRgb.b - 50, 0)
+            r: Math.max(currentRgb.r - 50, 0), g: Math.max(currentRgb.g - 50, 0), b: Math.max(currentRgb.b - 50, 0)
         }
     } else {
         progCol = {
@@ -329,18 +323,11 @@ function rgbToHex(r, g, b) {
 function hexToRgb(hex) {
     var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
+        r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16)
     } : null;
 }
 
-async function createSpect(
-    audioFile,
-    spectFMin = defaultFMin,
-    spectFMax = defaultFMax,
-    spectType = defaultSpectType,
-) {
+async function createSpect(audioFile, spectFMin = defaultFMin, spectFMax = defaultFMax, spectType = defaultSpectType,) {
     // type coersion
     spectFMin = Number(spectFMin)
     spectFMax = Number(spectFMax)
@@ -352,11 +339,8 @@ async function createSpect(
 
     cleanContainer()
     wavesurfer = WaveSurfer.create({
-        container: '#waveform',
-        waveColor: currentProg, //
-        progressColor: currentProg,
-        sampleRate: sampleRate,
-        height: 0
+        container: '#waveform', waveColor: currentProg, //
+        progressColor: currentProg, sampleRate: sampleRate, height: 0
     })
 
     // generate the cmap
@@ -388,13 +372,13 @@ async function handleChangeView(selection) {
 
     // create waveform if not existing
     if (textContent === "Waveform") {
-        currentShown = "wave"
+        state.currentShown = "wave"
         toggleSpectrogramOptions(false)
         await createWave(window.audio_url)
     }
     // create spectrogram otherwise
     else if (textContent === "Spectrogram") {
-        currentShown = "spect"
+        state.currentShown = "spect"
         toggleSpectrogramOptions(true)
         await createSpect(window.audio_url)
     }
@@ -476,11 +460,10 @@ async function colourChanged() {
     // }
 
     // for waveforms, we can update the surfer without having to recreate it
-    if (currentShown === "wave") {
+    if (state.currentShown === "wave") {
         let currentProg = getProgressColour(hoverColour)
         wavesurfer.setOptions({
-            waveColor: hoverColour,
-            progressColor: currentProg
+            waveColor: hoverColour, progressColor: currentProg
         })
     }
         // for spectrograms, we need to recreate it
@@ -493,22 +476,30 @@ async function colourChanged() {
     }
 }
 
-function addHoverStyle(hoverElement, transformElement = null) {
-    if (transformElement === null) {
-        transformElement = [hoverElement]
-    }
+function addHoverStyle(hoverElement, transformElements = null) {
+    if (!transformElements) transformElements = [hoverElement];
 
-    hoverElement.addEventListener('mouseover', () => {
-        transformElement.forEach(te => {
-            te.style.transition = 'color 0.1s ease';
-            te.style.color = hoverColour;
-        })
-    });
-    hoverElement.addEventListener('mouseout', () => {
-        transformElement.forEach(te => {
-            te.style.color = '';
-        })
-    })
+    // mouseover handler
+    const onOver = () => {
+        transformElements.forEach(te => {
+            te.style.transition = "color 0.1s ease";
+            te.style.color = hoverColour; // dynamic globally scoped
+        });
+    };
+
+    // mouseout handler
+    const onOut = () => {
+        transformElements.forEach(te => {
+            te.style.color = "";
+        });
+    };
+
+    hoverElement.addEventListener("mouseover", onOver);
+    hoverElement.addEventListener("mouseout", onOut);
+
+    // need to attach references so remove is possible later
+    hoverElement.__hoverOnOver = onOver;
+    hoverElement.__hoverOnOut = onOut;
 }
 
 function numberWithCommas(x) {
@@ -662,9 +653,7 @@ function addBeatMarkers(response = null) {
     // update beat regions
     beats.forEach(mark => {
         beatsRegions.addRegion({
-            start: mark,
-            color: beatColour,
-            drag: false
+            start: mark, color: beatColour, drag: false
         })
     })
 
@@ -698,11 +687,9 @@ function addFuncsToSidebarLinks() {
             e.preventDefault();
             const action = this.innerText.trim();
             fetch('/trigger_action', {
-                method: 'POST',
-                headers: {
+                method: 'POST', headers: {
                     'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({action: action, audio_url: window.audio_url})
+                }, body: JSON.stringify({action: action, audio_url: window.audio_url})
             })
                 .then(async response => {
                     if (!response.ok) {
@@ -724,42 +711,6 @@ function addFuncsToSidebarLinks() {
 }
 
 
-function showInfoPopup() {
-    // todo: this should be more of a tutorial, with multiple steps
-    // we can use a moving div that "unblurs" particular elements to advance to the next stage
-    const infoPopup = document.createElement('div');
-    infoPopup.classList.add('info-popup');
-    infoPopup.innerHTML = `
-                <h2>Music Explorer</h2>
-                <p>
-                    Use the buttons along the sidebar to learn more about your recording.
-                </p>
-            `;
-
-    const closeBtn = document.createElement("button");
-    closeBtn.innerText = "×";
-    closeBtn.addEventListener("click", () => {
-        closeInfoPopup()
-    });
-
-    infoPopup.appendChild(closeBtn)
-
-    document.body.appendChild(infoPopup);
-    infoPopup.style.display = 'block';
-    document.getElementById('explorer-overlay').style.display = 'block';
-    document.getElementById('explorer-content').classList.add('blurred');
-}
-
-function closeInfoPopup() {
-    const infoPopup = document.querySelector('.info-popup');
-    if (infoPopup) {
-        infoPopup.style.display = 'none';
-        document.body.removeChild(infoPopup);
-    }
-    document.getElementById('explorer-overlay').style.display = 'none';
-    document.getElementById('explorer-content').classList.remove('blurred');
-}
-
 globalThis.createWave = createWave;
 window.colourChanged = colourChanged;
 
@@ -779,10 +730,6 @@ document.addEventListener('DOMContentLoaded', () => {
             chevron.classList.toggle("rotate-180");
         });
     });
-
-    // about link
-    const aboutBtn = document.getElementById("explorer-show-info-popup");
-    aboutBtn.onclick = showInfoPopup;
 
     // play button
     const playBtn = document.getElementById("explorer-play-button");
@@ -806,13 +753,27 @@ document.addEventListener('DOMContentLoaded', () => {
         wavesurfer.seekTo(0.0)
     }
     addHoverStyle(rewindBtn)
-    // trigger on right arrow or backspace press
+
+    // listen out for key pressers
     document.addEventListener('keydown', function (e) {
-        if (e.keyCode === 37 || e.keyCode === 8) {
-            rewindBtn.click()
+        // left key press: scrub back two seconds
+        if (e.key === "ArrowLeft") {
+            const wasPlaying = wavesurfer.isPlaying();
+            wavesurfer.skip(-2);
+            wasPlaying && wavesurfer.play();
+        }
+        // right keypress: scrub forward two seconds
+        if (e.key === "ArrowRight") {
+            const wasPlaying = wavesurfer.isPlaying();
+            wavesurfer.skip(2);
+            if (
+                wasPlaying &&
+                wavesurfer.getCurrentTime() < wavesurfer.getDuration()
+            ) {
+                wavesurfer.play();
+            }
         }
     });
-
 
     // View as button (spectrogram/waveform)
     const viewAsHover = document.getElementById('viewAsBtn');
@@ -855,7 +816,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // add backend functionality to siderbar links
     addFuncsToSidebarLinks()
-
-    // Immediately show the about button
-    aboutBtn.click()
 });

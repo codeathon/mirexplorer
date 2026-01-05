@@ -4,6 +4,7 @@
     <script type="module" src="http://localhost:3000/@vite/client"></script>
     <script type="module" src="http://localhost:3000/main.jsx"></script>
     <script type="module" src="http://localhost:3000/src/explorerUI.jsx"></script>
+    <script type="module" src="http://localhost:3000/src/explorerTutorial.jsx"></script>
     <script type="module" src="http://localhost:3000/src/jsColor.jsx"></script>
 
     <div class="explorer-overlay" id="explorer-overlay"></div>
@@ -12,7 +13,7 @@
                class="explorer-sidebar-container transform transition-transform duration-300 translate-x-0 absolute left-0 top-0 z-50 bg-white">
 
             <div class="px-12 py-6">
-                <a href="#" class="explorer-sidebar-header">Music Explorer</a>
+                <a href="#" class="explorer-sidebar-header">AI Music Explorer</a>
             </div>
 
             <nav class="flex-1 px-4 py-6">
@@ -173,9 +174,10 @@
             </div>
         </aside>
 
-        <div id="explorer-current-shown-label" class="text-gradient-lines absolute right-[150px] bottom-9 font-display text-xl z-30">
+        <div id="explorer-current-shown-label" class="text-gradient-lines absolute right-[150px] bottom-9 text-xl">
             Waveform
         </div>
+
         <div id="spectrogramOptions" class="absolute bottom-4 right-80 w-72 hidden">
             <div class="flex gap-8">
                 <div class="flex flex-col items-center">
