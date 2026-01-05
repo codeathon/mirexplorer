@@ -14,6 +14,7 @@ librosa = "*"
 apscheduler = "*"
 loguru = "*"
 pydub = "*"
+python-dotenv = "*"
 
 [build-system]
 requires = ["poetry-core"]
