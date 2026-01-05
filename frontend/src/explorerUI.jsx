@@ -565,7 +565,7 @@ function addBeatPluginPill() {
     svg.setAttribute("xmlns", svgNS);
     svg.setAttribute("viewBox", "0 0 16 16");
     svg.setAttribute("fill", "#000000");
-    svg.id = "plugin-beats-icon";
+    svg.id = "plugin-icon";
     svg.setAttribute("height", "16");
     svg.setAttribute("width", "16");
 
@@ -575,8 +575,9 @@ function addBeatPluginPill() {
     svg.appendChild(path);
 
     const textDiv = document.createElement("div");
-    textDiv.id = "plugin-beats-text";
+    textDiv.id = "plugin-text";
     textDiv.classList.add("explorer-plugin-pill-text");
+    textDiv.classList.add("text-gradient-lines")
     textDiv.innerText = "Beats";
 
     const closeBtn = document.createElement("button");
