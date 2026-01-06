@@ -248,3 +248,15 @@
 .text-gradient-lines:hover::after {
     transform: scaleX(1);
 }
+
+.explorer-chord-horizontal-line {
+    @apply absolute h-0 border-t-2 border-t-black bottom-[-270px] pointer-events-none border-dashed divide-dashed;
+}
+
+.explorer-chord-marker {
+    @apply bottom-[-280px] absolute pointer-events-none font-display text-base
+}
+
+.explorer-chord-label {
+    @apply bottom-[-260px] font-display text-lg absolute pointer-events-none left-2
+}

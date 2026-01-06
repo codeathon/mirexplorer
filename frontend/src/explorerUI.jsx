@@ -39,6 +39,8 @@ let beats = null
 let beatColour = "#0000007F"
 let beatsRegions = null
 
+let chords = null
+
 let loopRegion = RegionsPlugin.create()
 
 
@@ -603,7 +605,6 @@ function addBeatPluginPill() {
     const textDiv = document.createElement("div");
     textDiv.id = "plugin-text";
     textDiv.classList.add("explorer-plugin-pill-text");
-    // textDiv.classList.add("text-gradient-lines")
     textDiv.innerText = "Beats";
 
     const closeBtn = document.createElement("button");
@@ -771,6 +772,121 @@ function addInstrumentPills(response = null) {
     })
 }
 
+function addKeyPill(response = null) {
+    // skip over creating pill if it exists
+    let svgId = "plugin-key"
+    if (document.getElementById(svgId)) {
+        return
+    }
+
+    // create the pill
+    let key = "Key: " + response["out"]
+    let svgPath = "M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1 1 21.75 8.25Z"
+    let pillDiv = addPill(svgPath, svgId, key)
+
+    // add to the container
+    const container = document.getElementById("plugins-interface");
+    container.appendChild(pillDiv)
+}
+
+function addChordMarkers() {
+    // check if we have chords
+    if (!chords) {
+        return
+    }
+
+    // start by removing any existing chord markers
+    removeChordMarkers()
+
+    const container = document.getElementById("waveform-container");
+    const containerWidth = container.offsetWidth;
+    const duration = wavesurfer.getDuration();
+
+    // add label for chords
+    const chordLabel = document.createElement("div")
+    chordLabel.className = "explorer-chord-label"
+    chordLabel.innerText = "Chords"
+    container.appendChild(chordLabel)
+
+    let chordCounter = 0
+
+    chords.forEach(chord => {
+        let chordName = chord["chord_simple_pop"]
+        let chordStart = chord["start"]
+        let chordEnd = chord["end"]
+        let chordId = `chord-label-${chordCounter}`;
+
+        // skip over creating chords that already exist
+        if (document.getElementById(chordId)) {
+            return
+        }
+
+        let chordDiv = document.createElement("div");
+        chordDiv.id = chordId
+        chordDiv.className = "explorer-chord-marker"
+
+        // add the chord label
+        const pxStart = (chordStart / duration) * containerWidth;
+        chordDiv.style.left = `${pxStart}px`;
+        chordDiv.innerText = chordName
+
+        container.appendChild(chordDiv);
+
+        // add line connecting chords
+        const chordRightPx = chordDiv.offsetLeft + chordDiv.offsetWidth + 5;
+        const pxEnd = (chordEnd / duration) * containerWidth;
+        const chordLine = document.createElement("div");
+        chordLine.className = "explorer-chord-horizontal-line";
+        chordLine.style.left = `${chordRightPx}px`;
+        chordLine.style.width = `${pxEnd - chordRightPx - 5}px`;
+
+        container.appendChild(chordLine);
+        chordCounter++
+    })
+}
+
+function removeChordMarkers() {
+    ["explorer-chord-marker", "explorer-chord-label", "explorer-chord-horizontal-line"].forEach(clsName => {
+        let els = document.getElementsByClassName(clsName)
+        Array.from(els).forEach(chordMarker => {
+            chordMarker.remove()
+        })
+    })
+}
+
+function addChordPills(response = null) {
+    // add chord markers and watch resize
+    chords = response["out"]
+
+    const observer = new ResizeObserver(() => {
+        addChordMarkers()
+    });
+    observer.observe(document.getElementById("waveform-container"));
+
+    // add a general chord pill
+    let svgID = `plugin-chords`;
+
+    // if the pill already exists, skip over creating again
+    if (document.getElementById(svgID)) {
+        return
+    }
+
+    // create the pill
+    let svgPath = "m9 9 10.5-3m0 6.553v3.75a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a1.803 1.803 0 1 1-.99-3.467l2.31-.66a2.25 2.25 0 0 0 1.632-2.163Zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a1.803 1.803 0 0 1-.99-3.467l2.31-.66A2.25 2.25 0 0 0 9 15.553Z"
+    let pillDiv = addPill(svgPath, svgID, "Chords")
+
+    // need to update close function of pill
+    let closeBtn = pillDiv.querySelector("button")
+    closeBtn.addEventListener("click", () => {
+        chords = null
+        removeChordMarkers()
+    });
+
+    // add to the container
+    const container = document.getElementById("plugins-interface");
+    container.appendChild(pillDiv)
+
+}
 
 function routeFrontendResponse(actionName) {
     if (actionName === "Beat Tracking") {
@@ -781,6 +897,10 @@ function routeFrontendResponse(actionName) {
         return addMoodPills
     } else if (actionName === "Instrument Identification") {
         return addInstrumentPills
+    } else if (actionName === "Key Transcription") {
+        return addKeyPill
+    } else if (actionName === "Chord Transcription") {
+        return addChordPills
     } else {
         throw new Error(`Action ${actionName} unknown`)
     }
