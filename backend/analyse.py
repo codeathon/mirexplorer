@@ -1,6 +1,9 @@
 import ast
 import os
+import json
 import time
+import urllib.request
+from dotenv import load_dotenv, find_dotenv
 from pathlib import Path
 from typing import Callable, Optional, Any
 from uuid import uuid4
@@ -13,6 +16,7 @@ from yarl import URL
 from backend.crud import AUDIO_SAMPLE_RATE, save_audio, pad_or_truncate_array
 from backend.extensions import cache
 
+load_dotenv(find_dotenv())
 
 MOISES_URL = URL(r"https://api.music.ai/v1/")
 MOISES_HEADERS = {"Authorization": os.environ.get("MOISES_TOKEN")}
@@ -26,7 +30,7 @@ GENRE_MAPPING = {
     "folkCountry": "Folk & Country",
     "funkSoul": "Funk & Soul",
     "indieAlternative": "Indie & Alternative",
-    "rapHipHop" : "Rap & Hip-Hop",
+    "rapHipHop": "Rap & Hip-Hop",
     "rnb": "R&B",
     "singerSongwriters": "Singer-Songwriter"
 }
@@ -37,6 +41,14 @@ INSTRUMENT_MAPPING = {
     "synth": "Synthesiser",
     "brassWoodwinds": "Brass & Woodwinds"
 }
+
+ROOT_NOTES = [
+    "C", "D", "E", "F", "G", "A", "B",
+    "C#", "D#", "F#", "G#", "A#",
+    "Db", "Eb", "Fb", "Gb", "Ab", "Bb"
+]
+
+LYRICS_THRESHOLD = 0.8    # words with confidence scores below this threshold will be rejected
 
 
 @cache.memoize()
@@ -57,7 +69,9 @@ def beat_track(audio, filename):
 def genre_identification(_, filename) -> list[str]:
     logger.info("Starting genre classification")
 
-    out = process_audio_with_moises(filename)
+    download_url = upload_audio_to_moises(filename)
+    out = process_audio_with_moises(download_url, workflow_slug=os.environ.get("MOISES_METADATA_WORKFLOW"))
+    out = _decode_moises_metadata_results(out)
 
     genres = out["genre"]
     if isinstance(genres, str):
@@ -70,21 +84,25 @@ def genre_identification(_, filename) -> list[str]:
 def instrument_identification(_, filename) -> list[str]:
     logger.info("Starting instruments classification")
 
-    out = process_audio_with_moises(filename)
+    download_url = upload_audio_to_moises(filename)
+    out = process_audio_with_moises(download_url, workflow_slug=os.environ.get("MOISES_METADATA_WORKFLOW"))
+    out = _decode_moises_metadata_results(out)
 
     instruments = out["instruments"]
     if isinstance(instruments, str):
         instruments = [instruments]
 
     # Map genres correctly
-    return ["Instrument: " + INSTRUMENT_MAPPING[g] if g in INSTRUMENT_MAPPING else "Instrument: " + g.title() for g in instruments][:MAX_TAGS]
-
+    return ["Instrument: " + INSTRUMENT_MAPPING[g] if g in INSTRUMENT_MAPPING else "Instrument: " + g.title() for g in
+            instruments][:MAX_TAGS]
 
 
 def mood_identification(_, filename) -> list[str]:
     logger.info("Starting mood classification")
 
-    out = process_audio_with_moises(filename)
+    download_url = upload_audio_to_moises(filename)
+    out = process_audio_with_moises(download_url, workflow_slug=os.environ.get("MOISES_METADATA_WORKFLOW"))
+    out = _decode_moises_metadata_results(out)
 
     mood = out["mood"]
     if isinstance(mood, str):
@@ -94,10 +112,97 @@ def mood_identification(_, filename) -> list[str]:
     return ["Mood: " + m.title() for m in mood][:MAX_TAGS]
 
 
+def lyrics_transcription(_, filename) -> list[dict]:
+    logger.info("Starting lyrics transcription")
+
+    download_url = upload_audio_to_moises(filename)
+    out = process_audio_with_moises(download_url, workflow_slug=os.environ.get("MOISES_LYRICS_WORKFLOW"))
+
+    lyrics_json_url = out["lyrics"]
+    lyrics_data = download_json_from_url(lyrics_json_url)
+
+    if not isinstance(lyrics_data, list) or len(lyrics_data) == 0:
+        raise ValueError("No lyrics detected!")
+
+    words_list = []
+    for lyrics_inner in lyrics_data:
+        if not isinstance(lyrics_inner, dict) or "words" not in lyrics_inner.keys():
+            raise ValueError("Expected lyrics to be dictionary but got type {}".format(type(lyrics_inner)))
+        words_outer = lyrics_inner["words"]
+
+        for words in words_outer:
+
+            # malformed results: set score to 0
+            score = words["score"] if "score" in words.keys() and isinstance(words["score"], float) else 0
+            if score < LYRICS_THRESHOLD:
+                logger.warning(f"Lyrics score for word {words['word']} (start {words['start']}, end {words['end']}) below threshold: score {score}")
+                continue
+
+            # keep valid words
+            words_list.append(words)
+
+    if len(words_list) == 0:
+        raise ValueError("No lyrics detected!")
+    return words_list
+
+
+def chord_transcription(_, filename) -> list[dict]:
+    # run the workflow
+    logger.info("Starting chord transcription")
+    download_url = upload_audio_to_moises(filename)
+    out = process_audio_with_moises(download_url,  workflow_slug=os.environ.get("MOISES_CHORD_WORKFLOW"))
+
+    # Moises returns a URL pointing to a JSON, so we need to load this is an actual Python dictionary
+    chord_json_url = out["chords"]
+    chord_data = download_json_from_url(chord_json_url)
+
+    # defensive raise on invalid results
+    if not isinstance(chord_data, list) or len(chord_data) == 0:
+        raise ValueError("No chords detected!")
+
+    # Simplify chord data: only need start/end timestamps, and chord_simple_pop
+    cols_reqd = ["start", "end", "chord_simple_pop"]
+    return [{k: c[k] for k in cols_reqd} for c in chord_data]
+
+
+def key_transcription(_, filename) -> str:
+    logger.info("Starting key transcription")
+
+    # run the workflow
+    #  the chord workflow returns both chords + key, so we can easily grab from this
+    download_url = upload_audio_to_moises(filename)
+    out = process_audio_with_moises(download_url, workflow_slug=os.environ.get("MOISES_CHORD_WORKFLOW"))
+
+    # validate results
+    if "key" not in out:
+        raise ValueError(f"Invalid results: expected 'key' in dict, but got {', '.join(list(out.keys()))}")
+    key = out["key"]
+
+    if not isinstance(key, str):
+        raise ValueError("Invalid results: expected 'key' to be 'str', but got {}".format(type(key)))
+
+    root, quality = key.split(" ")
+    if root not in ROOT_NOTES:
+        logger.error(f"Root note '{root}' may be invalid!")
+    if quality not in ["major", "minor"]:
+        logger.error(f"Key quality '{quality}' may be invalid!")
+
+    return key
+
+
+def download_json_from_url(url: str) -> dict:
+    with urllib.request.urlopen(url) as url:
+        # This should be a list of dictionaries
+        data = json.loads(url.read().decode())
+    return data
+
+
 def route_to_function(function_name) -> Callable:
-    # Beat tracking: calls librosa running on backend server
+    # Pattern extraction: calls Librosa running on backend server
     if function_name == 'Beat Tracking':
         return beat_track
+    elif function_name == "Melodic Contour":
+        raise NotImplementedError()
 
     # Metadata extraction: calls Cyanite through Music.AI
     elif function_name == 'Genre Identification':
@@ -106,6 +211,14 @@ def route_to_function(function_name) -> Callable:
         return instrument_identification
     elif function_name == "Mood Identification":
         return mood_identification
+
+    # Transcription: calls Moises
+    elif function_name == "Lyrics Transcription":
+        return lyrics_transcription
+    elif function_name == "Chord Transcription":
+        return chord_transcription
+    elif function_name == "Key Transcription":
+        return key_transcription
 
     else:
         raise ValueError(f"Invalid function name: '{function_name}'")
@@ -151,7 +264,7 @@ def _poll_moises_job(job_id: str, ) -> Optional[dict]:
     Poll a running Moises job and return the result (if successful) or raise an error (if still running/unsuccessful)
     """
     # Make a request with the current job ID
-    response_out = requests.get(f'{MOISES_URL}/job/{job_id}', headers=MOISES_HEADERS)
+    response_out = requests.get(MOISES_URL / "job" / job_id, headers=MOISES_HEADERS)
 
     # If a HTMLError occurred, raise it here
     response_out.raise_for_status()
@@ -178,7 +291,7 @@ def _poll_moises_job(job_id: str, ) -> Optional[dict]:
         raise ValueError(f"Job ID {job_id}: got unexpected response state: '{current_state}'")
 
 
-def _decode_moises_results(out: dict) -> dict[str, Any]:
+def _decode_moises_metadata_results(out: dict) -> dict[str, Any]:
     """
     Output from Moises is a dict that may contain lists/dicts represented as strings, so need to evaluate safely
     """
@@ -194,20 +307,20 @@ def _decode_moises_results(out: dict) -> dict[str, Any]:
     return decoded
 
 
-def _run_moises_workflow(download_url: str) -> dict:
+def _run_moises_workflow(download_url: str, workflow_slug: str) -> dict:
     """
     Runs given Moises workflow on audio available at `download_url`
     """
     # Run the workflow with the required payload
     response_out = requests.post(
-        f'{MOISES_URL}/job',
+        MOISES_URL / 'job',
         headers={
             **MOISES_HEADERS,
             "Content-Type": "application/json"
         },
         json={
             "name": str(uuid4()),
-            "workflow": os.environ.get("MOISES_WORKFLOW"),
+            "workflow": workflow_slug,
             "params": {
                 "inputUrl": download_url
             }
@@ -241,15 +354,32 @@ def _run_moises_workflow(download_url: str) -> dict:
 
 
 @cache.memoize()
-def process_audio_with_moises(filename: str) -> dict:
+def upload_audio_to_moises(filename: str) -> str:
     """
-    Processes audio using Moises workflow
+    Uploads given audio to Moises, returns URL to download (required for processors)
     """
     # Request URLs to upload to Moises
     upload_url, download_url = _request_moises_upload_urls()
     # Do the upload
     _upload_audio_to_moises(filename, upload_url)
+    return download_url
+
+
+@cache.memoize()
+def process_audio_with_moises(download_url: str, workflow_slug: str) -> dict:
+    """
+    Processes audio using a given Moises workflow
+    """
     # Run the workflow
-    out = _run_moises_workflow(download_url)
-    # Decode the result
-    return _decode_moises_results(out["result"])
+    out = _run_moises_workflow(download_url, workflow_slug)
+
+    # Catch time out errors
+    if out is None:
+        raise ValueError("Job timed out!")
+
+    # Return the result
+    return out["result"]
+
+
+if __name__ == "__main__":
+    lyrics_transcription(None, "../test_audio.mp3")
