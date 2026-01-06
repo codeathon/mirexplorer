@@ -3,7 +3,6 @@ import os
 import json
 import time
 import urllib.request
-from dotenv import load_dotenv, find_dotenv
 from pathlib import Path
 from typing import Callable, Optional, Any
 from uuid import uuid4
@@ -16,7 +15,6 @@ from yarl import URL
 from backend.crud import AUDIO_SAMPLE_RATE, save_audio, pad_or_truncate_array
 from backend.extensions import cache
 
-load_dotenv(find_dotenv())
 
 MOISES_URL = URL(r"https://api.music.ai/v1/")
 MOISES_HEADERS = {"Authorization": os.environ.get("MOISES_TOKEN")}
@@ -379,7 +377,3 @@ def process_audio_with_moises(download_url: str, workflow_slug: str) -> dict:
 
     # Return the result
     return out["result"]
-
-
-if __name__ == "__main__":
-    lyrics_transcription(None, "../test_audio.mp3")
