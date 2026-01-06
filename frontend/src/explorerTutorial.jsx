@@ -1,3 +1,5 @@
+import {unblurContent, blurContent} from "./explorerShared.jsx";
+
 function getState() {
     let currentShown = document.getElementById("explorer-current-shown-label").textContent
     if (String(currentShown.toLowerCase()).includes("wave")) {
@@ -44,11 +46,7 @@ function finalisePopup(popup) {
     document.getElementById('explorer-overlay').style.display = 'block';
 
     // disable all buttons, add blur
-    let content = document.getElementById('explorer-content')
-    content.classList.add('blurred');
-    Array.from(content.getElementsByTagName("button")).forEach(button => {
-        button.disabled = true;
-    })
+    blurContent()
 }
 
 
@@ -60,13 +58,8 @@ function closePopup(popupID) {
     }
     document.getElementById('explorer-overlay').style.display = 'none';
 
-    // enable all buttons, remove blur
-    let content = document.getElementById('explorer-content')
-    content.classList.remove('blurred');
-    Array.from(content.getElementsByTagName("button")).forEach(button => {
-        button.disabled = false;
-    })
-
+    // unblur content, enable buttons
+    unblurContent()
 }
 
 
@@ -229,4 +222,4 @@ const observer = new MutationObserver((mutationsList) => {
         }
     }
 });
-observer.observe(container, { childList: true });
+observer.observe(container, {childList: true});

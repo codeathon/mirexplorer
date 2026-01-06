@@ -1,6 +1,7 @@
 import WaveSurfer from 'wavesurfer.js';
-import Spectrogram from 'wavesurfer.js/dist/plugins/spectrogram.esm.js'
-import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.esm.js'
+import Spectrogram from 'wavesurfer.js/dist/plugins/spectrogram.esm.js';
+import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.esm.js';
+import {hexToRgb, rgbToHex, generateCmap} from "./explorerShared";
 
 let sampleRate = 22050;
 let gridResolutionSecs = 5
@@ -315,50 +316,6 @@ async function createWave(audioFile) {
     });
     await wavesurfer.load(audioFile);
     await finaliseSurfer(wavesurfer)
-}
-
-function generateCmap(r, g, b) {
-    const colorArray = [];
-
-    // Define the background and most intense colours
-    //  background colour is always constant, intense (foreground) dynamic based on colour picker element
-    const background = {r: 245 / 255, g: 245 / 255, b: 245 / 255, alpha: 1};
-    const intense = {r: r / 255, g: g / 255, b: b / 255, alpha: 1};
-
-    // Function to interpolate between two colours
-    function interpolateColor(start, end, t) {
-        return {
-            r: start.r + (end.r - start.r) * t,
-            g: start.g + (end.g - start.g) * t,
-            b: start.b + (end.b - start.b) * t,
-            alpha: start.alpha + (end.alpha - start.alpha) * t,
-        };
-    }
-
-    // Generate the 256 colours
-    for (let i = 0; i < 256; i++) {
-        const t = i / 255;  // Interpolation factor: from 0 (background) to 1 (most intense)
-        const color = interpolateColor(background, intense, t);
-        colorArray.push([color.r, color.g, color.b, color.alpha]);
-    }
-
-    return colorArray
-}
-
-function componentToHex(c) {
-    let hex = c.toString(16);
-    return hex.length == 1 ? "0" + hex : hex;
-}
-
-function rgbToHex(r, g, b) {
-    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
-}
-
-function hexToRgb(hex) {
-    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-        r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16)
-    } : null;
 }
 
 async function createSpect(audioFile, spectFMin = defaultFMin, spectFMax = defaultFMax, spectType = defaultSpectType,) {
@@ -842,7 +799,7 @@ function addFuncsToSidebarLinks() {
                 .then(data => {
                     console.log('Backend response:', data);
                     let funcToCall = routeFrontendResponse(action)
-                    let funcResponse = funcToCall(data)
+                    funcToCall(data)
                 })
                 .catch(error => {
                     console.error('Error:', error);
