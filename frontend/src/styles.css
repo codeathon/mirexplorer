@@ -208,7 +208,7 @@
 }
 
 .plugins-container {
-    @apply inline-flex flex-wrap gap-2 absolute left-[325px] top-[15px] right-[220px];
+    @apply inline-flex flex-wrap gap-2 absolute left-[325px] top-[15px] right-[320px];
 }
 
 .info-popup button {

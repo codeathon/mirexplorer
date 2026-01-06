@@ -190,7 +190,9 @@ function showChordsPopup() {
 function showLyricsPopup() {
     const lyricsEl = document.getElementsByClassName("explorer-lyrics-marker")
     let lyricsParsed = []
-    Array.from(lyricsEl).forEach(lyrics => {lyricsParsed.push(lyrics.innerText)})
+    Array.from(lyricsEl).forEach(lyrics => {
+        lyricsParsed.push(lyrics.innerText)
+    })
     let lyricsStr = lyricsParsed.join(" ")
 
     const viewPopup = createPopup();
@@ -209,6 +211,69 @@ function showLyricsPopup() {
     finalisePopup(viewPopup)
 }
 
+function showGenrePopup(pillId) {
+    console.log(pillId)
+
+    const genrePill = document.getElementById(pillId)
+    const pillText = genrePill.innerText.replace("Genre: ", "").replace("×", "").replace(/\s+$/, '')
+
+    const viewPopup = createPopup();
+    viewPopup.innerHTML = `
+    <h2>Genre</h2>
+    <p>
+        Music can be divided into many <strong>genres</strong>.
+    </p>
+    <p>
+        <strong>Genres</strong> help convey the mood, instruments, rhythm, and cultural background of the music. They can include styles like pop, rock, jazz, classical, hip-hop, or electronic.
+    </p>
+    <p>
+        AI has determined the <em>genre of the recording you uploaded</em> is: <em>${pillText}</em>. Can you think of any other songs in the same genre?
+    </p>
+    `
+    finalisePopup(viewPopup)
+}
+
+function showInstrumentPopup(pillId) {
+    const instrumentPill = document.getElementById(pillId)
+    const pillText = instrumentPill.innerText.replace("Instrument: ", "").replace("×", "").replace(/\s+$/, '')
+
+    const viewPopup = createPopup();
+    viewPopup.innerHTML = `
+    <h2>Instrument</h2>
+    <p>
+        Songs often feature many different <strong>musical instruments</strong>.
+    </p>
+    <p>
+        <strong>Instruments</strong> help shape the sound, mood, and style of a song. They can include instruments like guitar, piano, drums, violin, saxophone, or synthesizer.
+    </p>
+    <p>
+        AI has determined that <em>the recording you uploaded</em> contains the following instrument: <em>${pillText}</em>. Can you think of any other songs that also use this instrument?
+    </p>
+    `
+    finalisePopup(viewPopup)
+}
+
+function showMoodPopup(pillId) {
+    const moodPill = document.getElementById(pillId)
+    const pillText = moodPill.innerText.replace("Mood: ", "").replace("×", "").replace(/\s+$/, '')
+
+    const viewPopup = createPopup();
+    viewPopup.innerHTML = `
+    <h2>Mood</h2>
+    <p>
+        Songs can convey many different <strong>moods</strong> through their melodies, rhythm, and harmony.
+    </p>
+    <p>
+        <strong>Moods</strong> help listeners feel emotions like happiness, sadness, excitement, calm, or tension. The choice of instruments, tempo, and key all contribute to the mood of a song.
+    </p>
+    <p>
+        AI has determined that <em>the recording you uploaded</em> might evoke the following mood: <em>${pillText}</em>. Can you think of any other songs that evoke a similar mood?
+    </p>
+    `
+    finalisePopup(viewPopup)
+}
+
+
 function handleNewPlugin(pill) {
     if (pill.id === "plugin-beats") {
         pill.getElementsByTagName("div")[0].addEventListener("click", () => {
@@ -225,6 +290,18 @@ function handleNewPlugin(pill) {
     } else if (pill.id === "plugin-lyrics") {
         pill.getElementsByTagName("div")[0].addEventListener("click", () => {
             showLyricsPopup()
+        });
+    } else if (pill.id.includes("-genre-")) {
+        pill.getElementsByTagName("div")[0].addEventListener("click", () => {
+            showGenrePopup(pill.id)
+        });
+    } else if (pill.id.includes("-instrument-")) {
+        pill.getElementsByTagName("div")[0].addEventListener("click", () => {
+            showInstrumentPopup(pill.id)
+        });
+    } else if (pill.id.includes("-mood-")) {
+        pill.getElementsByTagName("div")[0].addEventListener("click", () => {
+            showMoodPopup(pill.id)
         });
     }
 }

@@ -727,7 +727,7 @@ function addGenrePills(response = null) {
     const container = document.getElementById("plugins-interface");
 
     response["out"].forEach(piller => {
-        let svgID = `plugin-${piller}`;
+        let svgID = `plugin-genre-${piller}`;
 
         // if the pill already exists, skip over creating again
         if (document.getElementById(svgID)) {
@@ -744,7 +744,7 @@ function addMoodPills(response = null) {
     const container = document.getElementById("plugins-interface");
 
     response["out"].forEach(piller => {
-        let svgID = `plugin-${piller}`;
+        let svgID = `plugin-mood-${piller}`;
 
         // if the pill already exists, skip over creating again
         if (document.getElementById(svgID)) {
@@ -761,7 +761,7 @@ function addInstrumentPills(response = null) {
     const container = document.getElementById("plugins-interface");
 
     response["out"].forEach(piller => {
-        let svgID = `plugin-${piller}`;
+        let svgID = `plugin-instrument-${piller}`;
 
         // if the pill already exists, skip over creating again
         if (document.getElementById(svgID)) {
