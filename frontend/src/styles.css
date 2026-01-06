@@ -207,6 +207,10 @@
     margin-bottom: 0;
 }
 
+.plugins-container {
+    @apply inline-flex flex-wrap gap-2 absolute left-[325px] top-[15px] right-[220px];
+}
+
 .info-popup button {
     @apply font-accent text-lg p-0 ml-[4px] cursor-pointer bg-transparent border-none absolute right-10 top-5
 }
@@ -258,5 +262,5 @@
 }
 
 .explorer-chord-label {
-    @apply bottom-[-260px] font-display text-lg absolute pointer-events-none left-2
+    @apply bottom-[-260px] font-display text-lg absolute pointer-events-none left-1
 }

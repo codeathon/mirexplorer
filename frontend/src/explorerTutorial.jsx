@@ -138,10 +138,68 @@ function showBeatsPopup() {
 }
 
 
+function showKeyPopup() {
+    const keyPill = document.getElementById("plugin-key")
+    const keyText = keyPill.innerText.replace("Key: ", "").replace("×", "").replace(/\s+$/, '')
+
+    let keyTextExtra;
+
+    if (keyText.toLowerCase().includes("minor")) {
+        keyTextExtra = "<strong>Minor</strong> keys may feel sad or angry. Can you think of any other songs that might be in a <em>minor</em> key?"
+    } else {
+        keyTextExtra = "<strong>Major</strong> keys may feel happy or upbeat. Can you think of any other songs that might be in a <em>major</em> key?"
+    }
+
+    const viewPopup = createPopup();
+    viewPopup.innerHTML = `
+    <h2>Key</h2>
+    <p>
+        Music is often written using a specific group of notes called a <strong>key</strong>.
+    </p>
+    <p>
+        The <strong>key</strong> is like the home base of the music. It tells you which notes sound most natural and which note feels like the main "home" note.
+    </p>
+    <p>
+        AI has determined that the key of <em>the recording you uploaded</em> is <strong>${keyText}.</strong> ${keyTextExtra}
+    </p>
+    `
+    finalisePopup(viewPopup)
+}
+
+function showChordsPopup() {
+    const viewPopup = createPopup();
+    viewPopup.innerHTML = `
+    <h2>Chords</h2>
+    <p>
+        Many types of music use groups of notes played together called <strong>chords</strong>.
+    </p>
+    <p>
+       A <strong>chord</strong> is made when multiple notes are played at the same time. Chords help give music its sound and feeling.
+    </p>
+    <p>
+        Musicians often play chords in patterns called chord progressions so the music flows smoothly. For example, many pop songs use just a few repeating chords.
+    </p>
+    <p>
+        You can hear chords in almost every style of music, from rock and jazz to pop and classical. When you hear several notes played at the same time, you’re hearing a chord!
+    </p>
+    `
+    finalisePopup(viewPopup)
+}
+
+
+
 function handleNewPlugin(pill) {
     if (pill.id === "plugin-beats") {
         pill.getElementsByTagName("div")[0].addEventListener("click", () => {
             showBeatsPopup()
+        });
+    } else if (pill.id === "plugin-key") {
+        pill.getElementsByTagName("div")[0].addEventListener("click", () => {
+            showKeyPopup()
+        });
+    } else if (pill.id === "plugin-chords") {
+        pill.getElementsByTagName("div")[0].addEventListener("click", () => {
+            showChordsPopup()
         });
     }
 }
