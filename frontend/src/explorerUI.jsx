@@ -177,10 +177,20 @@ async function finaliseSurfer(surfer) {
             regionContent.textContent = "Loop"
             regionContent.style.fontFamily = '"TASA Orbiter Display", serif'
             regionContent.style.fontWeight = "400"
+
+            // automatically set looping to true
+            looping = false
+            handleLoopButton()
         }
 
     });
 
+    // double click of loop region: remove all regions and turn off looping
+    loopRegion.on("region-double-clicked", () => {
+        loopRegion.clearRegions()
+        looping = true
+        handleLoopButton()
+    })
 
     // time functionality
     const timeEl = document.getElementById('waveform-time');
@@ -565,19 +575,23 @@ function addBeatPluginPill() {
     svg.setAttribute("xmlns", svgNS);
     svg.setAttribute("viewBox", "0 0 16 16");
     svg.setAttribute("fill", "#000000");
-    svg.id = "plugin-icon";
+    svg.setAttribute("stroke", "#000000");
     svg.setAttribute("height", "16");
     svg.setAttribute("width", "16");
+    svg.id = "plugin-icon";
 
     const path = document.createElementNS(svgNS, "path");
     path.setAttribute("d", "m12.8297625 6.92526875 2.1870375 -2.4059c0.3337625 -0.376225 0.1350875 -0.972675 -0.3576125 -1.0736125 -0.22319375 -0.045725 -0.4540875 0.028125 -0.609325 0.19488125l-1.67825 1.84566875 -1.4046625 -4.41571875c-0.17118125 -0.54333125 -0.67575625 -0.91225 -1.24541875 -0.91058125h-3.44388125c-0.56965625 -0.00166875 -1.07423125 0.36725 -1.2454125 0.91058125L0.8745875 14.13725C0.6065 14.98005 1.23559375 15.84015625 2.12 15.84h11.76c0.88440625 0.00015625 1.5135 -0.85995 1.2454125 -1.70275Zm-0.19763125 3.68806875h-3.1556l2.3373 -2.57086875ZM6.27765 1.466675h3.44388125l1.63333125 5.13683125 -3.6439625 4.00983125H3.36705ZM2.12 14.53333125 2.95136875 11.92H13.0478125l0.8321875 2.61333125Z");
     path.setAttribute("stroke-width", "0.0625");
+    path.setAttribute("stroke-linecap", "round");
+    path.setAttribute("stroke-linejoin", "round");
+
     svg.appendChild(path);
 
     const textDiv = document.createElement("div");
     textDiv.id = "plugin-text";
     textDiv.classList.add("explorer-plugin-pill-text");
-    textDiv.classList.add("text-gradient-lines")
+    // textDiv.classList.add("text-gradient-lines")
     textDiv.innerText = "Beats";
 
     const closeBtn = document.createElement("button");
@@ -693,9 +707,114 @@ function addBeatMarkers(response = null) {
 }
 
 
+function addPill(pillPath, pillID, pillText) {
+    const pluginDiv = document.createElement("div");
+    pluginDiv.id = pillID;
+    pluginDiv.classList.add("explorer-plugin-pill");
+
+    const svgNS = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(svgNS, "svg");
+    svg.setAttribute("xmlns", svgNS);
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("fill", "none");
+    svg.setAttribute("stroke", "#000000");
+    svg.setAttribute("height", "16");
+    svg.setAttribute("width", "16");
+    svg.id = "plugin-icon";
+
+    const path = document.createElementNS(svgNS, "path");
+    path.setAttribute("d", pillPath);
+    path.setAttribute("stroke-width", "0.5");
+    path.setAttribute("stroke-linecap", "round");
+    path.setAttribute("stroke-linejoin", "round");
+
+    svg.appendChild(path);
+    document.body.appendChild(svg);
+
+    const textDiv = document.createElement("div");
+    textDiv.id = "plugin-text";
+    textDiv.classList.add("explorer-plugin-pill-text");
+    textDiv.innerText = pillText;
+
+    const closeBtn = document.createElement("button");
+    closeBtn.classList.add("explorer-plugin-pill-close")
+    closeBtn.innerText = "×";
+
+    closeBtn.addEventListener("click", () => {
+        pluginDiv.remove()
+    });
+
+    pluginDiv.appendChild(svg);
+    pluginDiv.appendChild(textDiv);
+    pluginDiv.appendChild(closeBtn)
+
+    addHoverStyle(pluginDiv, [textDiv, svg])
+
+    return pluginDiv
+}
+
+
+function addGenrePills(response = null) {
+    const container = document.getElementById("plugins-interface");
+
+    response["out"].forEach(piller => {
+        let svgID = `plugin-${piller}`;
+
+        // if the pill already exists, skip over creating again
+        if (document.getElementById(svgID)) {
+            return
+        }
+
+        let svgPath = "m20.893 13.393-1.135-1.135a2.252 2.252 0 0 1-.421-.585l-1.08-2.16a.414.414 0 0 0-.663-.107.827.827 0 0 1-.812.21l-1.273-.363a.89.89 0 0 0-.738 1.595l.587.39c.59.395.674 1.23.172 1.732l-.2.2c-.212.212-.33.498-.33.796v.41c0 .409-.11.809-.32 1.158l-1.315 2.191a2.11 2.11 0 0 1-1.81 1.025 1.055 1.055 0 0 1-1.055-1.055v-1.172c0-.92-.56-1.747-1.414-2.089l-.655-.261a2.25 2.25 0 0 1-1.383-2.46l.007-.042a2.25 2.25 0 0 1 .29-.787l.09-.15a2.25 2.25 0 0 1 2.37-1.048l1.178.236a1.125 1.125 0 0 0 1.302-.795l.208-.73a1.125 1.125 0 0 0-.578-1.315l-.665-.332-.091.091a2.25 2.25 0 0 1-1.591.659h-.18c-.249 0-.487.1-.662.274a.931.931 0 0 1-1.458-1.137l1.411-2.353a2.25 2.25 0 0 0 .286-.76m11.928 9.869A9 9 0 0 0 8.965 3.525m11.928 9.868A9 9 0 1 1 8.965 3.525"
+        let pillDiv = addPill(svgPath, svgID, piller)
+        container.appendChild(pillDiv)
+    })
+}
+
+function addMoodPills(response = null) {
+    const container = document.getElementById("plugins-interface");
+
+    response["out"].forEach(piller => {
+        let svgID = `plugin-${piller}`;
+
+        // if the pill already exists, skip over creating again
+        if (document.getElementById(svgID)) {
+            return
+        }
+
+        let svgPath = "M15.182 15.182a4.5 4.5 0 0 1-6.364 0M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Z"
+        let pillDiv = addPill(svgPath, svgID, piller)
+        container.appendChild(pillDiv)
+    })
+}
+
+function addInstrumentPills(response = null) {
+    const container = document.getElementById("plugins-interface");
+
+    response["out"].forEach(piller => {
+        let svgID = `plugin-${piller}`;
+
+        // if the pill already exists, skip over creating again
+        if (document.getElementById(svgID)) {
+            return
+        }
+
+        let svgPath = "m9 9 10.5-3m0 6.553v3.75a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a1.803 1.803 0 1 1-.99-3.467l2.31-.66a2.25 2.25 0 0 0 1.632-2.163Zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a1.803 1.803 0 0 1-.99-3.467l2.31-.66A2.25 2.25 0 0 0 9 15.553Z"
+        let pillDiv = addPill(svgPath, svgID, piller)
+        container.appendChild(pillDiv)
+    })
+}
+
+
 function routeFrontendResponse(actionName) {
     if (actionName === "Beat Tracking") {
         return addBeatMarkers
+    } else if (actionName === "Genre Identification") {
+        return addGenrePills
+    } else if (actionName === "Mood Identification") {
+        return addMoodPills
+    } else if (actionName === "Instrument Identification") {
+        return addInstrumentPills
     } else {
         throw new Error(`Action ${actionName} unknown`)
     }

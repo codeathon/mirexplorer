@@ -177,7 +177,7 @@
 }
 
 .explorer-plugin-pill-text {
-    @apply whitespace-nowrap text-lg font-accent pl-2 text-gray-800
+    @apply whitespace-nowrap text-lg font-display pl-2 text-gray-800 cursor-pointer
 }
 
 .explorer-plugin-pill-close {

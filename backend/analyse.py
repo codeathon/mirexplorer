@@ -20,7 +20,7 @@ MOISES_HEADERS = {"Authorization": os.environ.get("MOISES_TOKEN")}
 TIMEOUT_SECONDS = 30
 BACKOFF_SECONDS = 5
 
-MAX_TAGS = 5
+MAX_TAGS = 3
 GENRE_MAPPING = {
     "electronicDance": "Electronic & Dance",
     "folkCountry": "Folk & Country",
@@ -64,7 +64,7 @@ def genre_identification(_, filename) -> list[str]:
         genres = [genres]
 
     # Map genres correctly
-    return [GENRE_MAPPING[g] if g in GENRE_MAPPING else g.title() for g in genres][:MAX_TAGS]
+    return ["Genre: " + GENRE_MAPPING[g] if g in GENRE_MAPPING else "Genre: " + g.title() for g in genres][:MAX_TAGS]
 
 
 def instrument_identification(_, filename) -> list[str]:
@@ -77,7 +77,7 @@ def instrument_identification(_, filename) -> list[str]:
         instruments = [instruments]
 
     # Map genres correctly
-    return [INSTRUMENT_MAPPING[g].title() if g in GENRE_MAPPING else g.title() for g in instruments][:MAX_TAGS]
+    return ["Instrument: " + INSTRUMENT_MAPPING[g] if g in INSTRUMENT_MAPPING else "Instrument: " + g.title() for g in instruments][:MAX_TAGS]
 
 
 
@@ -91,7 +91,7 @@ def mood_identification(_, filename) -> list[str]:
         mood = [mood]
 
     # No need for a mapping, these are all one word anyway
-    return [m.title() for m in mood][:MAX_TAGS]
+    return ["Mood: " + m.title() for m in mood][:MAX_TAGS]
 
 
 def route_to_function(function_name) -> Callable:
