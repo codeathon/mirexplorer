@@ -41,6 +41,8 @@ let beatsRegions = null
 
 let chords = null
 
+let lyrics = null
+
 let loopRegion = RegionsPlugin.create()
 
 
@@ -888,6 +890,124 @@ function addChordPills(response = null) {
 
 }
 
+function addLyricMarkers() {
+    // check if we have chords
+    if (!lyrics) {
+        return
+    }
+
+    // start by removing any existing chord markers
+    removeLyricsMarkers()
+
+    const container = document.getElementById("waveform-container");
+    const containerWidth = container.offsetWidth;
+    const duration = wavesurfer.getDuration();
+
+    // add label for lyrics
+    const lyricsLabel = document.createElement("div")
+    lyricsLabel.className = "explorer-lyrics-label"
+    lyricsLabel.innerText = "Lyrics"
+    container.appendChild(lyricsLabel)
+
+    let wordCounter = 0
+
+    const markers = [];
+
+    lyrics.forEach(word => {
+        let wordName = word.word;
+        let wordStart = word.start;
+        let wordEnd = word.end;
+
+        // skip words near the end of the excerpt
+        if (wordEnd > 29) {
+            return
+        }
+
+        let wordId = `word-label-${wordCounter}`;
+
+        if (document.getElementById(wordId)) return;
+
+        const wordDiv = document.createElement("div");
+        wordDiv.id = wordId;
+        wordDiv.className = "explorer-lyrics-marker";
+        wordDiv.innerText = wordName;
+
+        let x = (wordStart / duration) * containerWidth;
+
+        container.appendChild(wordDiv);
+        const width = wordDiv.offsetWidth;
+
+        let collision = true;
+        while (collision) {
+            collision = false;
+            for (const m of markers) {
+                const mLeft = m.x;
+                const mRight = m.x + m.width;
+
+                if (x < mRight && x + width > mLeft) {
+                    x = mRight + 6;
+                    collision = true;
+                }
+            }
+        }
+
+        if (x > containerWidth) {
+            return
+        }
+
+        wordDiv.style.left = `${x}px`;
+
+        markers.push({x, width});
+        wordCounter++;
+    });
+
+}
+
+
+function removeLyricsMarkers() {
+    ["explorer-lyrics-marker", "explorer-lyrics-label"].forEach(clsName => {
+        let els = document.getElementsByClassName(clsName)
+        Array.from(els).forEach(lyr => {
+            lyr.remove()
+        })
+    })
+}
+
+
+function addLyricPills(response = null) {
+    // add chord markers and watch resize
+    lyrics = response["out"]
+
+    const observer = new ResizeObserver(() => {
+        addLyricMarkers()
+    });
+    observer.observe(document.getElementById("waveform-container"));
+
+    // add a general chord pill
+    let svgID = `plugin-lyrics`;
+
+    // if the pill already exists, skip over creating again
+    if (document.getElementById(svgID)) {
+        return
+    }
+
+    // create the pill
+    let svgPath = "m10.5 21 5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 0 1 6-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 0 1-3.827-5.802"
+    let pillDiv = addPill(svgPath, svgID, "Lyrics")
+
+    // need to update close function of pill
+    let closeBtn = pillDiv.querySelector("button")
+    closeBtn.addEventListener("click", () => {
+        lyrics = null
+        removeLyricsMarkers()
+    });
+
+    // add to the container
+    const container = document.getElementById("plugins-interface");
+    container.appendChild(pillDiv)
+}
+
+
 function routeFrontendResponse(actionName) {
     if (actionName === "Beat Tracking") {
         return addBeatMarkers
@@ -901,6 +1021,8 @@ function routeFrontendResponse(actionName) {
         return addKeyPill
     } else if (actionName === "Chord Transcription") {
         return addChordPills
+    } else if (actionName === "Lyrics Transcription") {
+        return addLyricPills
     } else {
         throw new Error(`Action ${actionName} unknown`)
     }
@@ -931,6 +1053,8 @@ function addFuncsToSidebarLinks() {
                 .then(async response => {
                     if (!response.ok) {
                         let responseText = await response.text()
+                        let responseJSON = JSON.parse(responseText)
+                        alert(`Encountered an error in ${action}. Please try again later.\n\nError message: ${responseJSON["error"]}`)
                         throw new Error('Backend response was not ok' + responseText);
                     }
                     return response.json();

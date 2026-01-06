@@ -258,9 +258,17 @@
 }
 
 .explorer-chord-marker {
-    @apply bottom-[-280px] absolute pointer-events-none font-display text-base
+    @apply bottom-[-280px] absolute pointer-events-none font-accent text-sm
 }
 
 .explorer-chord-label {
     @apply bottom-[-260px] font-display text-lg absolute pointer-events-none left-1
+}
+
+.explorer-lyrics-marker {
+    @apply bottom-[-340px] font-accent text-sm absolute pointer-events-none
+}
+
+.explorer-lyrics-label {
+    @apply bottom-[-320px] font-display text-lg absolute pointer-events-none left-1
 }

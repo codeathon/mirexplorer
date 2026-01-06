@@ -46,7 +46,7 @@ ROOT_NOTES = [
     "Db", "Eb", "Fb", "Gb", "Ab", "Bb"
 ]
 
-LYRICS_THRESHOLD = 0.8    # words with confidence scores below this threshold will be rejected
+LYRICS_THRESHOLD = 0.3    # words with confidence scores below this threshold will be rejected
 
 
 @cache.memoize()
@@ -132,7 +132,7 @@ def lyrics_transcription(_, filename) -> list[dict]:
 
             # malformed results: set score to 0
             score = words["score"] if "score" in words.keys() and isinstance(words["score"], float) else 0
-            if score < LYRICS_THRESHOLD:
+            if score <= LYRICS_THRESHOLD:
                 logger.warning(f"Lyrics score for word {words['word']} (start {words['start']}, end {words['end']}) below threshold: score {score}")
                 continue
 

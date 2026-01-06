@@ -187,6 +187,27 @@ function showChordsPopup() {
 }
 
 
+function showLyricsPopup() {
+    const lyricsEl = document.getElementsByClassName("explorer-lyrics-marker")
+    let lyricsParsed = []
+    Array.from(lyricsEl).forEach(lyrics => {lyricsParsed.push(lyrics.innerText)})
+    let lyricsStr = lyricsParsed.join(" ")
+
+    const viewPopup = createPopup();
+    viewPopup.innerHTML = `
+    <h2>Lyrics</h2>
+    <p>
+        Many types of music use <strong>lyrics</strong>, which are the words sung in a song.
+    </p>
+    <p>
+        <strong>Lyrics</strong> help convey the song’s story, emotion, and meaning. They can be written in English or any other language, like Spanish, French, Japanese, or Hindi.
+    </p>
+    <p>
+        AI has determined the lyrics of <em>the recording you uploaded</em> are: <em>${lyricsStr}</em>
+    </p>
+    `
+    finalisePopup(viewPopup)
+}
 
 function handleNewPlugin(pill) {
     if (pill.id === "plugin-beats") {
@@ -200,6 +221,10 @@ function handleNewPlugin(pill) {
     } else if (pill.id === "plugin-chords") {
         pill.getElementsByTagName("div")[0].addEventListener("click", () => {
             showChordsPopup()
+        });
+    } else if (pill.id === "plugin-lyrics") {
+        pill.getElementsByTagName("div")[0].addEventListener("click", () => {
+            showLyricsPopup()
         });
     }
 }
