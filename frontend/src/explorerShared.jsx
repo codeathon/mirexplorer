@@ -59,3 +59,50 @@ export function generateCmap(r, g, b) {
 
     return colorArray
 }
+
+export function createPopup() {
+    const infoPopup = document.createElement('div');
+    infoPopup.classList.add('info-popup');
+    infoPopup.id = ".info-popup"
+    return infoPopup
+}
+
+export function createSpinner() {
+    const spinner = document.createElement('div');
+    spinner.classList.add('popup-spinner');
+    spinner.id = ".popup-spinner"
+    return spinner
+}
+
+export function finalisePopup(popup, allowClose = true) {
+    if (allowClose) {
+        const closeBtn = document.createElement("button");
+        closeBtn.innerText = "×";
+        closeBtn.addEventListener("click", () => {
+            closePopup(popup.id)
+        });
+        popup.appendChild(closeBtn)
+    }
+
+    document.body.appendChild(popup);
+
+    popup.style.display = 'block';
+    document.getElementById('explorer-overlay').style.display = 'block';
+
+    // disable all buttons, add blur
+    blurContent()
+}
+
+
+export function closePopup(popupID, unblur = true) {
+    const popup = document.querySelector(popupID);
+    if (popup) {
+        popup.style.display = 'none';
+        document.body.removeChild(popup);
+    }
+    document.getElementById('explorer-overlay').style.display = 'none';
+
+    // unblur content, enable buttons
+    unblurContent()
+
+}

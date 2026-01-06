@@ -1,7 +1,15 @@
 import WaveSurfer from 'wavesurfer.js';
 import Spectrogram from 'wavesurfer.js/dist/plugins/spectrogram.esm.js';
 import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.esm.js';
-import {hexToRgb, rgbToHex, generateCmap} from "./explorerShared";
+import {
+    hexToRgb,
+    rgbToHex,
+    generateCmap,
+    finalisePopup,
+    closePopup,
+    createPopup,
+    createSpinner
+} from "./explorerShared";
 
 let sampleRate = 22050;
 let gridResolutionSecs = 5
@@ -464,6 +472,53 @@ async function colourChanged() {
     }
 }
 
+function addPill(pillPath, pillID, pillText) {
+    const pluginDiv = document.createElement("div");
+    pluginDiv.id = pillID;
+    pluginDiv.classList.add("explorer-plugin-pill");
+
+    const svgNS = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(svgNS, "svg");
+    svg.setAttribute("xmlns", svgNS);
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("fill", "none");
+    svg.setAttribute("stroke", "#000000");
+    svg.setAttribute("height", "16");
+    svg.setAttribute("width", "16");
+    svg.id = "plugin-icon";
+
+    const path = document.createElementNS(svgNS, "path");
+    path.setAttribute("d", pillPath);
+    path.setAttribute("stroke-width", "0.5");
+    path.setAttribute("stroke-linecap", "round");
+    path.setAttribute("stroke-linejoin", "round");
+
+    svg.appendChild(path);
+    document.body.appendChild(svg);
+
+    const textDiv = document.createElement("div");
+    textDiv.id = "plugin-text";
+    textDiv.classList.add("explorer-plugin-pill-text");
+    textDiv.innerText = pillText;
+
+    const closeBtn = document.createElement("button");
+    closeBtn.classList.add("explorer-plugin-pill-close")
+    closeBtn.innerText = "×";
+
+    closeBtn.addEventListener("click", () => {
+        pluginDiv.remove()
+    });
+
+    pluginDiv.appendChild(svg);
+    pluginDiv.appendChild(textDiv);
+    pluginDiv.appendChild(closeBtn)
+
+    addHoverStyle(pluginDiv, [textDiv, svg])
+
+    return pluginDiv
+}
+
+
 function addHoverStyle(hoverElement, transformElements = null) {
     if (!transformElements) transformElements = [hoverElement];
 
@@ -659,57 +714,11 @@ function addBeatMarkers(response = null) {
 
     // load up click track
     wavesurfer.load(getClickPath(window.audio_url))
-    wavesurfer.pause()
-    wavesurfer.seekTo(0.0);
-}
-
-
-function addPill(pillPath, pillID, pillText) {
-    const pluginDiv = document.createElement("div");
-    pluginDiv.id = pillID;
-    pluginDiv.classList.add("explorer-plugin-pill");
-
-    const svgNS = "http://www.w3.org/2000/svg";
-    const svg = document.createElementNS(svgNS, "svg");
-    svg.setAttribute("xmlns", svgNS);
-    svg.setAttribute("viewBox", "0 0 24 24");
-    svg.setAttribute("fill", "none");
-    svg.setAttribute("stroke", "#000000");
-    svg.setAttribute("height", "16");
-    svg.setAttribute("width", "16");
-    svg.id = "plugin-icon";
-
-    const path = document.createElementNS(svgNS, "path");
-    path.setAttribute("d", pillPath);
-    path.setAttribute("stroke-width", "0.5");
-    path.setAttribute("stroke-linecap", "round");
-    path.setAttribute("stroke-linejoin", "round");
-
-    svg.appendChild(path);
-    document.body.appendChild(svg);
-
-    const textDiv = document.createElement("div");
-    textDiv.id = "plugin-text";
-    textDiv.classList.add("explorer-plugin-pill-text");
-    textDiv.innerText = pillText;
-
-    const closeBtn = document.createElement("button");
-    closeBtn.classList.add("explorer-plugin-pill-close")
-    closeBtn.innerText = "×";
-
-    closeBtn.addEventListener("click", () => {
-        pluginDiv.remove()
+    wavesurfer.on("ready", function () {
+        handlePlayButton()
+        wavesurfer.stop()
     });
-
-    pluginDiv.appendChild(svg);
-    pluginDiv.appendChild(textDiv);
-    pluginDiv.appendChild(closeBtn)
-
-    addHoverStyle(pluginDiv, [textDiv, svg])
-
-    return pluginDiv
 }
-
 
 function addGenrePills(response = null) {
     const container = document.getElementById("plugins-interface");
@@ -784,6 +793,16 @@ function addFuncsToSidebarLinks() {
         link.addEventListener('click', async function (e) {
             e.preventDefault();
             const action = this.innerText.trim();
+
+            // blur content and display a spinner while waiting for backend response
+            let popup = createPopup()
+            popup.innerHTML = `
+                <h2>${action}</h2>
+            `;
+            let spinner = createSpinner()
+            popup.appendChild(spinner)
+            finalisePopup(popup, false);
+
             fetch('/trigger_action', {
                 method: 'POST', headers: {
                     'Content-Type': 'application/json'
@@ -803,6 +822,11 @@ function addFuncsToSidebarLinks() {
                 })
                 .catch(error => {
                     console.error('Error:', error);
+                })
+                // we've received the response from the backend or errored (e.g. timed out)
+                .finally(() => {
+                    // remove the popup and unblur the screen
+                    closePopup(popup.id, true)
                 });
         });
     });

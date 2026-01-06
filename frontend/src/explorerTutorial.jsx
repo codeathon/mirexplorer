@@ -1,4 +1,4 @@
-import {unblurContent, blurContent} from "./explorerShared.jsx";
+import {finalisePopup, createPopup} from "./explorerShared.jsx";
 
 function getState() {
     let currentShown = document.getElementById("explorer-current-shown-label").textContent
@@ -7,14 +7,6 @@ function getState() {
     } else {
         return "spect"
     }
-}
-
-
-function createPopup() {
-    const infoPopup = document.createElement('div');
-    infoPopup.classList.add('info-popup');
-    infoPopup.id = ".info-popup"
-    return infoPopup
 }
 
 
@@ -30,38 +22,6 @@ function showInfoPopup() {
             `;
     finalisePopup(infoPopup)
 }
-
-
-function finalisePopup(popup) {
-    const closeBtn = document.createElement("button");
-    closeBtn.innerText = "×";
-    closeBtn.addEventListener("click", () => {
-        closePopup(popup.id)
-    });
-
-    popup.appendChild(closeBtn)
-    document.body.appendChild(popup);
-
-    popup.style.display = 'block';
-    document.getElementById('explorer-overlay').style.display = 'block';
-
-    // disable all buttons, add blur
-    blurContent()
-}
-
-
-function closePopup(popupID) {
-    const popup = document.querySelector(popupID);
-    if (popup) {
-        popup.style.display = 'none';
-        document.body.removeChild(popup);
-    }
-    document.getElementById('explorer-overlay').style.display = 'none';
-
-    // unblur content, enable buttons
-    unblurContent()
-}
-
 
 function showCurrentViewPopup() {
     const viewPopup = createPopup()
