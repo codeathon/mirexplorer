@@ -979,7 +979,9 @@ function addLyricPills(response = null) {
     lyrics = response["out"]
 
     const observer = new ResizeObserver(() => {
-        addLyricMarkers()
+        if (lyrics) {
+            addLyricMarkers()
+        }
     });
     observer.observe(document.getElementById("waveform-container"));
 
@@ -1074,6 +1076,54 @@ function addFuncsToSidebarLinks() {
                 });
         });
     });
+}
+
+function clearAllPills() {
+    [removeBeatMarkers, removeChordMarkers, removeLyricsMarkers].forEach(func => {
+        try {
+            func()
+        }
+        catch { }
+    })
+
+    const pills = document.querySelectorAll('.explorer-plugin-pill');
+    pills.forEach(pill => {
+        pill.remove()
+    })
+}
+
+
+function manageClearPluginsButton() {
+    const clearButton = document.getElementById('clear-plugins-button');
+
+    function updateButtonVisibility() {
+        const pills = document.querySelectorAll('.explorer-plugin-pill');
+        if (pills.length > 0) {
+            clearButton.style.display = 'block';
+        } else {
+            clearButton.style.display = 'none';
+        }
+    }
+
+    updateButtonVisibility();
+
+    const observer = new MutationObserver((mutationsList) => {
+        for (const mutation of mutationsList) {
+            if (mutation.type === 'childList') {
+                updateButtonVisibility();
+            }
+        }
+    });
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
+    // remove all plugins when added
+    clearButton.addEventListener("click", () => {
+        clearAllPills()
+    })
+
 }
 
 
@@ -1180,4 +1230,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // add backend functionality to siderbar links
     addFuncsToSidebarLinks()
+
+    // manage clear plugins button: show when plugins added, hide otherwise
+    manageClearPluginsButton()
 });

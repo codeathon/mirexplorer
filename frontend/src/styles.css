@@ -125,7 +125,11 @@
 }
 
 .explorer-viewas-button {
-    @apply fixed bottom-6 right-6 px-4 py-3 rounded-lg bg-gray-200 border-2 border-gray-300 hover:bg-gray-300 shadow-lg z-50
+    @apply fixed bottom-6 right-6 px-4 py-3 rounded-lg bg-gray-200 border-2 border-gray-300 hover:bg-gray-300 shadow-lg z-50 flex font-accent items-center gap-4 text-xl
+}
+
+.explorer-clear-plugins-button {
+    @apply fixed top-16 right-6 px-4 py-3 rounded-lg bg-gray-200 border-2 border-gray-300 hover:bg-gray-300 shadow-lg z-50 flex font-accent items-center gap-4 text-xl hidden
 }
 
 .explorer-viewas-option {
