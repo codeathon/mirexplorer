@@ -9,5 +9,5 @@ install:
 dev: install
 	@echo "Starting frontend + backend..."
 	@trap "kill 0" EXIT; \
-		flask vite start & \
+		poetry run flask vite start & \
 		poetry run python app.py
