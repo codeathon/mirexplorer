@@ -43,6 +43,13 @@ let chords = null
 
 let lyrics = null
 
+let timeSignatureContainer = null
+let keyContainer = null
+let genresContainer = null
+let moodsContainer = null
+let eraContainer = null
+let instrumentsContainer = null
+
 let loopRegion = RegionsPlugin.create()
 
 
@@ -724,6 +731,8 @@ function addBeatMarkers(response = null) {
 }
 
 function addGenrePills(response = null) {
+    genresContainer = response["out"]
+
     const container = document.getElementById("plugins-interface");
 
     response["out"].forEach(piller => {
@@ -741,6 +750,8 @@ function addGenrePills(response = null) {
 }
 
 function addMoodPills(response = null) {
+    moodsContainer = response["out"]
+
     const container = document.getElementById("plugins-interface");
 
     response["out"].forEach(piller => {
@@ -758,6 +769,8 @@ function addMoodPills(response = null) {
 }
 
 function addInstrumentPills(response = null) {
+    instrumentsContainer = response["out"]
+
     const container = document.getElementById("plugins-interface");
 
     response["out"].forEach(piller => {
@@ -775,6 +788,8 @@ function addInstrumentPills(response = null) {
 }
 
 function addKeyPill(response = null) {
+    keyContainer = response["out"]
+
     // skip over creating pill if it exists
     let svgId = "plugin-key"
     if (document.getElementById(svgId)) {
@@ -1009,11 +1024,85 @@ function addLyricPills(response = null) {
     container.appendChild(pillDiv)
 }
 
+function getChatHistoryFromDOM() {
+    const messages = [];
+    const items = document.querySelectorAll("#chat-message-container li");
+
+    items.forEach(li => {
+        const div = li.firstElementChild;
+        if (!div) return;
+
+        if (div.classList.contains("chat-user-message")) {
+            messages.push({role: "user", content: div.textContent});
+        } else if (div.classList.contains("chat-assistant-message")) {
+            messages.push({role: "assistant", content: div.textContent});
+        }
+    });
+
+    return messages;
+}
+
 
 function sendUserMessage(text) {
-    const messageContainer = document.getElementById("chat-message-container")
+    if (!text) return;
 
-    console.log(messageContainer, text)
+    const messageContainer = document.getElementById("chat-message-container");
+
+    const li = document.createElement("li");
+    li.className = "flex justify-end";
+    const div = document.createElement("div");
+    div.className = "chat-user-message relative";
+    div.textContent = text;
+
+    li.appendChild(div);
+    messageContainer.appendChild(li);
+    messageContainer.scrollTop = messageContainer.scrollHeight;
+
+    const chatHistory = getChatHistoryFromDOM()
+    const chatDeps = JSON.stringify({
+        user_message: text,
+        filepath: window.audio_url,
+        message_history: chatHistory,
+        key: keyContainer,
+        time_signature: timeSignatureContainer,
+        genres: genresContainer,
+        instruments: instrumentsContainer,
+        mood: moodsContainer,
+        era: eraContainer,
+        lyrics: lyrics,
+        chords: chords
+    })
+
+    // wait for an openAI response here on the frontend
+    fetch('/send_message', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: chatDeps
+    })
+        .then(async response => {
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error("Backend error:", errorText);
+                throw new Error(errorText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            const li = document.createElement("li");
+            li.className = "flex justify-start";
+            const div = document.createElement("div");
+            div.className = "chat-assistant-message relative";
+            div.textContent = data.out;
+
+            li.appendChild(div);
+            messageContainer.appendChild(li);
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        })
 }
 
 
@@ -1056,14 +1145,9 @@ function startChat(response = null) {
     messages.className = "chat-message-container";
     messages.id = "chat-message-container"
     messages.innerHTML = `
-        <li class="items-end">
-            <div class="chat-user-message">
-                User message
-            </div>
-        </li>
-        <li class="items-start">
+        <li class="flex justify-start">
             <div class="chat-assistant-message">
-                Assistant message
+                Hi there! You can ask me any questions you might have about your music or recording. What would you like to know?
             </div>
         </li>
     `;
@@ -1095,13 +1179,17 @@ function startChat(response = null) {
     });
     const replyButton = document.getElementById("chat-sendmessage-button")
     const userReply = document.getElementById("chat-userreply")
-    replyButton.addEventListener("click", () => {sendUserMessage(userReply.textContent)});
+    replyButton.addEventListener("click", () => {
+        sendUserMessage(userReply.value)
+    });
 
     return chatContainer;
 }
 
 
 function addTimeSignaturePill(response = null) {
+    timeSignatureContainer = response["out"]
+
     // skip over creating pill if it exists
     let svgId = "plugin-timesignature"
     if (document.getElementById(svgId)) {
@@ -1119,6 +1207,8 @@ function addTimeSignaturePill(response = null) {
 }
 
 function addEraPill(response = null) {
+    eraContainer = response["out"]
+
     // skip over creating pill if it exists
     let svgId = "plugin-era"
     if (document.getElementById(svgId)) {

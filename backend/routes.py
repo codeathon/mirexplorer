@@ -128,3 +128,36 @@ def service():
 @main_routes.route("/contact")
 def contact():
     return render_template("contact.html", app_data=app_data)
+
+
+@main_routes.route("/send_message", methods=["POST"])
+async def send_message():
+    from backend.chat import AGENT, convert_openai_to_pydantic
+
+    data = request.get_json()
+    user_message = data.get("user_message")
+    filepath = data.get("filepath")
+    message_history = convert_openai_to_pydantic(data.get("message_history"))
+
+    full_path = UPLOADS_FOLDER / Path(filepath).name
+    try:
+        result = await AGENT.run(
+            user_message,
+            deps={
+                "filename": full_path,
+                "key": data.get("key"),
+                "time_signature": data.get("time_signature"),
+                "genres": data.get("genres"),
+                "instruments": data.get("instruments"),
+                "mood": data.get("mood"),
+                "era": data.get("era"),
+                "lyrics": data.get("lyrics"),
+                "chords": data.get("chords"),
+            },
+            message_history=message_history
+        )
+    except Exception as e:
+        logger.error(f"Error processing user message: {e}", category="danger")
+        return jsonify(success=False, error=str(e)), 500
+
+    return jsonify(success=True, out=result.output), 200

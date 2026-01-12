@@ -240,15 +240,13 @@
     @apply flex-1 min-h-0 overflow-y-auto border-t border-gray-200 px-5 py-3;
 }
 .chat-message-container li {
-    @apply flex flex-col
-}
-.chat-assistant-message {
-    @apply bg-gray-100 px-3 py-2 font-accent text-left text-sm
-           rounded-t-lg rounded-tr-lg rounded-br-lg rounded-bl-none;
+    @apply flex mb-2;
 }
 .chat-user-message {
-    @apply bg-blue-600/70 px-3 py-2 font-accent text-left text-sm text-white
-           rounded-t-lg rounded-tl-lg rounded-bl-lg rounded-br-none;
+    @apply bg-blue-600/70 text-white px-3 py-2 rounded-lg max-w-[70%] text-left font-accent rounded-t-lg rounded-tl-lg rounded-bl-lg rounded-br-none relative;
+}
+.chat-assistant-message {
+    @apply bg-gray-100 px-3 py-2 rounded-lg max-w-[70%] text-left font-accent rounded-t-lg rounded-tr-lg rounded-br-lg rounded-bl-none relative;
 }
 
 .chat-reply-container {
