@@ -4,7 +4,7 @@ install:
 	@echo "Installing dependencies..."
 	poetry lock
 	poetry install --no-interaction
-	flask vite install
+	poetry run flask vite install
 
 dev: install
 	@echo "Starting frontend + backend..."
