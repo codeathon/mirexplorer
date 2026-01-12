@@ -274,6 +274,27 @@ function showMoodPopup(pillId) {
 }
 
 
+function showTimeSignaturePopup(pillId) {
+    const tsPill = document.getElementById(pillId)
+    const pillText = tsPill.innerText.replace("Time Signature: ", "").replace("×", "").replace(/\s+$/, '')
+
+    const viewPopup = createPopup();
+    viewPopup.innerHTML = `
+    <h2>Time Signature</h2>
+    <p>
+        The <strong>time signature</strong> of a piece of music indicates how beats are grouped in each measure.
+    </p>
+    <p>
+        Time signatures like 4/4, 3/4, or 6/8 can make music feel steady, waltz-like, or swinging. The choice of time signature influences how listeners perceive the rhythm of a piece.
+    </p>
+    <p>
+        AI has determined that <em>the recording you uploaded</em> uses the following time signature: <em>${pillText}</em>.
+    </p>
+    `
+    finalisePopup(viewPopup)
+}
+
+
 function handleNewPlugin(pill) {
     if (pill.id === "plugin-beats") {
         pill.getElementsByTagName("div")[0].addEventListener("click", () => {
@@ -282,6 +303,10 @@ function handleNewPlugin(pill) {
     } else if (pill.id === "plugin-key") {
         pill.getElementsByTagName("div")[0].addEventListener("click", () => {
             showKeyPopup()
+        });
+    } else if (pill.id === "plugin-timesignature") {
+        pill.getElementsByTagName("div")[0].addEventListener("click", () => {
+            showTimeSignaturePopup(pill.id)
         });
     } else if (pill.id === "plugin-chords") {
         pill.getElementsByTagName("div")[0].addEventListener("click", () => {

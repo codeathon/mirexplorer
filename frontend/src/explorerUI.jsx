@@ -1101,6 +1101,24 @@ function startChat(response = null) {
 }
 
 
+function addTimeSignaturePill(response = null) {
+    // skip over creating pill if it exists
+    let svgId = "plugin-timesignature"
+    if (document.getElementById(svgId)) {
+        return
+    }
+
+    // create the pill
+    let key = response["out"]
+    let svgPath = "M8.242 5.992h12m-12 6.003H20.24m-12 5.999h12M4.117 7.495v-3.75H2.99m1.125 3.75H2.99m1.125 0H5.24m-1.92 2.577a1.125 1.125 0 1 1 1.591 1.59l-1.83 1.83h2.16M2.99 15.745h1.125a1.125 1.125 0 0 1 0 2.25H3.74m0-.002h.375a1.125 1.125 0 0 1 0 2.25H2.99"
+    let pillDiv = addPill(svgPath, svgId, key)
+
+    // add to the container
+    const container = document.getElementById("plugins-interface");
+    container.appendChild(pillDiv)
+}
+
+
 function routeFrontendResponse(actionName) {
     if (actionName === "Beat Tracking") {
         return addBeatMarkers
@@ -1110,7 +1128,7 @@ function routeFrontendResponse(actionName) {
         return addMoodPills
     } else if (actionName === "Instrument Identification") {
         return addInstrumentPills
-    } else if (actionName === "Key Transcription") {
+    } else if (actionName === "Key Estimation") {
         return addKeyPill
     } else if (actionName === "Chord Transcription") {
         return addChordPills
@@ -1118,6 +1136,8 @@ function routeFrontendResponse(actionName) {
         return addLyricPills
     } else if (actionName === "Chat") {
         return startChat
+    } else if (actionName === "Time Signature Detection") {
+        return addTimeSignaturePill
     } else {
         throw new Error(`Action ${actionName} unknown`)
     }
@@ -1149,6 +1169,7 @@ function addFuncsToSidebarLinks() {
                     if (!response.ok) {
                         let responseText = await response.text()
                         let responseJSON = JSON.parse(responseText)
+                        console.log(responseText)
                         alert(`Encountered an error in ${action}. Please try again later.\n\nError message: ${responseJSON["error"]}`)
                         throw new Error('Backend response was not ok' + responseText);
                     }

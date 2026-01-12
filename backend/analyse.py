@@ -110,6 +110,27 @@ def mood_identification(_, filename) -> list[str]:
     return ["Mood: " + m.title() for m in mood][:MAX_TAGS]
 
 
+def time_signature_detection(_, filename) -> str:
+    logger.info("Starting time signature detection")
+
+    download_url = upload_audio_to_moises(filename)
+    out = process_audio_with_moises(download_url, workflow_slug=os.environ.get("MOISES_METADATA_WORKFLOW"))
+    out = _decode_moises_metadata_results(out)
+
+    ts = out["time_signature"]
+    if not isinstance(ts, str):
+        raise ValueError("Time signature detection failed: expected str, got {}".format(type(ts)))
+    elif isinstance(ts, list):
+        ts = ts[0]
+
+    try:
+        _, __ = ts.split("/")
+    except ValueError:
+        raise ValueError("Time signature detection failed: expected X/Y format, got {}".format(ts))
+
+    return "Time Signature: " + ts.upper()
+
+
 def lyrics_transcription(_, filename) -> list[dict]:
     logger.info("Starting lyrics transcription")
 
@@ -199,8 +220,8 @@ def route_to_function(function_name) -> Callable:
     # Pattern extraction: calls Librosa running on backend server
     if function_name == 'Beat Tracking':
         return beat_track
-    elif function_name == "Melodic Contour":
-        raise NotImplementedError()
+    elif function_name == "Time Signature Detection":
+        return time_signature_detection
 
     # Metadata extraction: calls Cyanite through Music.AI
     elif function_name == 'Genre Identification':
@@ -215,7 +236,7 @@ def route_to_function(function_name) -> Callable:
         return lyrics_transcription
     elif function_name == "Chord Transcription":
         return chord_transcription
-    elif function_name == "Key Transcription":
+    elif function_name == "Key Estimation":
         return key_transcription
 
     # Chat
@@ -304,12 +325,10 @@ def _decode_moises_metadata_results(out: dict) -> dict[str, Any]:
     decoded = {}
     for k, v in out.items():
         try:
-            parsed = ast.literal_eval(v)
+            v = ast.literal_eval(v)
         except (ValueError, SyntaxError):
             logger.error(f"Could not parse Moises result: key {k} (type: {type(k)}), value: {v} (type: {type(v)})")
-            pass
-        else:
-            decoded[k] = parsed
+        decoded[k] = v
     return decoded
 
 
