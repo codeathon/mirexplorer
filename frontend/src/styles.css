@@ -193,7 +193,7 @@
 }
 
 .explorer-sidebar-dropdown.open {
-    @apply opacity-100 max-h-32;
+    @apply opacity-100 max-h-48;
 }
 
 .info-popup {
@@ -222,7 +222,6 @@
            text-left rounded-lg shadow-lg z-[1000]
            grid grid-rows-[auto_1fr_auto];
 }
-
 
 .chat-header-container {
     @apply flex items-center justify-between px-5 py-3;

@@ -131,6 +131,17 @@ def time_signature_detection(_, filename) -> str:
     return "Time Signature: " + ts.upper()
 
 
+def musical_era_detection(_, filename) -> str:
+    logger.info("Starting musical era detection")
+
+    download_url = upload_audio_to_moises(filename)
+    out = process_audio_with_moises(download_url, workflow_slug=os.environ.get("MOISES_METADATA_WORKFLOW"))
+    out = _decode_moises_metadata_results(out)
+
+    ts = out["musical_era"]
+    return "Era: " + ts
+
+
 def lyrics_transcription(_, filename) -> list[dict]:
     logger.info("Starting lyrics transcription")
 
@@ -230,6 +241,8 @@ def route_to_function(function_name) -> Callable:
         return instrument_identification
     elif function_name == "Mood Identification":
         return mood_identification
+    elif function_name == "Musical Era Identification":
+        return musical_era_detection
 
     # Transcription: calls Moises
     elif function_name == "Lyrics Transcription":

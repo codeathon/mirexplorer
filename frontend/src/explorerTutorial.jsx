@@ -295,6 +295,27 @@ function showTimeSignaturePopup(pillId) {
 }
 
 
+function showEraPopup(pillId) {
+    const tsPill = document.getElementById(pillId)
+    const pillText = tsPill.innerText.replace("Era: ", "").replace("×", "").replace(/\s+$/, '')
+
+    const viewPopup = createPopup();
+    viewPopup.innerHTML = `
+    <h2>Musical Era</h2>
+    <p>
+        Every song comes from a <strong>musical era</strong>. Different eras use instruments, melodies, and rhythms in unique ways.
+    </p>
+    <p>
+        For example, songs from the 1980s might have lots of synths and dance beats, 1990s pop could be catchy and fun like, and modern music might mix rap, electronic sounds, and cool effects (like Billie Eilish or BTS).
+    </p>
+    <p>
+        AI thinks that <em>the recording you uploaded</em> comes from the <em>${pillText}</em>. Can you think of any other songs from that time that sound similar?
+    </p>
+    `
+    finalisePopup(viewPopup)
+}
+
+
 function handleNewPlugin(pill) {
     if (pill.id === "plugin-beats") {
         pill.getElementsByTagName("div")[0].addEventListener("click", () => {
@@ -307,6 +328,10 @@ function handleNewPlugin(pill) {
     } else if (pill.id === "plugin-timesignature") {
         pill.getElementsByTagName("div")[0].addEventListener("click", () => {
             showTimeSignaturePopup(pill.id)
+        });
+    } else if (pill.id === "plugin-era") {
+        pill.getElementsByTagName("div")[0].addEventListener("click", () => {
+            showEraPopup(pill.id)
         });
     } else if (pill.id === "plugin-chords") {
         pill.getElementsByTagName("div")[0].addEventListener("click", () => {
