@@ -218,8 +218,16 @@ def route_to_function(function_name) -> Callable:
     elif function_name == "Key Transcription":
         return key_transcription
 
+    # Chat
+    elif function_name == "Chat":
+        return start_chat
+
     else:
         raise ValueError(f"Invalid function name: '{function_name}'")
+
+
+def start_chat(_, filename) -> None:
+    return
 
 
 def _request_moises_upload_urls() -> tuple[str, str]:

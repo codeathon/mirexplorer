@@ -8,7 +8,7 @@ import {
     finalisePopup,
     closePopup,
     createPopup,
-    createSpinner
+    createSpinner, blurContent
 } from "./explorerShared";
 
 let sampleRate = 22050;
@@ -1010,6 +1010,97 @@ function addLyricPills(response = null) {
 }
 
 
+function sendUserMessage(text) {
+    const messageContainer = document.getElementById("chat-message-container")
+
+    console.log(messageContainer, text)
+}
+
+
+function startChat(response = null) {
+    const chatContainer = document.createElement('div');
+    chatContainer.className = "chat-container";
+    chatContainer.id = "chat-container-123";
+
+    // Header
+    const header = document.createElement('div');
+    header.className = "chat-header-container";
+    const titleWrapper = document.createElement('div');
+    titleWrapper.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                d="M8.625 9.75a.375.375 0 1 1-.75 0
+                .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0
+                .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0
+                .375.375 0 0 1 .75 0Zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994
+                2.707 3.227 1.087.16 2.185.283 3.293.369V21
+                l4.184-4.183a1.14 1.14 0 0 1 .778-.332
+                48.294 48.294 0 0 0 5.83-.498
+                c1.585-.233 2.708-1.626 2.708-3.228V6.741
+                c0-1.602-1.123-2.995-2.707-3.228A48.394
+                48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513
+                C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
+        </svg>
+        <div>AI Music Explorer Chat</div>
+    `;
+    const closeBtn = document.createElement("button")
+    closeBtn.innerText = "×";
+    titleWrapper.appendChild(closeBtn)
+
+    header.append(titleWrapper);
+
+    // Messages
+    const messages = document.createElement('ul');
+    messages.className = "chat-message-container";
+    messages.id = "chat-message-container"
+    messages.innerHTML = `
+        <li class="items-end">
+            <div class="chat-user-message">
+                User message
+            </div>
+        </li>
+        <li class="items-start">
+            <div class="chat-assistant-message">
+                Assistant message
+            </div>
+        </li>
+    `;
+
+    // Reply
+    const inputWrapper = document.createElement('div');
+    inputWrapper.className = "chat-reply-container";
+    inputWrapper.innerHTML = `
+        <input type="text" placeholder="Reply" id="chat-userreply"/>
+        <button id="chat-sendmessage-button">
+            <svg class="size-4" stroke="currentColor" stroke-width="1.5"
+                viewBox="0 0 24 24" fill="none">
+                <path stroke-linejoin="round" stroke-linecap="round"
+                    d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
+            </svg>
+        </button>
+    `;
+    chatContainer.append(header, messages, inputWrapper);
+
+    // Blur content
+    document.body.appendChild(chatContainer)
+    blurContent()
+
+    // add event listeners now
+    closeBtn.addEventListener("click", () => {
+        chatContainer.style.display = "none"
+        document.body.removeChild(chatContainer)
+        closePopup(chatContainer.id)
+    });
+    const replyButton = document.getElementById("chat-sendmessage-button")
+    const userReply = document.getElementById("chat-userreply")
+    replyButton.addEventListener("click", () => {sendUserMessage(userReply.textContent)});
+
+    return chatContainer;
+}
+
+
 function routeFrontendResponse(actionName) {
     if (actionName === "Beat Tracking") {
         return addBeatMarkers
@@ -1025,6 +1116,8 @@ function routeFrontendResponse(actionName) {
         return addChordPills
     } else if (actionName === "Lyrics Transcription") {
         return addLyricPills
+    } else if (actionName === "Chat") {
+        return startChat
     } else {
         throw new Error(`Action ${actionName} unknown`)
     }
@@ -1072,7 +1165,12 @@ function addFuncsToSidebarLinks() {
                 // we've received the response from the backend or errored (e.g. timed out)
                 .finally(() => {
                     // remove the popup and unblur the screen
-                    closePopup(popup.id, true)
+                    //  keep blur for chat window, however
+                    if (action !== "Chat") {
+                        closePopup(popup.id, true)
+                    } else {
+                        closePopup(popup.id, false)
+                    }
                 });
         });
     });
@@ -1082,8 +1180,8 @@ function clearAllPills() {
     [removeBeatMarkers, removeChordMarkers, removeLyricsMarkers].forEach(func => {
         try {
             func()
+        } catch {
         }
-        catch { }
     })
 
     const pills = document.querySelectorAll('.explorer-plugin-pill');

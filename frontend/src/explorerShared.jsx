@@ -60,10 +60,10 @@ export function generateCmap(r, g, b) {
     return colorArray
 }
 
-export function createPopup() {
+export function createPopup(popupClass = "info-popup") {
     const infoPopup = document.createElement('div');
-    infoPopup.classList.add('info-popup');
-    infoPopup.id = ".info-popup"
+    infoPopup.classList.add(popupClass);
+    infoPopup.id = `.${popupClass}`
     return infoPopup
 }
 
@@ -103,6 +103,8 @@ export function closePopup(popupID, unblur = true) {
     document.getElementById('explorer-overlay').style.display = 'none';
 
     // unblur content, enable buttons
-    unblurContent()
+    if (unblur) {
+        unblurContent()
+    }
 
 }
