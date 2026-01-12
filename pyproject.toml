@@ -7,7 +7,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-flask = "*"
+flask = {extras = ["async"], version = "^3.1.2"}
 Flask-Caching = "*"
 flask-wtf = "*"
 flask-vite = "*"
@@ -17,6 +17,7 @@ loguru = "*"
 pydub = "*"
 python-dotenv = "*"
 yarl = "*"
+pydantic-ai = "*"
 
 [build-system]
 requires = ["poetry-core"]
