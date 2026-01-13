@@ -10,6 +10,7 @@ from loguru import logger
 
 from backend import app_data
 from backend.crud import AudioUpload, preprocess_audio_on_upload, save_audio, UPLOADS_FOLDER, load_audio
+from backend.extensions import limiter
 
 # Create a blueprint
 main_routes = Blueprint("main", __name__)
@@ -80,6 +81,7 @@ def handle_exception(e):
 
 
 @main_routes.route("/trigger_action", methods=["POST"])
+@limiter.limit("15 per hour")
 def trigger_action():
     """
     Handles actions within the explorer: route to the correct function and return results to frontend as a JSON
@@ -131,6 +133,7 @@ def contact():
 
 
 @main_routes.route("/send_message", methods=["POST"])
+@limiter.limit("15 per hour")
 async def send_message():
     from backend.chat import route_chat_response
 

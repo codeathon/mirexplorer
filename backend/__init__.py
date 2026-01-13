@@ -2,7 +2,7 @@ import os
 
 from flask import Flask
 
-from backend.extensions import cache, vite
+from backend.extensions import cache, vite, limiter
 from backend.tasks import get_scheduler
 
 
@@ -37,10 +37,12 @@ def create_flask_app():
     # Initialise extensions
     vite.init_app(app)
     cache.init_app(app)
+    limiter.init_app(app)
 
     # Check all extensions have been defined
     assert "vite" in app.extensions, "vite is not defined"
     assert "cache" in app.extensions, "cache is not defined"
+    assert "limiter" in app.extensions, "limiter is not defined"
     # assert "celery" in app.extensions, "celery is not defined"
 
     return app

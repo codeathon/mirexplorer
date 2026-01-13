@@ -1101,6 +1101,12 @@ function sendUserMessage(text) {
         body: chatDeps
     })
         .then(async response => {
+            if (response.status === 429) {
+                typingLi.remove();
+                alert(`You've sent too many messages recently. Please try again later.`);
+                return null;
+            }
+
             if (!response.ok) {
                 const errorText = await response.text();
                 console.error("Backend error:", errorText);
@@ -1314,6 +1320,11 @@ function addFuncsToSidebarLinks() {
                 }, body: JSON.stringify({action: action, audio_url: window.audio_url})
             })
                 .then(async response => {
+                    if (response.status === 429) {
+                        alert(`You've performed too many actions recently. Please try again later.`);
+                        return null;
+                    }
+
                     if (!response.ok) {
                         let responseText = await response.text()
                         let responseJSON = JSON.parse(responseText)
@@ -1456,8 +1467,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === "Enter") {
             if (!sendReplyBtn) {
                 playBtn.click()
-            }
-            else {
+            } else {
                 sendReplyBtn.click()
             }
         }

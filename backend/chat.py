@@ -34,19 +34,23 @@ AGENT = Agent("gpt-4o", deps_type=dict)
 MAX_USER_TURNS = 3
 
 
-def get_musical_piece_information(deps: dict[str, str]) -> str:
-    return f"""
-    Time Signature: {deps.get("time_signature", None)}\n
-    Key: {deps.get("key", None)}\n
-    \n
-    Genres: {deps.get("genres", None)}\n
-    Instruments: {deps.get("instruments", None)}\n
-    Mood: {deps.get("mood", None)}\n
-    Era: {deps.get("era", None)}\n
-    \n
-    Lyrics: {deps.get("lyrics", None)}\n
-    Chords: {deps.get("chords", None)}\n
+def get_musical_piece_information(deps: dict[str, str], skip_long: bool = False) -> str:
+    st = f"""
+    Time Signature: {deps.get("time_signature", None)}
+    Key: {deps.get("key", None)}
+    Genres: {deps.get("genres", None)}
+    Instruments: {deps.get("instruments", None)}
+    Mood: {deps.get("mood", None)}
+    Era: {deps.get("era", None)}
     """
+
+    if not skip_long:
+        st += f"""
+        Lyrics: {deps.get("lyrics", None)}
+        Chords: {deps.get("chords", None)}
+        """
+
+    return st
 
 
 @AGENT.instructions
@@ -57,7 +61,7 @@ async def provide_instructions(ctx: RunContext) -> str:
     Here is information about the musical piece uploaded:
     -----------------------------------------------------
     
-    {get_musical_piece_information(ctx.deps)}
+    {get_musical_piece_information(ctx.deps, skip_long=False)}
     """
 
     return out_str
@@ -88,7 +92,7 @@ def convert_openai_to_pydantic(messages: list[dict]) -> list:
 
 async def create_goodbye_message(ctx: RunContext) -> str:
     return f"""It's been great chatting with you about this recording! To continue the conversation, try pasting the following information into your favorite AI chatbot like ChatGPT, Claude or Gemini.\n\n
-    {get_musical_piece_information(ctx)}
+    {get_musical_piece_information(ctx, skip_long=True)}
     """
 
 
