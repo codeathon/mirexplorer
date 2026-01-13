@@ -1,4 +1,4 @@
-import {finalisePopup, createPopup} from "./explorerShared.jsx";
+import {finalisePopup, createPopup, closePopup, unblurContent, blurContent} from "./explorerShared.jsx";
 
 function getState() {
     let currentShown = document.getElementById("explorer-current-shown-label").textContent
@@ -11,16 +11,185 @@ function getState() {
 
 
 function showInfoPopup() {
-    // todo: this should be more of a tutorial, with multiple steps
-    // we can use a moving div that "unblurs" particular elements to advance to the next stage
     const infoPopup = createPopup()
-    infoPopup.innerHTML = `
-                <h2>AI Music Explorer</h2>
-                <p>
-                    Use the buttons along the sidebar to learn more about your recording.
-                </p>
-            `;
-    finalisePopup(infoPopup)
+    const tutorialPages = [
+        {
+            title: "AI Music Explorer",
+            content: `
+            <p>Welcome to the <strong>AI Music Explorer!</strong></p>
+            <p>You can use this application to <em>learn more about music</em> using AI.</p>
+            <p><strong>Press the arrow button below.</strong></p>
+        `
+        },
+        {
+            title: "Look at your Recording",
+            content: `
+            <p>The graph you are currently looking at <strong>shows your recording</strong>.</p>
+            <p>Can you recognise any parts of it?</p>
+        `,
+            flasher: "waveform",
+        },
+        {
+            title: "Look at your Recording",
+            content: `
+            <p>This type of graph is called a <strong>Waveform</strong>.</p>
+            <p>If you want to learn more about what a <strong>Waveform</strong> is, you can click this button.</p>
+        `,
+            flasher: "explorer-current-shown-label",
+        },
+        {
+            title: "Look at your Recording",
+            content: `
+            <p>You can also learn more about what the different graph labels mean by <strong>clicking on them</strong></p>
+        `,
+            flasher: "explorer-yaxis-text",
+        },
+        {
+            title: "Changing the View",
+            content: `
+            <p>Click the <strong>View As</strong> button to try out <em>different ways</em> of viewing your recording.</p>
+            <p>You can always go back to the <strong>Waveform</strong> later.</p>
+        `,
+            flasher: "viewAsBtn"
+        },
+        {
+            title: "Changing the View",
+            content: `
+            <p>You can also change the <strong>colour</strong> of the waveform by clicking on this button.</p>
+        `,
+            flasher: "colour-picker-container",
+        },
+        {
+            title: "Listen to your Recording",
+            content: `
+            <p>These controls allow you to <strong>listen to your recording</strong>.</p>
+        `,
+            flasher: "explorer-play-pause-container",
+        },
+        {
+            title: "Listen to your Recording",
+            content: `
+            <p>Click this button to <strong>Play</strong> and <strong>Pause</strong> your recording.</p>
+        `,
+            flasher: "explorer-play-icon",
+        },
+        {
+            title: "Rewind your Recording",
+            content: `
+            <p>Click this button to <strong>Rewind</strong> your recording back to the start.</p>
+        `,
+            flasher: "explorer-rewind-icon",
+        },
+        {
+            title: "Loop your Recording",
+            content: `
+            <p>Click this button to <strong>Loop</strong> sections of your recording.</p>
+        `,
+            flasher: "explorer-loop-icon",
+        },
+        {
+            title: "Loop your Recording",
+            content: `
+            <p>To control which sections get looped, <strong>click and drag on the waveform</strong>.</p>
+            <p><strong>Double click</strong> on the loop to remove it.</p>
+        `,
+            flasher: "waveform",
+        },
+        {
+            title: "Analysing your Audio",
+            content: `
+            <p>You can use any of these buttons to <strong>analyse</strong> your audio with <strong>AI</strong>.</p>
+            <p>For instance, <strong>Classification</strong> uses AI to <em>sort your audio</em> into different groups, like musical <strong>genres</strong>.</p>
+        `,
+            flasher: "sidebar-analyser"
+        },
+        {
+            title: "Done!",
+            content: `
+            <p>That's the end of the tutorial! Click the <strong>×</strong> button to close.</p>
+            <p>To go through the tutorial again, click <strong>'Help'</strong>. Or, to analyse a different recording, click <strong>'Exit'</strong>.</p>
+        `,
+            flasher: "sidebar-help"
+        }
+    ];
+
+    let modifyElements = []
+    tutorialPages.forEach(elm => {if (elm.flasher) {modifyElements.push(elm.flasher)}})
+
+    let currentPage = 0
+
+    function renderPage() {
+        const page = tutorialPages[currentPage];
+
+        infoPopup.innerHTML = `
+        <h2>${page.title}</h2>
+        ${page.content}
+    `;
+
+        if (currentPage !== 0) {
+            infoPopup.className = "tutorial-popup"
+        } else {
+            infoPopup.className = "info-popup"
+            Array.from(modifyElements).forEach(elm => {
+                document.getElementById(elm).classList.remove("flasher-style")
+            })
+        }
+
+        if (page.flasher) {
+            const flasher = document.getElementById(page.flasher);
+            flasher.classList.add('flasher-style', 'animate-border-flash');
+            Array.from(modifyElements).forEach(elm => {
+                if (elm !== page.flasher) {
+                    const el = document.getElementById(elm);
+                    el.classList.remove('flasher-style', 'animate-border-flash');
+                }
+            });
+        }
+
+
+        // Pagination buttons
+        const btnContainer = document.createElement("div");
+        btnContainer.className = "pagination-buttons";
+
+        if (currentPage > 0) {
+            const prevBtn = document.createElement("button");
+            prevBtn.innerText = "←";
+            prevBtn.className = "prev-page-button";
+            prevBtn.onclick = () => {
+                currentPage--;
+                renderPage();
+            };
+            btnContainer.appendChild(prevBtn);
+        } else {
+            btnContainer.appendChild(document.createElement("div"));
+        }
+
+        if (currentPage < tutorialPages.length - 1) {
+            const nextBtn = document.createElement("button");
+            nextBtn.innerText = "→";
+            nextBtn.className = "next-page-button";
+            nextBtn.onclick = () => {
+                currentPage++;
+                renderPage();
+            };
+            btnContainer.appendChild(nextBtn);
+        }
+
+        currentPage > 0 ? unblurContent() : blurContent();
+
+        infoPopup.appendChild(btnContainer);
+
+        // Close button
+        const closeBtn = document.createElement("button");
+        closeBtn.innerText = "×";
+        closeBtn.className = "close-button";
+        closeBtn.onclick = () => closePopup(infoPopup.id);
+
+        infoPopup.appendChild(closeBtn);
+    }
+
+    renderPage()
+    finalisePopup(infoPopup, false)
 }
 
 function showCurrentViewPopup() {

@@ -7,13 +7,15 @@ export function blurContent() {
     })
 }
 
-export function unblurContent() {
+export function unblurContent(enableButtons = true) {
     // enable all buttons, remove blur
     let content = document.getElementById('explorer-content')
     content.classList.remove('blurred');
-    Array.from(content.getElementsByTagName("button")).forEach(button => {
-        button.disabled = false;
-    })
+    if (enableButtons) {
+        Array.from(content.getElementsByTagName("button")).forEach(button => {
+            button.disabled = false;
+        })
+    }
 }
 
 export function componentToHex(c) {
@@ -78,6 +80,7 @@ export function finalisePopup(popup, allowClose = true) {
     if (allowClose) {
         const closeBtn = document.createElement("button");
         closeBtn.innerText = "×";
+        closeBtn.className = "close-button"
         closeBtn.addEventListener("click", () => {
             closePopup(popup.id)
         });

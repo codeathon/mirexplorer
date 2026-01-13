@@ -16,7 +16,7 @@
                 <a href="#" class="explorer-sidebar-header">AI Music Explorer</a>
             </div>
 
-            <nav class="flex-1 px-4 py-6">
+            <nav id="sidebar-analyser" class="flex-1 px-4 py-6">
                 <ul class="flex flex-col gap-5">
                     <li>
                         <a href="#" class="explorer-sidebar-labels">
@@ -151,7 +151,7 @@
                     </li>
                 </ul>
             </nav>
-            <div class="px-4 py-6">
+            <div id="sidebar-help" class="px-4 py-6">
                 <ul class="flex flex-col gap-5">
                     <li>
                         <a href="#" class="explorer-sidebar-parent-label" id="explorer-show-info-popup">
@@ -210,7 +210,7 @@
             </div>
         </div>
 
-        <div class="absolute top-4 right-8 flex items-center space-x-2">
+        <div class="absolute top-4 right-8 flex items-center space-x-2" id="colour-picker-container">
             <button id="explorer-colour-picker" data-jscolor="{
                 format:'hex',
                 backgroundColor:'rgba(245,245,245,1)',
@@ -237,7 +237,7 @@
             </div>
         </button>
 
-        <div class="explorer-play-pause-container">
+        <div class="explorer-play-pause-container" id="explorer-play-pause-container">
             <button id="explorer-play-button">
                 <svg id="explorer-play-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                      stroke-width="1.5"
