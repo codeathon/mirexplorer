@@ -954,6 +954,24 @@ files = [
 ]
 
 [[package]]
+name = "deprecated"
+version = "1.3.1"
+description = "Python @deprecated decorator to deprecate old python classes, functions or methods."
+optional = false
+python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,>=2.7"
+groups = ["main"]
+files = [
+    {file = "deprecated-1.3.1-py2.py3-none-any.whl", hash = "sha256:597bfef186b6f60181535a29fbe44865ce137a5079f295b479886c82729d5f3f"},
+    {file = "deprecated-1.3.1.tar.gz", hash = "sha256:b1b50e0ff0c1fddaa5708a2c6b0a6588bb09b892825ab2b214ac9ea9d92a5223"},
+]
+
+[package.dependencies]
+wrapt = ">=1.10,<3"
+
+[package.extras]
+dev = ["PyTest", "PyTest-Cov", "bump2version (<1)", "setuptools ; python_version >= \"3.12\"", "tox"]
+
+[[package]]
 name = "diskcache"
 version = "5.6.3"
 description = "Disk Cache -- Disk and file backed persistent cache."
@@ -1266,6 +1284,31 @@ files = [
 [package.dependencies]
 cachelib = ">=0.9.0"
 Flask = "*"
+
+[[package]]
+name = "flask-limiter"
+version = "4.1.1"
+description = "Rate limiting for flask applications"
+optional = false
+python-versions = ">=3.10"
+groups = ["main"]
+files = [
+    {file = "flask_limiter-4.1.1-py3-none-any.whl", hash = "sha256:e1ae13e06e6b3e39a4902e7d240b901586b25932c2add7bd5f5eeb4bdc11111b"},
+    {file = "flask_limiter-4.1.1.tar.gz", hash = "sha256:ca11608fc7eec43dcea606964ca07c3bd4ec1ae89043a0f67f717899a4f48106"},
+]
+
+[package.dependencies]
+flask = ">=2"
+limits = ">=3.13"
+ordered-set = ">4,<5"
+typing-extensions = ">=4.3"
+
+[package.extras]
+cli = ["rich (>=12,<15)"]
+memcached = ["limits[memcached]"]
+mongodb = ["limits[mongodb]"]
+redis = ["limits[redis]"]
+valkey = ["limits[valkey]"]
 
 [[package]]
 name = "flask-vite"
@@ -2197,6 +2240,34 @@ typing_extensions = ">=4.1.1"
 display = ["matplotlib (>=3.5.0)"]
 docs = ["ipython (>=7.0)", "matplotlib (>=3.5.0)", "mir_eval (>=0.5)", "numba (>=0.51)", "numpydoc", "presets", "sphinx (!=1.3.1)", "sphinx-copybutton (>=0.5.2)", "sphinx-gallery (>=0.7)", "sphinx-multiversion (>=0.2.3)", "sphinx_rtd_theme (>=1.2.0)", "sphinxcontrib-googleanalytics (>=0.4)", "sphinxcontrib-svg2pdfconverter"]
 tests = ["matplotlib (>=3.5.0)", "packaging (>=20.0)", "pytest", "pytest-cov", "pytest-mpl", "resampy (>=0.2.2)", "samplerate", "types-decorator"]
+
+[[package]]
+name = "limits"
+version = "5.6.0"
+description = "Rate limiting utilities"
+optional = false
+python-versions = ">=3.10"
+groups = ["main"]
+files = [
+    {file = "limits-5.6.0-py3-none-any.whl", hash = "sha256:b585c2104274528536a5b68864ec3835602b3c4a802cd6aa0b07419798394021"},
+    {file = "limits-5.6.0.tar.gz", hash = "sha256:807fac75755e73912e894fdd61e2838de574c5721876a19f7ab454ae1fffb4b5"},
+]
+
+[package.dependencies]
+deprecated = ">=1.2"
+packaging = ">=21"
+typing-extensions = "*"
+
+[package.extras]
+async-memcached = ["memcachio (>=0.3)"]
+async-mongodb = ["motor (>=3,<4)"]
+async-redis = ["coredis (>=3.4.0,<6)"]
+async-valkey = ["valkey (>=6)"]
+memcached = ["pymemcache (>3,<5.0.0)"]
+mongodb = ["pymongo (>4.1,<5)"]
+redis = ["redis (>3,!=4.5.2,!=4.5.3,<7.0.0)"]
+rediscluster = ["redis (>=4.2.0,!=4.5.2,!=4.5.3)"]
+valkey = ["valkey (>=6)"]
 
 [[package]]
 name = "llvmlite"
@@ -3172,6 +3243,21 @@ files = [
     {file = "opentelemetry_util_http-0.60b1-py3-none-any.whl", hash = "sha256:66381ba28550c91bee14dcba8979ace443444af1ed609226634596b4b0faf199"},
     {file = "opentelemetry_util_http-0.60b1.tar.gz", hash = "sha256:0d97152ca8c8a41ced7172d29d3622a219317f74ae6bb3027cfbdcf22c3cc0d6"},
 ]
+
+[[package]]
+name = "ordered-set"
+version = "4.1.0"
+description = "An OrderedSet is a custom MutableSet that remembers its order, so that every"
+optional = false
+python-versions = ">=3.7"
+groups = ["main"]
+files = [
+    {file = "ordered-set-4.1.0.tar.gz", hash = "sha256:694a8e44c87657c59292ede72891eb91d34131f6531463aab3009191c77364a8"},
+    {file = "ordered_set-4.1.0-py3-none-any.whl", hash = "sha256:046e1132c71fcf3330438a539928932caf51ddbc582496833e23de611de14562"},
+]
+
+[package.extras]
+dev = ["black", "mypy", "pytest"]
 
 [[package]]
 name = "packaging"
@@ -5644,4 +5730,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "24d3d210548f069aae93d9e911cdb3c1273c1f6426b5a215a5d2afb3f58880e6"
+content-hash = "7905cbad84fa7f6c160b1444cf7ed721d03d4db6150b70644501015fea2f1f21"
