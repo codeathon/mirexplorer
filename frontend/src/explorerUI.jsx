@@ -1113,16 +1113,30 @@ function sendUserMessage(text) {
             typingLi.remove()
 
             // add assistant message to chat
+            const asstResponse = data.out;
             const li = document.createElement("li");
             li.className = "flex justify-start";
             const div = document.createElement("div");
             div.className = "chat-assistant-message relative";
-            div.textContent = data.out;
+            div.textContent = asstResponse
             li.appendChild(div);
             messageContainer.appendChild(li);
 
             // scroll down
             messageContainer.scrollTop = messageContainer.scrollHeight;
+
+            // disable the reply button and input if the message is a goodbye
+            console.log(asstResponse, asstResponse.startsWith("It's been great chatting with you about this recording!"), asstResponse.startsWith("It's been great chatting with you"))
+            if (asstResponse.startsWith("It's been great chatting with you about this recording! To continue the conversation, try pasting")) {
+                const userReplyButton = document.getElementById("chat-sendmessage-button")
+                const userReplyInput = document.getElementById("chat-userreply")
+
+                userReplyButton.disabled = true;
+                userReplyButton.style.pointerEvents = 'none';
+                userReplyInput.disabled = true;
+                userReplyInput.placeholder = "Thanks for chatting!"
+            }
+
         })
         .catch(error => {
             console.error('Error:', error);

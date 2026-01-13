@@ -1,4 +1,4 @@
-from pydantic_ai import Agent, RunContext, ModelResponse, UserPromptPart, TextPart, ModelRequest
+from pydantic_ai import Agent, RunContext, ModelResponse, UserPromptPart, TextPart, ModelRequest, AgentRunResult
 
 from loguru import logger
 
@@ -28,9 +28,25 @@ You are a friendly assistant designed to assist the user with answering question
 - You do not invent information you do not have access to. NEVER invent or hallucinate information about the recording.
 - If a piece of information is given as "None" or "null" and a user requests it, simply state that you do not have access to this information, and prompt them to continue exploring their recording with the available AI functions.
 """
-
-
 AGENT = Agent("gpt-4o", deps_type=dict)
+
+# Once the user has asked this many questions, we'll just return the "goodbye" message
+MAX_USER_TURNS = 3
+
+
+def get_musical_piece_information(deps: dict[str, str]) -> str:
+    return f"""
+    Time Signature: {deps.get("time_signature", None)}\n
+    Key: {deps.get("key", None)}\n
+    \n
+    Genres: {deps.get("genres", None)}\n
+    Instruments: {deps.get("instruments", None)}\n
+    Mood: {deps.get("mood", None)}\n
+    Era: {deps.get("era", None)}\n
+    \n
+    Lyrics: {deps.get("lyrics", None)}\n
+    Chords: {deps.get("chords", None)}\n
+    """
 
 
 @AGENT.instructions
@@ -41,16 +57,7 @@ async def provide_instructions(ctx: RunContext) -> str:
     Here is information about the musical piece uploaded:
     -----------------------------------------------------
     
-    Time Signature: {ctx.deps.get("time_signature", None)}
-    Key: {ctx.deps.get("key", None)}
-    
-    Genres: {ctx.deps.get("genres", None)}
-    Instruments: {ctx.deps.get("instruments", None)}
-    Mood: {ctx.deps.get("mood", None)}
-    Era: {ctx.deps.get("era", None)}
-    
-    Lyrics: {ctx.deps.get("lyrics", None)}
-    Chords: {ctx.deps.get("chords", None)}
+    {get_musical_piece_information(ctx.deps)}
     """
 
     return out_str
@@ -77,3 +84,25 @@ def convert_openai_to_pydantic(messages: list[dict]) -> list:
             continue
 
     return pydantic_messages
+
+
+async def create_goodbye_message(ctx: RunContext) -> str:
+    return f"""It's been great chatting with you about this recording! To continue the conversation, try pasting the following information into your favorite AI chatbot like ChatGPT, Claude or Gemini.\n\n
+    {get_musical_piece_information(ctx)}
+    """
+
+
+async def route_chat_response(user_message: str, context: list[dict], deps: dict[str, str]) -> AgentRunResult:
+    """Routes a chat response either to the agent, or to a generic 'goodbye' message."""
+
+    n_user_turns = len([i for i in context if i["role"] == "user"])
+    if n_user_turns >= MAX_USER_TURNS:
+        return await create_goodbye_message(deps)
+
+    else:
+        # need to convert message history to pydantic format
+        message_history = convert_openai_to_pydantic(context)
+        # make the completion
+        result = await AGENT.run(user_message, deps=deps, message_history=message_history)
+        # return the result
+        return result.output

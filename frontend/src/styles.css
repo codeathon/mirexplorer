@@ -258,7 +258,7 @@
 .chat-reply-container button {
     @apply absolute top-0 right-1 bottom-0 my-auto rounded-lg p-0.5
            text-blue-600 hover:bg-gray-200 z-50
-           w-6 h-6 flex items-center justify-center mr-1;
+           w-6 h-6 flex items-center justify-center mr-1 pointer-events-auto;
 }
 .chat-reply-container svg {
     @apply w-7 h-7 text-blue-600 z-50

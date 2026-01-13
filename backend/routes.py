@@ -132,32 +132,32 @@ def contact():
 
 @main_routes.route("/send_message", methods=["POST"])
 async def send_message():
-    from backend.chat import AGENT, convert_openai_to_pydantic
+    from backend.chat import route_chat_response
 
     data = request.get_json()
     user_message = data.get("user_message")
     filepath = data.get("filepath")
-    message_history = convert_openai_to_pydantic(data.get("message_history"))
-
+    message_history = data.get("message_history")
     full_path = UPLOADS_FOLDER / Path(filepath).name
+
+    # create dependencies
+    deps = {
+        "filename": full_path,
+        "key": data.get("key"),
+        "time_signature": data.get("time_signature"),
+        "genres": data.get("genres"),
+        "instruments": data.get("instruments"),
+        "mood": data.get("mood"),
+        "era": data.get("era"),
+        "lyrics": data.get("lyrics"),
+        "chords": data.get("chords"),
+    }
+
+    # create the chat completion
     try:
-        result = await AGENT.run(
-            user_message,
-            deps={
-                "filename": full_path,
-                "key": data.get("key"),
-                "time_signature": data.get("time_signature"),
-                "genres": data.get("genres"),
-                "instruments": data.get("instruments"),
-                "mood": data.get("mood"),
-                "era": data.get("era"),
-                "lyrics": data.get("lyrics"),
-                "chords": data.get("chords"),
-            },
-            message_history=message_history
-        )
+        result = await route_chat_response(user_message, message_history, deps)
     except Exception as e:
         logger.error(f"Error processing user message: {e}", category="danger")
         return jsonify(success=False, error=str(e)), 500
 
-    return jsonify(success=True, out=result.output), 200
+    return jsonify(success=True, out=result), 200
