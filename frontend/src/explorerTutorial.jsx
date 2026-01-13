@@ -1,4 +1,5 @@
 import {finalisePopup, createPopup, closePopup, unblurContent, blurContent} from "./explorerShared.jsx";
+import {addGenrePills} from "./explorerUI.jsx";
 
 function getState() {
     let currentShown = document.getElementById("explorer-current-shown-label").textContent
@@ -12,114 +13,100 @@ function getState() {
 
 function showInfoPopup() {
     const infoPopup = createPopup()
-    const tutorialPages = [
-        {
-            title: "AI Music Explorer",
-            content: `
+    const tutorialPages = [{
+        title: "AI Music Explorer", content: `
             <p>Welcome to the <strong>AI Music Explorer!</strong></p>
             <p>You can use this application to <em>learn more about music</em> using AI.</p>
             <p><strong>Press the arrow button below.</strong></p>
         `
-        },
-        {
-            title: "Look at your Recording",
-            content: `
+    }, {
+        title: "Look at your Recording", content: `
             <p>The graph you are currently looking at <strong>shows your recording</strong>.</p>
             <p>Can you recognise any parts of it?</p>
-        `,
-            flasher: "waveform",
-        },
-        {
-            title: "Look at your Recording",
-            content: `
+        `, flasher: "waveform",
+    }, {
+        title: "Look at your Recording", content: `
             <p>This type of graph is called a <strong>Waveform</strong>.</p>
             <p>If you want to learn more about what a <strong>Waveform</strong> is, you can click this button.</p>
-        `,
-            flasher: "explorer-current-shown-label",
-        },
-        {
-            title: "Look at your Recording",
-            content: `
-            <p>You can also learn more about what the different graph labels mean by <strong>clicking on them</strong></p>
-        `,
-            flasher: "explorer-yaxis-text",
-        },
-        {
-            title: "Changing the View",
-            content: `
+        `, flasher: "explorer-current-shown-label",
+    }, {
+        title: "Look at your Recording", content: `
+            <p>You can also learn more about what the different graph labels mean by <strong>clicking on them</strong>.</p>
+        `, flasher: "explorer-yaxis-text",
+    }, {
+        title: "Changing the View", content: `
             <p>Click the <strong>View As</strong> button to try out <em>different ways</em> of viewing your recording.</p>
             <p>You can always go back to the <strong>Waveform</strong> later.</p>
-        `,
-            flasher: "viewAsBtn"
-        },
-        {
-            title: "Changing the View",
-            content: `
+        `, flasher: "viewAsBtn"
+    }, {
+        title: "Changing the View", content: `
             <p>You can also change the <strong>colour</strong> of the waveform by clicking on this button.</p>
-        `,
-            flasher: "colour-picker-container",
-        },
-        {
-            title: "Listen to your Recording",
-            content: `
+        `, flasher: "colour-picker-container",
+    }, {
+        title: "Listen to your Recording", content: `
             <p>These controls allow you to <strong>listen to your recording</strong>.</p>
-        `,
-            flasher: "explorer-play-pause-container",
-        },
-        {
-            title: "Listen to your Recording",
-            content: `
+        `, flasher: "explorer-play-pause-container",
+    }, {
+        title: "Listen to your Recording", content: `
             <p>Click this button to <strong>Play</strong> and <strong>Pause</strong> your recording.</p>
-        `,
-            flasher: "explorer-play-icon",
-        },
-        {
-            title: "Rewind your Recording",
-            content: `
+        `, flasher: "explorer-play-icon",
+    }, {
+        title: "Rewind your Recording", content: `
             <p>Click this button to <strong>Rewind</strong> your recording back to the start.</p>
-        `,
-            flasher: "explorer-rewind-icon",
-        },
-        {
-            title: "Loop your Recording",
-            content: `
+        `, flasher: "explorer-rewind-icon",
+    }, {
+        title: "Loop your Recording", content: `
             <p>Click this button to <strong>Loop</strong> sections of your recording.</p>
-        `,
-            flasher: "explorer-loop-icon",
-        },
-        {
-            title: "Loop your Recording",
-            content: `
+        `, flasher: "explorer-loop-icon",
+    }, {
+        title: "Loop your Recording", content: `
             <p>To control which sections get looped, <strong>click and drag on the waveform</strong>.</p>
             <p><strong>Double click</strong> on the loop to remove it.</p>
-        `,
-            flasher: "waveform",
-        },
-        {
-            title: "Analysing your Audio",
-            content: `
+        `, flasher: "waveform",
+    }, {
+        title: "Analysing your Audio", content: `
             <p>You can use any of these buttons to <strong>analyse</strong> your audio with <strong>AI</strong>.</p>
             <p>For instance, <strong>Classification</strong> uses AI to <em>sort your audio</em> into different groups, like musical <strong>genres</strong>.</p>
-        `,
-            flasher: "sidebar-analyser"
-        },
-        {
-            title: "Done!",
-            content: `
+        `, flasher: "sidebar-analyser"
+    }, {
+        title: "Analysing your Audio", content: `
+            <p>Once you've run some analysis, the results will be shown as <strong>icons</strong>.</p>
+            <p>You can click each <strong>icon</strong> to learn more about the results.</p>
+        `, flasher: "plugin-genre-Rock", func: addGenrePills, args: {"out": ["Rock"]}
+    }, {
+        title: "Analysing your Audio", content: `
+            <p>To clear all the <strong>icons</strong> from the screen, click <strong>'Clear Plugins'</strong>.</p>
+        `, flasher: "clear-plugins-button", func: addGenrePills, args: {"out": ["Rock"]}
+    }, {
+        title: "Done!", content: `
             <p>That's the end of the tutorial! Click the <strong>×</strong> button to close.</p>
             <p>To go through the tutorial again, click <strong>'Help'</strong>. Or, to analyse a different recording, click <strong>'Exit'</strong>.</p>
-        `,
-            flasher: "sidebar-help"
-        }
-    ];
+        `, flasher: "sidebar-help"
+    }];
 
     let modifyElements = []
-    tutorialPages.forEach(elm => {if (elm.flasher) {modifyElements.push(elm.flasher)}})
+    tutorialPages.forEach(elm => {
+        if (elm.flasher) {
+            modifyElements.push(elm.flasher)
+        }
+    })
 
     let currentPage = 0
 
     function renderPage() {
+        const pluginClosers = document.getElementsByClassName("explorer-plugin-pill-close")
+        if (pluginClosers) {
+            Array.from(pluginClosers).forEach(btn => {
+                btn.click()
+            })
+        }
+
         const page = tutorialPages[currentPage];
+
+        // in case we need to run some funcs for this tutorial page
+        if (page.func) {
+            page.func(page.args)
+        }
 
         infoPopup.innerHTML = `
         <h2>${page.title}</h2>
@@ -128,10 +115,14 @@ function showInfoPopup() {
 
         if (currentPage !== 0) {
             infoPopup.className = "tutorial-popup"
+            infoPopup.id = "tutorial-popup"
         } else {
             infoPopup.className = "info-popup"
             Array.from(modifyElements).forEach(elm => {
-                document.getElementById(elm).classList.remove("flasher-style")
+                let elmer = document.getElementById(elm)
+                if (elmer) {
+                    elmer.classList.remove("flasher-style", 'animate-border-flash')
+                }
             })
         }
 
@@ -141,11 +132,12 @@ function showInfoPopup() {
             Array.from(modifyElements).forEach(elm => {
                 if (elm !== page.flasher) {
                     const el = document.getElementById(elm);
-                    el.classList.remove('flasher-style', 'animate-border-flash');
+                    if (el) {
+                        el.classList.remove('flasher-style', 'animate-border-flash');
+                    }
                 }
             });
         }
-
 
         // Pagination buttons
         const btnContainer = document.createElement("div");
@@ -183,7 +175,16 @@ function showInfoPopup() {
         const closeBtn = document.createElement("button");
         closeBtn.innerText = "×";
         closeBtn.className = "close-button";
-        closeBtn.onclick = () => closePopup(infoPopup.id);
+        closeBtn.addEventListener("click", () => {
+            infoPopup.style.display = 'none';
+            document.body.removeChild(infoPopup);
+            Array.from(modifyElements).forEach(elm => {
+                let elmer = document.getElementById(elm)
+                if (elmer) {
+                    elmer.classList.remove("flasher-style", 'animate-border-flash')
+                }
+            })
+        });
 
         infoPopup.appendChild(closeBtn);
     }

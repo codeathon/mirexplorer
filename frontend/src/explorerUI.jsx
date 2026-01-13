@@ -730,7 +730,7 @@ function addBeatMarkers(response = null) {
     });
 }
 
-function addGenrePills(response = null) {
+export function addGenrePills(response = null) {
     genresContainer = response["out"]
 
     const container = document.getElementById("plugins-interface");
