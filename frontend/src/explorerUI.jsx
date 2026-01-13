@@ -1048,14 +1048,33 @@ function sendUserMessage(text) {
 
     const messageContainer = document.getElementById("chat-message-container");
 
+    // add user message to the chat
     const li = document.createElement("li");
     li.className = "flex justify-end";
     const div = document.createElement("div");
     div.className = "chat-user-message relative";
     div.textContent = text;
-
+    // order we add to the container is important: user message needs to be first, then typing indicator
     li.appendChild(div);
     messageContainer.appendChild(li);
+
+    // show typing indicator for assistant response
+    const typingLi = document.createElement("li");
+    typingLi.className = "chat-typing-indicator";
+    typingLi.id = "typing-indicator";
+    const typingDiv = document.createElement("div");
+    typingDiv.className = "chat-assistant-message relative";
+    typingDiv.innerHTML = `
+        <div class="flex gap-[4px] items-center">
+            <div class="typing-dot" style="animation-delay: -0.32s;"></div>
+            <div class="typing-dot" style="animation-delay: -0.16s;"></div>
+            <div class="typing-dot"></div>
+        </div>
+    `;
+    typingLi.appendChild(typingDiv);
+    messageContainer.appendChild(typingLi);
+
+    // scroll down
     messageContainer.scrollTop = messageContainer.scrollHeight;
 
     const chatHistory = getChatHistoryFromDOM()
@@ -1090,14 +1109,19 @@ function sendUserMessage(text) {
             return response.json();
         })
         .then(data => {
+            // remove thinking message
+            typingLi.remove()
+
+            // add assistant message to chat
             const li = document.createElement("li");
             li.className = "flex justify-start";
             const div = document.createElement("div");
             div.className = "chat-assistant-message relative";
             div.textContent = data.out;
-
             li.appendChild(div);
             messageContainer.appendChild(li);
+
+            // scroll down
             messageContainer.scrollTop = messageContainer.scrollHeight;
         })
         .catch(error => {
@@ -1158,10 +1182,10 @@ function startChat(response = null) {
     inputWrapper.innerHTML = `
         <input type="text" placeholder="Reply" id="chat-userreply"/>
         <button id="chat-sendmessage-button">
-            <svg class="size-4" stroke="currentColor" stroke-width="1.5"
-                viewBox="0 0 24 24" fill="none">
-                <path stroke-linejoin="round" stroke-linecap="round"
-                    d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 fill="currentColor"
+                 viewBox="0 0 24 24">
+                <path d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"/>
             </svg>
         </button>
     `;
@@ -1181,6 +1205,7 @@ function startChat(response = null) {
     const userReply = document.getElementById("chat-userreply")
     replyButton.addEventListener("click", () => {
         sendUserMessage(userReply.value)
+        userReply.value = ""
     });
 
     return chatContainer;
@@ -1399,6 +1424,7 @@ document.addEventListener('DOMContentLoaded', () => {
             wavesurfer.skip(-2);
             wasPlaying && wavesurfer.play();
         }
+
         // right keypress: scrub forward two seconds
         if (e.key === "ArrowRight") {
             const wasPlaying = wavesurfer.isPlaying();
@@ -1410,11 +1436,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 wavesurfer.play();
             }
         }
-        // space/enter button: play/pause audio
-        if (e.key === "Enter" || e.key === " ") {
-            playBtn.click()
+
+        // enter button: play/pause audio in normal view, send message in chat
+        const sendReplyBtn = document.getElementById("chat-sendmessage-button")
+        if (e.key === "Enter") {
+            if (!sendReplyBtn) {
+                playBtn.click()
+            }
+            else {
+                sendReplyBtn.click()
+            }
         }
-    });
+
+        // space button: play pause audio in normal view, nothing in chat
+        if (e.key === " ") {
+            if (!sendReplyBtn) {
+                playBtn.click()
+            }
+        }
+    })
 
     // View as button (spectrogram/waveform)
     const viewAsHover = document.getElementById('viewAsBtn');
