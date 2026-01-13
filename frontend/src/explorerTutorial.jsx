@@ -178,6 +178,8 @@ function showInfoPopup() {
         closeBtn.addEventListener("click", () => {
             infoPopup.style.display = 'none';
             document.body.removeChild(infoPopup);
+            unblurContent(true)
+
             Array.from(modifyElements).forEach(elm => {
                 let elmer = document.getElementById(elm)
                 if (elmer) {
