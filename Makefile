@@ -20,7 +20,7 @@ build: install
 	cd frontend && npm run build
 
 # Start backend for production (after build)
-prod: build
+prod:
 	@echo "Starting Flask backend (production)..."
 	# Render provides $PORT
 	poetry run gunicorn app:app --bind 0.0.0.0:$(PORT)
