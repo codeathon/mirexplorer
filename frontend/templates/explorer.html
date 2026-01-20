@@ -1,11 +1,19 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-    <script type="module" src="http://localhost:3000/@vite/client"></script>
-    <script type="module" src="http://localhost:3000/main.jsx"></script>
-    <script type="module" src="http://localhost:3000/src/explorerUI.jsx"></script>
-    <script type="module" src="http://localhost:3000/src/explorerTutorial.jsx"></script>
-    <script type="module" src="http://localhost:3000/src/jsColor.jsx"></script>
+    {% if is_development %}
+        <script type="module" src="http://localhost:3000/@vite/client"></script>
+        <script type="module" src="http://localhost:3000/main.jsx"></script>
+        <script type="module" src="http://localhost:3000/src/explorerUI.jsx"></script>
+        <script type="module" src="http://localhost:3000/src/explorerTutorial.jsx"></script>
+        <script type="module" src="http://localhost:3000/src/jsColor.jsx"></script>
+    {% else %}
+        <script type="module" src="{{ url_for('static', filename='dist/main.js') }}"></script>
+        <script type="module" src="{{ url_for('static', filename='dist/explorerUI.js') }}"></script>
+        <script type="module" src="{{ url_for('static', filename='dist/explorerTutorial.js') }}"></script>
+        <script type="module" src="{{ url_for('static', filename='dist/jsColor.js') }}"></script>
+        <link rel="stylesheet" href="{{ url_for('static', filename='dist/main.css') }}">
+    {% endif %}
 
     <div class="explorer-overlay" id="explorer-overlay"></div>
     <div id="tutorial-arrow" class="tutorial-arrow">

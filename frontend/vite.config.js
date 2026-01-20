@@ -13,9 +13,17 @@ export default {
   },
 
   build: {
+    outDir: resolve(__dirname, 'static/dist'),
+    emptyOutDir: true,
+    manifest: true,
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'main.jsx')
+        main: resolve(__dirname, 'main.jsx'),
+        dropzone: resolve(__dirname, 'src/dropzone.jsx'),
+        audioRecorder: resolve(__dirname, 'src/audioRecorder.jsx'),
+        explorerUI: resolve(__dirname, 'src/explorerUI.jsx'),
+        explorerTutorial: resolve(__dirname, 'src/explorerTutorial.jsx'),
+        jsColor: resolve(__dirname, 'src/jsColor.jsx'),
       }
     }
   }

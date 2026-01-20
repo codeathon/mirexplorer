@@ -5,9 +5,11 @@ from flask import Flask
 from backend.extensions import cache, limiter
 from backend.tasks import get_scheduler
 
+# Check if we're in development mode
+IS_DEVELOPMENT = os.environ.get("DEVELOPMENT_ENV", "false").lower() == "true"
 
 FLASK_CONFIG = {
-    "DEBUG": True,
+    "DEBUG": IS_DEVELOPMENT,
     "SECRET_KEY": os.urandom(32),
     "MAX_CONTENT_LENGTH": 50 * 1024 * 1024,
     "CACHE_TYPE": "SimpleCache",
@@ -29,6 +31,11 @@ def create_flask_app():
 
     cache.init_app(app)
     limiter.init_app(app)
+
+    # Add is_development flag to templates
+    @app.context_processor
+    def inject_config():
+        return dict(is_development=IS_DEVELOPMENT)
 
     return app
 
