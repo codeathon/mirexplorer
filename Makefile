@@ -1,13 +1,13 @@
-.PHONY: build install run
+.PHONY: dev install
 
 install:
 	@echo "Installing dependencies..."
 	poetry lock
 	poetry install --no-interaction
-	poetry run flask vite install
+	cd frontend && npm install
 
 dev: install
 	@echo "Starting frontend + backend..."
 	@trap "kill 0" EXIT; \
-		poetry run flask vite start & \
-		poetry run python app.py
+	   cd frontend && npm run dev & \
+	   poetry run python app.py

@@ -4,9 +4,10 @@ const withMT = require("@material-tailwind/react/utils/withMT");
 
 module.exports = withMT({
     content: [
-        "../templates/**/*.html",
-        "../templates/**/*.j2",
-        "../*.py",
+        "./templates/**/*.html",
+        "./templates/**/*.j2",
+        "./src/**/*.{js,jsx}",
+        "../backend/**/*.py",
     ],
     theme: {
         extend: {
@@ -34,4 +35,3 @@ module.exports = withMT({
     },
     plugins: [],
 })
-

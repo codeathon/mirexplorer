@@ -11,6 +11,7 @@ from dotenv import load_dotenv, find_dotenv
 from backend import FLASK_APP, get_scheduler, app_data
 from backend.extensions import limiter
 
+
 if __name__ == "__main__":
     # load env variables
     load_dotenv(find_dotenv())

@@ -8,7 +8,7 @@ export default {
 
   resolve: {
     alias: {
-      '@': '/src',
+      '@': resolve(__dirname, 'src'),
     }
   },
 
