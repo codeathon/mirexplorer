@@ -2,14 +2,20 @@
 
 {% block body %}
     {% if is_development %}
+        <script>console.log("DEV")</script>
         <script type="module" src="http://localhost:3000/@vite/client"></script>
         <script type="module" src="http://localhost:3000/main.jsx"></script>
         <script type="module" src="http://localhost:3000/src/dropzone.jsx"></script>
         <script type="module" src="http://localhost:3000/src/audioRecorder.jsx"></script>
     {% else %}
+        <script>console.log("PROD")</script>
+        <script>console.log("Loading main.js")</script>
         <script type="module" src="{{ url_for('static', filename='dist/main.js') }}"></script>
+        <script>console.log("Loading dropzone.js")</script>
         <script type="module" src="{{ url_for('static', filename='dist/dropzone.js') }}"></script>
+        <script>console.log("Loading audioRecorder.js")</script>
         <script type="module" src="{{ url_for('static', filename='dist/audioRecorder.js') }}"></script>
+        <script>console.log("Loading main.css")</script>
         <link rel="stylesheet" href="{{ url_for('static', filename='dist/main.css') }}">
     {% endif %}
 
