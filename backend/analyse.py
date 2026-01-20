@@ -19,7 +19,7 @@ from backend.extensions import cache
 MOISES_URL = URL(r"https://api.music.ai/v1/")
 MOISES_HEADERS = {"Authorization": os.environ.get("MOISES_TOKEN")}
 
-TIMEOUT_SECONDS = 30
+TIMEOUT_SECONDS = 120
 BACKOFF_SECONDS = 5
 
 MAX_TAGS = 3
@@ -268,7 +268,6 @@ def _request_moises_upload_urls() -> tuple[str, str]:
     """
     Requests upload and download URLs from Moises
     """
-    logger.info(MOISES_HEADERS)
     response = requests.get(str(MOISES_URL / "upload"), headers=MOISES_HEADERS)
 
     # Raises a HTTP error if one occurred
