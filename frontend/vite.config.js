@@ -1,6 +1,10 @@
 import { resolve } from 'path';
 
-export default {
+export default ({ mode }) => ({
+  base: mode === 'production'
+    ? '/static/dist/'
+    : '/',
+
   server: {
     port: 3000,
     strictPort: true,
@@ -27,4 +31,4 @@ export default {
       }
     }
   }
-};
+});
