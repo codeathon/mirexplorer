@@ -100,7 +100,7 @@ async def route_chat_response(user_message: str, context: list[dict], deps: dict
     """Routes a chat response either to the agent, or to a generic 'goodbye' message."""
 
     n_user_turns = len([i for i in context if i["role"] == "user"])
-    if n_user_turns >= MAX_USER_TURNS:
+    if n_user_turns > MAX_USER_TURNS:
         return await create_goodbye_message(deps)
 
     else:

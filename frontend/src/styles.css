@@ -322,12 +322,16 @@
     @apply mt-auto relative flex-shrink-0 px-5 py-3 border-t border-gray-200 z-10;
 }
 
+.chat-reply-container div {
+    @apply items-center text-center justify-center font-accent text-sm pb-2 pt-0 text-gray-600
+}
+
 .chat-reply-container input {
     @apply h-10 w-[96%] rounded-b-lg border-t border-gray-200 bg-gray-100 pl-3 text-sm focus:outline-blue-600/50 z-20
 }
 
 .chat-reply-container button {
-    @apply absolute top-0 right-1 bottom-0 my-auto rounded-lg p-0.5
+    @apply absolute top-5 right-1 bottom-0 my-auto rounded-lg p-0.5
     text-blue-600 hover:bg-gray-200 z-50
     w-6 h-6 flex items-center justify-center mr-1 pointer-events-auto;
 }

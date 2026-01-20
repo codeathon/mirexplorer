@@ -52,6 +52,8 @@ let instrumentsContainer = null
 
 let loopRegion = RegionsPlugin.create()
 
+let maxUserTurns = 4
+
 
 function cleanContainer() {
     // Destroy previous instances if it exists
@@ -1128,6 +1130,15 @@ function sendUserMessage(text) {
             li.appendChild(div);
             messageContainer.appendChild(li);
 
+            const nMessagesRemaining = maxUserTurns - document.getElementsByClassName("chat-user-message").length
+            const messageCounter = document.getElementById("chat-message-counter")
+            if (nMessagesRemaining === 1) {
+                messageCounter.innerText = `${nMessagesRemaining} message left`
+            } else {
+                messageCounter.innerText = `${nMessagesRemaining} messages left`
+            }
+
+
             // scroll down
             messageContainer.scrollTop = messageContainer.scrollHeight;
 
@@ -1210,6 +1221,7 @@ function startChat(response = null) {
     const inputWrapper = document.createElement('div');
     inputWrapper.className = "chat-reply-container";
     inputWrapper.innerHTML = `
+        <div id="chat-message-counter">${maxUserTurns} messages left</div>
         <input type="text" placeholder="Reply" id="chat-userreply"/>
         <button id="chat-sendmessage-button">
             <svg xmlns="http://www.w3.org/2000/svg"
