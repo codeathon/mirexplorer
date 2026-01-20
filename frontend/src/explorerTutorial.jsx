@@ -11,7 +11,62 @@ function getState() {
 }
 
 
+function getArrowPosition() {
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+
+    const targetElements = document.getElementsByClassName('flasher-style');
+    if (targetElements.length === 0) return {x: centerX, y: centerY, angle: 0};
+
+    const target = targetElements[0];
+    const rect = target.getBoundingClientRect();
+
+    // waveform positioning different
+    if (targetElements[0].id === "waveform") {
+        return {x: centerX, y: rect.top - 120, angle: 180};
+    }
+    else if (targetElements[0].id === "sidebar-analyser") {
+        console.log(targetElements[0].getBoundingClientRect())
+        return {x: rect.right + 90, y: centerY, angle: 270}
+    }
+    // sidebar position different
+    console.log(targetElements[0].id)
+
+    // Original logic for small elements
+    const corners = [
+        { x: rect.left, y: rect.top },
+        { x: rect.right, y: rect.top },
+        { x: rect.left, y: rect.bottom },
+        { x: rect.right, y: rect.bottom }
+    ];
+
+    let closestCorner = corners[0];
+    let minDistance = Math.hypot(corners[0].x - centerX, corners[0].y - centerY);
+
+    for (let corner of corners) {
+        const dist = Math.hypot(corner.x - centerX, corner.y - centerY);
+        if (dist < minDistance) {
+            minDistance = dist;
+            closestCorner = corner;
+        }
+    }
+
+    const dx = closestCorner.x - centerX;
+    const dy = closestCorner.y - centerY;
+    const distance = Math.hypot(dx, dy);
+    const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+
+    const buffer = 60;
+    const ratio = (distance - buffer) / distance;
+    const finalX = centerX + dx * ratio;
+    const finalY = centerY + dy * ratio;
+
+    return {x: finalX, y: finalY, angle: angle + 90};
+}
+
 function showInfoPopup() {
+    const tutorialArrow = document.getElementById("tutorial-arrow")
+
     const infoPopup = createPopup()
     const tutorialPages = [{
         title: "AI Music Explorer", content: `
@@ -116,7 +171,9 @@ function showInfoPopup() {
         if (currentPage !== 0) {
             infoPopup.className = "tutorial-popup"
             infoPopup.id = "tutorial-popup"
+            tutorialArrow.style.display = "block"
         } else {
+            tutorialArrow.style.display = "none"
             infoPopup.className = "info-popup"
             Array.from(modifyElements).forEach(elm => {
                 let elmer = document.getElementById(elm)
@@ -180,6 +237,8 @@ function showInfoPopup() {
             document.body.removeChild(infoPopup);
             unblurContent(true)
 
+            tutorialArrow.style.display = "none"
+
             Array.from(modifyElements).forEach(elm => {
                 let elmer = document.getElementById(elm)
                 if (elmer) {
@@ -189,6 +248,17 @@ function showInfoPopup() {
         });
 
         infoPopup.appendChild(closeBtn);
+
+        setTimeout(() => {
+            const {x, y, angle} = getArrowPosition();
+
+            tutorialArrow.style.setProperty('left', x + 'px', 'important');
+            tutorialArrow.style.setProperty('top', y + 'px', 'important');
+            tutorialArrow.style.setProperty('margin-left', '-2px', 'important');
+            tutorialArrow.style.setProperty('margin-top', '-32px', 'important');
+            tutorialArrow.style.setProperty('transform', `rotate(${angle}deg)`, 'important');
+            tutorialArrow.style.setProperty('opacity', '1', 'important');
+        }, 0);
     }
 
     renderPage()

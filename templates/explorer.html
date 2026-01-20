@@ -8,6 +8,10 @@
     <script type="module" src="http://localhost:3000/src/jsColor.jsx"></script>
 
     <div class="explorer-overlay" id="explorer-overlay"></div>
+    <div id="tutorial-arrow" class="tutorial-arrow">
+        <div></div>
+    </div>
+
     <div id="explorer-content" class="flex h-screen bg-gray-100 relative">
         <aside id="sidebar"
                class="explorer-sidebar-container transform transition-transform duration-300 translate-x-0 absolute left-0 top-0 z-50 bg-white">
@@ -206,7 +210,7 @@
                 borderColor:'rgba(0,0,0,1)',
                 borderRadius:12,
                 sliderSize:9,
-                value:'rgba(239,155,151,1)',
+                value:'rgba(151,155,239,1)',
                 onChange: 'colourChanged()'
                 }" class="w-8 h-8"></button>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"

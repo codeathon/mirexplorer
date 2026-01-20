@@ -212,7 +212,7 @@
 }
 
 .tutorial-popup {
-    @apply flex flex-col fixed top-1/2 left-1/2 -translate-x-1/2 translate-y-64 bg-white p-5 w-[1000px] min-h-[100px] text-left rounded-lg shadow-lg z-[1000];
+    @apply flex flex-col fixed top-1/2 left-1/2 -translate-x-1/2 translate-y-64 bg-red-500 p-5 w-[1000px] min-h-[100px] text-left rounded-lg shadow-lg z-[1000] text-white;
 }
 
 .tutorial-popup h2 {
@@ -227,14 +227,39 @@
 }
 
 .flasher-style {
-    @apply border-4  border-dashed bg-red-500/20;
+    @apply border-8  border-dashed bg-red-500/20;
 }
 @keyframes border-flash {
     0%, 100% { border-color: rgba(220, 38, 38, 0.2); }
     50% { border-color: #dc2626; }
 }
 .animate-border-flash {
-    animation: border-flash 2s ease-in-out infinite;
+    animation: border-flash 0.8s ease-in-out infinite;
+}
+
+.tutorial-arrow {
+    position: fixed;
+    display: block;
+    width: 16px;
+    height: 128px;
+    background: #ef4444;
+    transform-origin: center center;
+    z-index: 9999 !important;
+    margin: 0;
+    padding: 0;
+}
+
+.tutorial-arrow div {
+    position: absolute;
+    z-index: 9999 !important;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 16px solid transparent;
+    border-right: 16px solid transparent;
+    border-bottom: 24px solid #ef4444;
 }
 
 .close-button {

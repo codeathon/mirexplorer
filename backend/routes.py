@@ -17,6 +17,7 @@ main_routes = Blueprint("main", __name__)
 
 
 @main_routes.route("/uploads/<filename>")
+# TODO: add rate limit here
 def uploaded_file(filename):
     return send_from_directory(UPLOADS_FOLDER, filename)
 

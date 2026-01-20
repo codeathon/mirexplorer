@@ -8,7 +8,7 @@ import {
     finalisePopup,
     closePopup,
     createPopup,
-    createSpinner, blurContent
+    createSpinner, blurContent, unblurContent
 } from "./explorerShared";
 
 let sampleRate = 22050;
@@ -16,7 +16,7 @@ let gridResolutionSecs = 5
 let defaultFMin = 200
 let defaultFMax = 8000
 let defaultSpectType = "Linear"
-let defaultColour = '#ef9b97'
+let defaultColour = '#979bef'
 let defaultHeight = 376
 
 let wavesurfer = null;
@@ -1149,8 +1149,10 @@ function sendUserMessage(text) {
         })
 }
 
-
 function startChat(response = null) {
+    if (document.getElementById("chat-container-123")) {
+        return;
+    }
     const chatContainer = document.createElement('div');
     chatContainer.className = "chat-container";
     chatContainer.id = "chat-container-123";
@@ -1159,27 +1161,35 @@ function startChat(response = null) {
     const header = document.createElement('div');
     header.className = "chat-header-container";
     const titleWrapper = document.createElement('div');
+
     titleWrapper.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-            viewBox="0 0 24 24" stroke-width="1.5"
-            stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round"
-                d="M8.625 9.75a.375.375 0 1 1-.75 0
-                .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0
-                .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0
-                .375.375 0 0 1 .75 0Zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994
-                2.707 3.227 1.087.16 2.185.283 3.293.369V21
-                l4.184-4.183a1.14 1.14 0 0 1 .778-.332
-                48.294 48.294 0 0 0 5.83-.498
-                c1.585-.233 2.708-1.626 2.708-3.228V6.741
-                c0-1.602-1.123-2.995-2.707-3.228A48.394
-                48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513
-                C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
-        </svg>
-        <div>AI Music Explorer Chat</div>
-    `;
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+        viewBox="0 0 24 24" stroke-width="1.5"
+        stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round"
+            d="M8.625 9.75a.375.375 0 1 1-.75 0
+            .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0
+            .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0
+            .375.375 0 0 1 .75 0Zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994
+            2.707 3.227 1.087.16 2.185.283 3.293.369V21
+            l4.184-4.183a1.14 1.14 0 0 1 .778-.332
+            48.294 48.294 0 0 0 5.83-.498
+            c1.585-.233 2.708-1.626 2.708-3.228V6.741
+            c0-1.602-1.123-2.995-2.707-3.228A48.394
+            48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513
+            C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
+    </svg>
+    <div>AI Music Explorer Chat</div>
+`;
     const closeBtn = document.createElement("button")
     closeBtn.innerText = "×";
+    closeBtn.addEventListener("click", (e) => {
+        // e.stopPropagation();
+        // e.preventDefault();
+        document.getElementById('explorer-overlay').style.display = 'none';
+        unblurContent();
+        chatContainer.remove();
+    });
     titleWrapper.appendChild(closeBtn)
 
     header.append(titleWrapper);
@@ -1216,11 +1226,6 @@ function startChat(response = null) {
     blurContent()
 
     // add event listeners now
-    closeBtn.addEventListener("click", () => {
-        chatContainer.style.display = "none"
-        document.body.removeChild(chatContainer)
-        closePopup(chatContainer.id)
-    });
     const replyButton = document.getElementById("chat-sendmessage-button")
     const userReply = document.getElementById("chat-userreply")
     replyButton.addEventListener("click", () => {
@@ -1230,7 +1235,6 @@ function startChat(response = null) {
 
     return chatContainer;
 }
-
 
 function addTimeSignaturePill(response = null) {
     timeSignatureContainer = response["out"]
