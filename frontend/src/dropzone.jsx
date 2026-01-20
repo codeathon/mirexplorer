@@ -1,6 +1,29 @@
 import "./styles.css";
 
+
+// show warning for mobile user
+function mobileWarning() {
+    const isMobileOrTablet = () => {
+        return (
+            /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+            (navigator.maxTouchPoints && navigator.maxTouchPoints > 1)
+        );
+    };
+
+    if (isMobileOrTablet()) {
+        const warning = document.getElementById('mobile-warning');
+        const container = document.getElementById("dropzone-container")
+        console.log(container)
+        if (warning) {
+            container.classList.add("blurred")
+            warning.classList.remove('hidden');
+        }
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    mobileWarning()
+
     // Dropzone form auto-submit
     const dropzone = document.getElementById("dropzone-file");
     const form = document.getElementById("upload-form");

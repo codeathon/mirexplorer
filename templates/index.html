@@ -8,7 +8,27 @@
 
     <div id="app"></div>
 
-    <div class="w-screen h-screen flex flex-col items-center justify-center space-y-4 bg-gray-100">
+    <div id="mobile-warning"
+         class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+        <div class="bg-white rounded-lg shadow-lg max-w-md p-6 text-center space-y-4">
+            <h2 class="text-xl font-display text-gray-800">
+                Desktop / Laptop Required
+            </h2>
+            <p class="text-gray-700 font-accent">
+                This website is <strong>only supported on desktop or laptop computers</strong>.
+            </p>
+            <p class="text-gray-600 font-accent">
+                Mobile phones and tablets are not supported, and audio upload or recording
+                will not function correctly.
+            </p>
+            <p class="text-sm text-gray-500 font-accent">
+                Please access this site using a desktop or laptop computer.
+            </p>
+        </div>
+    </div>
+
+    <div id="dropzone-container"
+         class="w-screen h-screen flex flex-col items-center justify-center space-y-4 bg-gray-100">
         <div class="flex items-center justify-center space-x-12">
             <a href="https://www.qmul.ac.uk/">
                 <img src="{{ url_for('static', filename='QM_logo_Black.png') }}"
@@ -139,4 +159,5 @@
                 Us</a>
         </div>
     </div>
+
 {% endblock %}
