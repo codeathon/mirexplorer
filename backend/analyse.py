@@ -268,6 +268,7 @@ def _request_moises_upload_urls() -> tuple[str, str]:
     """
     Requests upload and download URLs from Moises
     """
+    logger.info(MOISES_HEADERS)
     response = requests.get(str(MOISES_URL / "upload"), headers=MOISES_HEADERS)
 
     # Raises a HTTP error if one occurred
