@@ -12,6 +12,9 @@ from backend import FLASK_APP, get_scheduler, app_data
 from backend.extensions import limiter
 
 
+# make gunicorn happy :)
+app = FLASK_APP
+
 if __name__ == "__main__":
     # load env variables
     load_dotenv(find_dotenv())
