@@ -310,6 +310,10 @@
     @apply flex mb-2;
 }
 
+.chat-message-container button {
+    @apply justify-center items-center text-center w-full font-accent my-auto rounded-lg text-blue-600  z-50 h-6 flex pointer-events-auto;
+}
+
 .chat-user-message {
     @apply bg-blue-600/70 text-white px-3 py-2 rounded-lg max-w-[70%] text-left font-accent rounded-t-lg rounded-tl-lg rounded-bl-lg rounded-br-none relative;
 }

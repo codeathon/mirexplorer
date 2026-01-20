@@ -1143,10 +1143,20 @@ function sendUserMessage(text) {
             messageContainer.scrollTop = messageContainer.scrollHeight;
 
             // disable the reply button and input if the message is a goodbye
-            console.log(asstResponse, asstResponse.startsWith("It's been great chatting with you about this recording!"), asstResponse.startsWith("It's been great chatting with you"))
+            // console.log(asstResponse, asstResponse.startsWith("It's been great chatting with you about this recording!"), asstResponse.startsWith("It's been great chatting with you"))
             if (asstResponse.startsWith("It's been great chatting with you about this recording! To continue the conversation, try pasting")) {
                 const userReplyButton = document.getElementById("chat-sendmessage-button")
                 const userReplyInput = document.getElementById("chat-userreply")
+
+                // copy text button for goodbye message
+                const copyTextButton = document.createElement("button")
+                copyTextButton.innerText = "Copy text"
+                copyTextButton.addEventListener("click", () => {
+                    copyTextButton.innerText = "Copied!"
+                    navigator.clipboard.writeText(asstResponse);
+                })
+
+                messageContainer.appendChild(copyTextButton)
 
                 userReplyButton.disabled = true;
                 userReplyButton.style.pointerEvents = 'none';
