@@ -23,4 +23,4 @@ build: install
 prod:
 	@echo "Starting Flask backend (production)..."
 	# Render provides $PORT
-	poetry run gunicorn app:app --bind 0.0.0.0:$(PORT)
+	poetry run gunicorn app:app --bind 0.0.0.0:$(PORT) --timeout 240
