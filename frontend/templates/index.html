@@ -9,14 +9,30 @@
         <script type="module" src="http://localhost:3000/src/audioRecorder.jsx"></script>
     {% else %}
         <script>console.log("PROD")</script>
+
+        {# Main app JS + CSS #}
+        {% set main = vite_asset('main.jsx') %}
         <script>console.log("Loading main.js")</script>
-        <script type="module" src="{{ url_for('static', filename='dist/main.js') }}"></script>
+        <script type="module" src="{{ url_for('static', filename='dist/' ~ main.file) }}"></script>
+        {% for css_file in main.css %}
+            <link rel="stylesheet" href="{{ url_for('static', filename='dist/' ~ css_file) }}">
+        {% endfor %}
+
+        {# Dropzone JS #}
+        {% set dropzone = vite_asset('src/dropzone.jsx') %}
         <script>console.log("Loading dropzone.js")</script>
-        <script type="module" src="{{ url_for('static', filename='dist/dropzone.js') }}"></script>
+        <script type="module" src="{{ url_for('static', filename='dist/' ~ dropzone.file) }}"></script>
+        {% for css_file in dropzone.css %}
+            <link rel="stylesheet" href="{{ url_for('static', filename='dist/' ~ css_file) }}">
+        {% endfor %}
+
+        {# Audio Recorder JS #}
+        {% set audio = vite_asset('src/audioRecorder.jsx') %}
         <script>console.log("Loading audioRecorder.js")</script>
-        <script type="module" src="{{ url_for('static', filename='dist/audioRecorder.js') }}"></script>
-        <script>console.log("Loading main.css")</script>
-        <link rel="stylesheet" href="{{ url_for('static', filename='dist/main.css') }}">
+        <script type="module" src="{{ url_for('static', filename='dist/' ~ audio.file) }}"></script>
+        {% for css_file in audio.css %}
+            <link rel="stylesheet" href="{{ url_for('static', filename='dist/' ~ css_file) }}">
+        {% endfor %}
     {% endif %}
 
     <div id="app"></div>

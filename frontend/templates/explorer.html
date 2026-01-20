@@ -8,11 +8,39 @@
         <script type="module" src="http://localhost:3000/src/explorerTutorial.jsx"></script>
         <script type="module" src="http://localhost:3000/src/jsColor.jsx"></script>
     {% else %}
-        <script type="module" src="{{ url_for('static', filename='dist/main.js') }}"></script>
-        <script type="module" src="{{ url_for('static', filename='dist/explorerUI.js') }}"></script>
-        <script type="module" src="{{ url_for('static', filename='dist/explorerTutorial.js') }}"></script>
-        <script type="module" src="{{ url_for('static', filename='dist/jsColor.js') }}"></script>
-        <link rel="stylesheet" href="{{ url_for('static', filename='dist/main.css') }}">
+        <script>console.log("PROD")</script>
+
+        {# Main bundle #}
+        {% set main = vite_asset('main.jsx') %}
+        <script>console.log("Loading main.js")</script>
+        <script type="module" src="{{ url_for('static', filename='dist/' ~ main.file) }}"></script>
+        {% for css_file in main.css %}
+            <link rel="stylesheet" href="{{ url_for('static', filename='dist/' ~ css_file) }}">
+        {% endfor %}
+
+        {# explorerUI bundle #}
+        {% set explorerUI = vite_asset('src/explorerUI.jsx') %}
+        <script>console.log("Loading explorerUI.js")</script>
+        <script type="module" src="{{ url_for('static', filename='dist/' ~ explorerUI.file) }}"></script>
+        {% for css_file in explorerUI.css %}
+            <link rel="stylesheet" href="{{ url_for('static', filename='dist/' ~ css_file) }}">
+        {% endfor %}
+
+        {# explorerTutorial bundle #}
+        {% set explorerTutorial = vite_asset('src/explorerTutorial.jsx') %}
+        <script>console.log("Loading explorerTutorial.js")</script>
+        <script type="module" src="{{ url_for('static', filename='dist/' ~ explorerTutorial.file) }}"></script>
+        {% for css_file in explorerTutorial.css %}
+            <link rel="stylesheet" href="{{ url_for('static', filename='dist/' ~ css_file) }}">
+        {% endfor %}
+
+        {# jsColor bundle #}
+        {% set jsColor = vite_asset('src/jsColor.jsx') %}
+        <script>console.log("Loading jsColor.js")</script>
+        <script type="module" src="{{ url_for('static', filename='dist/' ~ jsColor.file) }}"></script>
+        {% for css_file in jsColor.css %}
+            <link rel="stylesheet" href="{{ url_for('static', filename='dist/' ~ css_file) }}">
+        {% endfor %}
     {% endif %}
 
     <div class="explorer-overlay" id="explorer-overlay"></div>
