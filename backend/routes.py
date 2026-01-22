@@ -26,7 +26,7 @@ def uploaded_file(filename):
 def index():
 
     example_key = request.form.get("example_file")
-    logger.info(example_key)
+
     if example_key:
         path = ROOT_DIR / "frontend/static/example_audio" / example_key
 
@@ -50,6 +50,7 @@ def index():
     form = AudioUpload()
 
     filo = request.files.get("file")
+
     if filo and filo.filename == "recorded_audio.webm":
         filename = secure_filename(filo.filename)
         ext = Path(filename).suffix.lower()
