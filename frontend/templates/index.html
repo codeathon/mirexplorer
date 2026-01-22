@@ -56,6 +56,26 @@
         </div>
     </div>
 
+
+    <div id="copyright-warning"
+         class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+        <div class="bg-white rounded-lg shadow-lg max-w-md p-6 text-center space-y-4">
+            <h2 class="text-xl font-display text-gray-800">
+                Be Aware of Copyright!
+            </h2>
+            <p class="text-gray-700 font-accent">
+                This website <strong>only allows you to analyse music or recordings that you own the copyright to</strong>.
+            </p>
+            <p class="text-gray-600 font-accent">
+                By clicking continue, you confirm that you <strong>are the legal owner</strong> of the recording you just uploaded.
+            </p>
+            <p class="text-sm text-gray-500 font-accent">
+                If in doubt, please ask a parent or guardian to assist you.
+            </p>
+            <button id="copyright-continue-button" class="font-display border-2 rounded-lg p-1">Continue</button>
+        </div>
+    </div>
+
     <div id="dropzone-container"
          class="w-screen h-screen flex flex-col items-center justify-center space-y-4 bg-gray-100">
         <div class="flex items-center justify-center space-x-12">
@@ -130,7 +150,7 @@
                         </svg>
                         <p class="dropzone-text-main">Use an example recording!</p>
                         <p class="dropzone-text-sub">Choose from one of our pre-selected files</p>
-                        <select name="example_file" class="z-50" onchange="this.form.submit()">
+                        <select id="example-selector" name="example_file" class="z-50" onchange="this.form.submit()">
                             <option value="rock.mp3">Rock (male vocals, keyboard, drum kit)</option>
                             <option value="folk_zanzibar.mp3">Folk (female vocals, accordion, from Zanzibar)</option>
                             <option value="pop.mp3">Pop (female vocals, guitar, drum kit)</option>
@@ -161,14 +181,14 @@
         </div>
         <div>
             <p class="dropzone-text-sub mt-5">
-                Created as part of the <a href="https://www.ukri.org/councils/epsrc/" class="underline z-[9999]">EPSRC</a> <em>AI
+                Created as part of the <a href="https://www.ukri.org/councils/epsrc/" class="underline z-10">EPSRC</a> <em>AI
                 Skills Through Music</em> project.
             </p>
             <p class="dropzone-text-sub">
                 We do not store your recordings or use them to train AI models.
             </p>
             <p class="dropzone-text-sub">
-                Example recordings are from the <a href="https://freemusicarchive.org/" class="underline z-[9999]">Free Music Archive</a> and are <a href="https://creativecommons.org/share-your-work/cclicenses/" class="underline z-[9999]">CC Licensed</a>
+                Example recordings are from the <a href="https://freemusicarchive.org/" class="underline z-10">Free Music Archive</a> and are <a href="https://creativecommons.org/share-your-work/cclicenses/" class="underline z-10">CC Licensed</a>
             </p>
         </div>
 

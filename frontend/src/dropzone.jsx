@@ -1,7 +1,6 @@
 import "./styles.css";
 
 
-
 // show warning for mobile user
 function mobileWarning() {
     const isMobileOrTablet = () => {
@@ -22,6 +21,22 @@ function mobileWarning() {
     }
 }
 
+
+function prepareUpload() {
+    const selector = document.getElementById("example-selector")
+    selector.disabled = true
+    selector.classList.add("bg-black/10")
+
+    const confirmPopup = document.getElementById("copyright-warning")
+    confirmPopup.classList.remove("hidden");
+
+    const form = document.getElementById("upload-form");
+    const continueButton = document.getElementById("copyright-continue-button")
+
+    continueButton.addEventListener("click", () => {form.submit()})
+}
+
+
 document.addEventListener('DOMContentLoaded', () => {
     mobileWarning()
 
@@ -40,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Submit form when file selected via input
         dropzone.addEventListener("change", () => {
             if (dropzone.files.length > 0) {
-                form.submit();
+                prepareUpload()
             }
         });
 
@@ -62,14 +77,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const files = e.dataTransfer.files;
             if (files.length > 0) {
                 dropzone.files = files;
-                form.submit();
+                prepareUpload()
             }
         });
 
         // Submit on file selection
         dropzone.addEventListener("change", () => {
             if (dropzone.files.length > 0) {
-                form.submit();
+                prepareUpload()
             }
         });
     }

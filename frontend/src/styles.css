@@ -9,6 +9,22 @@
     @apply max-w-[228px] h-auto opacity-40 mb-8 mt-0;
 }
 
+.dropzone-popup {
+    @apply hidden fixed inset-0 z-50 flex items-center justify-center bg-black/70
+}
+.dropzone-popup div {
+    @apply bg-white rounded-lg shadow-lg max-w-md p-6 text-center space-y-4
+}
+.dropzone-popup div h2 {
+    @apply text-xl font-display text-gray-800
+}
+.dropzone-popup div p {
+    @apply font-accent
+}
+.dropzone-popup div button {
+    @apply font-display pointer-events-auto
+}
+
 .dropzone-label-example {
     @apply flex flex-col items-center justify-center w-72 md:w-96 h-48 bg-gray-100 border-2 border-dashed border-gray-400 rounded-lg transition-colors duration-200;
 }
