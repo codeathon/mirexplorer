@@ -1050,6 +1050,11 @@ function sendUserMessage(text) {
 
     const messageContainer = document.getElementById("chat-message-container");
 
+    // disable send message button
+    const userReplyButton = document.getElementById("chat-sendmessage-button")
+    userReplyButton.disabled = true
+    userReplyButton.style.pointerEvents = 'none';
+
     // add user message to the chat
     const li = document.createElement("li");
     li.className = "flex justify-end";
@@ -1117,8 +1122,10 @@ function sendUserMessage(text) {
             return response.json();
         })
         .then(data => {
-            // remove thinking message
+            // remove thinking message, enable new message
             typingLi.remove()
+            userReplyButton.disabled = false
+            userReplyButton.style.pointerEvents = 'auto';
 
             // add assistant message to chat
             const asstResponse = data.out;
@@ -1145,7 +1152,6 @@ function sendUserMessage(text) {
             // disable the reply button and input if the message is a goodbye
             // console.log(asstResponse, asstResponse.startsWith("It's been great chatting with you about this recording!"), asstResponse.startsWith("It's been great chatting with you"))
             if (asstResponse.startsWith("It's been great chatting with you about this recording! To continue the conversation, try pasting")) {
-                const userReplyButton = document.getElementById("chat-sendmessage-button")
                 const userReplyInput = document.getElementById("chat-userreply")
 
                 // copy text button for goodbye message

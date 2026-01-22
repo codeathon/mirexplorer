@@ -211,8 +211,19 @@
     margin-bottom: 0;
 }
 
+@keyframes shadow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 5px 2px rgba(45, 212, 191, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 15px 5px rgba(45, 212, 191, 0.4);
+  }
+}
+.shadow-pulse {
+  animation: shadow-pulse 1.6s infinite ease-in-out;
+}
 .tutorial-popup {
-    @apply flex flex-col fixed top-1/2 left-1/2 -translate-x-1/2 translate-y-64 bg-red-500 p-5 w-[1000px] min-h-[100px] text-left rounded-lg shadow-lg z-[1000] text-white;
+    @apply flex flex-col fixed top-1/2 left-1/2 -translate-x-1/2 translate-y-64 bg-teal-300 p-5 w-[1000px] min-h-[100px] text-left rounded-lg  shadow-teal-100 shadow-pulse z-[1000] text-white;
 }
 
 .tutorial-popup h2 {
@@ -311,7 +322,7 @@
 }
 
 .chat-message-container button {
-    @apply justify-center items-center text-center w-full font-accent my-auto rounded-lg text-blue-600  z-50 h-6 flex pointer-events-auto;
+    @apply justify-center items-center text-center w-[70%] font-accent my-auto rounded-lg text-blue-600 z-50 h-6 flex pointer-events-auto border border-blue-400;
 }
 
 .chat-user-message {
