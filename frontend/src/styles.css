@@ -9,6 +9,10 @@
     @apply max-w-[228px] h-auto opacity-40 mb-8 mt-0;
 }
 
+.dropzone-label-example {
+    @apply flex flex-col items-center justify-center w-72 md:w-96 h-48 bg-gray-100 border-2 border-dashed border-gray-400 rounded-lg transition-colors duration-200;
+}
+
 .dropzone-label {
     @apply flex flex-col items-center justify-center w-72 md:w-96 h-48 bg-gray-100 border-2 border-dashed border-gray-400 rounded-lg cursor-pointer transition-colors duration-200;
 }

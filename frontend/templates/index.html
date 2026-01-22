@@ -79,22 +79,6 @@
         <h2 class="dropzone-header-sub">Analyse your music using AI!</h2>
 
         <div class="flex flex-row justify-center items-center w-full space-x-10">
-            <form id="upload-form" method="POST" class="flex justify-center" enctype="multipart/form-data">
-                {{ form.hidden_tag() }}
-                <label for="dropzone-file" id="dropzone-label" class="dropzone-label">
-                    <div class="dropzone-content">
-                        <svg class="dropzone-icon" xmlns="http://www.w3.org/2000/svg" fill="none"
-                             viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                  d="m9 9 10.5-3m0 6.553v3.75a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a1.803 1.803 0 1 1-.99-3.467l2.31-.66a2.25 2.25 0 0 0 1.632-2.163Zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a1.803 1.803 0 0 1-.99-3.467l2.31-.60A2.25 2.25 0 0 0 9 15.553Z"/>
-                        </svg>
-                        <p class="dropzone-text-main">Drag a file or click to upload!</p>
-                        <p class="dropzone-text-sub">MP3, WAV, or FLAC (maximum file size 16MB)</p>
-                    </div>
-                    {{ form.file(class="hidden-input", id="dropzone-file") }}
-                </label>
-            </form>
-
             <form id="record-form" method="POST" enctype="multipart/form-data" action="{{ url_for('main.index') }}">
                 <label id="record-label" class="dropzone-label cursor-pointer">
                     <div class="dropzone-content">
@@ -134,14 +118,58 @@
                 </label>
                 <button type="submit" hidden>Submit</button>
             </form>
+
+            <form id="example-form" method="POST" class="flex justify-center" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                <label id="dropzone-label=example" class="dropzone-label-example" >
+                    <div class="dropzone-content">
+                        <svg class="dropzone-icon" xmlns="http://www.w3.org/2000/svg" fill="none"
+                             viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                  d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"/>
+                        </svg>
+                        <p class="dropzone-text-main">Use an example recording!</p>
+                        <p class="dropzone-text-sub">Choose from one of our pre-selected files</p>
+                        <select name="example_file" class="z-50" onchange="this.form.submit()">
+                            <option value="rock.mp3">Rock (male vocals, keyboard, drum kit)</option>
+                            <option value="folk_zanzibar.mp3">Folk (female vocals, accordion, from Zanzibar)</option>
+                            <option value="pop.mp3">Pop (female vocals, guitar, drum kit)</option>
+                            <option value="rap.mp3">Rap (male vocals, electronic drums)</option>
+                            <option value="folk_ukraine.mp3">Folk (no vocals, flute, from Ukraine)</option>
+                        </select>
+                    </div>
+                    {{ form.file(class="hidden-input", id="dropzone-file") }}
+                </label>
+            </form>
+
+
+            <form id="upload-form" method="POST" class="flex justify-center" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                <label for="dropzone-file" id="dropzone-label" class="dropzone-label">
+                    <div class="dropzone-content">
+                        <svg class="dropzone-icon" xmlns="http://www.w3.org/2000/svg" fill="none"
+                             viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                  d="m9 9 10.5-3m0 6.553v3.75a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a1.803 1.803 0 1 1-.99-3.467l2.31-.66a2.25 2.25 0 0 0 1.632-2.163Zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a1.803 1.803 0 0 1-.99-3.467l2.31-.60A2.25 2.25 0 0 0 9 15.553Z"/>
+                        </svg>
+                        <p class="dropzone-text-main">Drag a file or click to upload!</p>
+                        <p class="dropzone-text-sub">MP3, WAV, or FLAC (maximum file size 16MB)</p>
+                    </div>
+                    {{ form.file(class="hidden-input", id="dropzone-file") }}
+                </label>
+            </form>
+
         </div>
         <div>
             <p class="dropzone-text-sub">
-                Created as part of the <a href="https://www.ukri.org/councils/epsrc/" class="underline">EPSRC</a> <em>AI
+                Created as part of the <a href="https://www.ukri.org/councils/epsrc/" class="underline z-[9999]">EPSRC</a> <em>AI
                 Skills Through Music</em> project.
             </p>
             <p class="dropzone-text-sub">
-                We do not store your recordings or files.
+                We do not store your recordings or use them to train AI models.
+            </p>
+            <p class="dropzone-text-sub">
+                Example recordings are from the <a href="https://freemusicarchive.org/" class="underline z-[9999]">Free Music Archive</a> and are <a href="https://creativecommons.org/share-your-work/cclicenses/" class="underline z-[9999]">CC Licensed</a>
             </p>
         </div>
 

@@ -9,7 +9,7 @@ from werkzeug.utils import secure_filename
 from loguru import logger
 
 from backend import app_data
-from backend.crud import AudioUpload, preprocess_audio_on_upload, save_audio, UPLOADS_FOLDER, load_audio
+from backend.crud import AudioUpload, preprocess_audio_on_upload, save_audio, ROOT_DIR, UPLOADS_FOLDER, load_audio
 from backend.extensions import limiter
 
 # Create a blueprint
@@ -24,6 +24,29 @@ def uploaded_file(filename):
 
 @main_routes.route("/", methods=["GET", "POST"])
 def index():
+
+    example_key = request.form.get("example_file")
+    logger.info(example_key)
+    if example_key:
+        path = ROOT_DIR / "frontend/static/example_audio" / example_key
+
+        try:
+            # Generate temp filename exactly like uploads
+            temp_filename = f"{uuid4()}.wav"
+            save_path = os.path.join(UPLOADS_FOLDER, temp_filename)
+
+            # Reuse  preprocessing logic
+            file_prep = preprocess_audio_on_upload(path)
+            save_audio(file_prep, save_path)
+
+            return redirect(
+                url_for("main.explorer", filename=temp_filename)
+            )
+
+        except Exception as e:
+            flash(f"Error processing example audio: {e}", category="danger")
+            logger.error(f"Error processing example audio: {e}")
+
     form = AudioUpload()
 
     filo = request.files.get("file")
