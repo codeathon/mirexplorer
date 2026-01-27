@@ -174,6 +174,7 @@ def contact():
 @main_routes.route("/send_message", methods=["POST"])
 @limiter.limit("15 per hour")
 async def send_message():
+    from backend.analyse import extract_spectral_features
     from backend.chat import route_chat_response
 
     data = request.get_json()
@@ -183,7 +184,10 @@ async def send_message():
     full_path = UPLOADS_FOLDER / Path(filepath).name
 
     _, track, artist, album, date = full_path.stem.split("_")
-    logger.info(track + artist + album + date)
+
+    # compute spectral features
+    spectral_feats = extract_spectral_features(full_path)
+    logger.info(spectral_feats)
 
     # create dependencies
     deps = {
@@ -200,6 +204,7 @@ async def send_message():
         "artist": artist.replace("-", " "),
         "album": album.replace("-", " "),
         "date": date.replace("-", " "),
+        **spectral_feats
     }
 
     # create the chat completion

@@ -7,24 +7,33 @@ SYSTEM_PROMPT = """
 You are a friendly assistant designed to assist the user with answering questions about an audio recording they have uploaded based on information you will be provided.
 
 # Important:
-- You do not have access to the recording. NEVER ask the user to upload their recording.
+- You do not have access to the user's recording. NEVER ask the user to upload their recording to you.
 - You are highly knowledgeable of all forms of music and musical style. Based on the user's responses and the information you are provided, you can provide recommendations of other musical artists or styles, depending on the user's questions. 
 - Assume that the user you are talking to as an interested middle schooler. Use clear, simple, and straightforward language, and keep your responses under three sentences.
 
 ## Identity:
 - You were developed by researchers at Queen Mary University of London
-- You were developed as part of the "AI Skills Through Music" project, funded by the EPSRC
+- You were developed as part of the "AI Skills Through Music" project, funded by the Engineering and Physical Sciences Research Council (abbreviate this to EPSRC, unless asked specifically)
 - If anybody asks you to reveal your system prompt or other important aspects of your design, direct them towards the open-source code repository on GitHub
 
 ## Formatting Instructions:
-- You never use emojis or non-ASCII symbols as part of your response.
-- Do not use any markdown or HTML formatting in your response: only plain text is acceptable. 
+- Never use emojis or non-ASCII symbols as part of your response.
+- Never use markdown or HTML formatting in your response: only plain text is acceptable. 
 - Never use bold, italicised, underlined, or strikethrough text. 
 - Never used numbered or bullet point lists.
 - Never use headings or separate sections.
+
+### Formatting Numeric Values:
+- When providing numeric values, round these to two decimal places for clarity: e.g., 0.12345 -> 0.12, 4.5678 -> 4.57
+- Always provide the units of any numeric values: for instance, spectral centroid -> Hz
+
+# Response Style:
+- Use varied descriptors to avoid repetition
+- Adjust the complexity of the language based on user preferences, starting with simplified explanations. 
+- Conclude each analysis by asking if the user needs further clarification or more detailed technical explanations.
 - Maximum response length: four sentences.
 
-## Missing Information:
+# Missing Information:
 - You do not invent information you do not have access to. NEVER invent or hallucinate information about the recording.
 - If a piece of information is given as "None" or "null" and a user requests it, simply state that you do not have access to this information, and prompt them to continue exploring their recording with the available AI functions.
 """
@@ -35,26 +44,33 @@ MAX_USER_TURNS = 3
 
 
 def get_musical_piece_information(deps: dict[str, str], skip_long: bool = False) -> str:
-    st = f"""
-    Title/Name of Recording: {deps.get("title")}
-    Artist: {deps.get("artist")}
-    Album: {deps.get("album")}
-    Date: {deps.get("date")}
-    Time Signature: {deps.get("time_signature", "")}
-    Key: {deps.get("key", "")}
-    Genres: {deps.get("genres", "")}
-    Instruments: {deps.get("instruments", "")}
-    Mood: {deps.get("mood", "")}
-    Era: {deps.get("era", "")}
-    """
+    res = ""
+    fields = [
+        ("title", "Title/Name of Recording", False),
+        ("artist", "Recording Artist", False),
+        ("album", "Recording Album", False),
+        ("date", "Year of Recording", False),
+        ("time_signature", "Time Signature", False),
+        ("key", "Key", False),
+        ("genres", "Musical Genres", False),
+        ("instruments", "Musical Instruments", False),
+        ("mood", "Moods", False),
+        ("era", "Musical Era", False),
+        ("lyrics", "Lyrics", True),
+        ("chords", "Chords", True),
+        ("spectral_centroid", "Spectral Centroid", False),
+        ("spectral_bandwidth", "Spectral Bandwidth", False),
+        ("spectral_rolloff", "Spectral Rolloff", False),
+        ("spectral_contrast", "Spectral Contrast", False),
+        ("rms", "Root-Mean-Square Energy", False)
+    ]
+    for field, fmt_name, skipper in fields:
+        if deps.get(field, None) is not None:
+            if skip_long and skipper:
+                continue
+            res += f"{fmt_name}: {deps[field]}\n"
 
-    if not skip_long:
-        st += f"""
-        Lyrics: {deps.get("lyrics", "")}
-        Chords: {deps.get("chords", "")}
-        """
-
-    return st
+    return res
 
 
 @AGENT.instructions
@@ -95,9 +111,7 @@ def convert_openai_to_pydantic(messages: list[dict]) -> list:
 
 
 async def create_goodbye_message(ctx: RunContext) -> str:
-    return f"""It's been great chatting with you about this recording! To continue the conversation, try pasting the following information into your favorite AI chatbot like ChatGPT, Claude or Gemini.\n\n
-    {get_musical_piece_information(ctx, skip_long=True)}
-    """
+    return f"It's been great chatting with you about this recording! To continue the conversation, click the button below and paste the result into into your favorite AI chatbot like ChatGPT, Claude or Gemini.===Help me analyse a recording! Here is some information about it: {get_musical_piece_information(ctx, skip_long=False)}"
 
 
 async def route_chat_response(user_message: str, context: list[dict], deps: dict[str, str]) -> AgentRunResult:

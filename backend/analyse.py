@@ -8,13 +8,14 @@ from typing import Callable, Optional, Any
 from uuid import uuid4
 
 import librosa
+import librosa.feature
+import numpy as np
 import requests
 from loguru import logger
 from yarl import URL
 
 from backend.crud import AUDIO_SAMPLE_RATE, save_audio, pad_or_truncate_array
 from backend.extensions import cache
-
 
 MOISES_URL = URL(r"https://api.music.ai/v1/")
 MOISES_HEADERS = {"Authorization": os.environ.get("MOISES_TOKEN")}
@@ -46,7 +47,7 @@ ROOT_NOTES = [
     "Db", "Eb", "Fb", "Gb", "Ab", "Bb"
 ]
 
-LYRICS_THRESHOLD = 0.3    # words with confidence scores below this threshold will be rejected
+LYRICS_THRESHOLD = 0.3  # words with confidence scores below this threshold will be rejected
 
 
 @cache.memoize()
@@ -165,7 +166,8 @@ def lyrics_transcription(_, filename) -> list[dict]:
             # malformed results: set score to 0
             score = words["score"] if "score" in words.keys() and isinstance(words["score"], float) else 0
             if score <= LYRICS_THRESHOLD:
-                logger.warning(f"Lyrics score for word {words['word']} (start {words['start']}, end {words['end']}) below threshold: score {score}")
+                logger.warning(
+                    f"Lyrics score for word {words['word']} (start {words['start']}, end {words['end']}) below threshold: score {score}")
                 continue
 
             # keep valid words
@@ -180,7 +182,7 @@ def chord_transcription(_, filename) -> list[dict]:
     # run the workflow
     logger.info("Starting chord transcription")
     download_url = upload_audio_to_moises(filename)
-    out = process_audio_with_moises(download_url,  workflow_slug=os.environ.get("MOISES_CHORD_WORKFLOW"))
+    out = process_audio_with_moises(download_url, workflow_slug=os.environ.get("MOISES_CHORD_WORKFLOW"))
 
     # Moises returns a URL pointing to a JSON, so we need to load this is an actual Python dictionary
     chord_json_url = out["chords"]
@@ -417,3 +419,29 @@ def process_audio_with_moises(download_url: str, workflow_slug: str) -> dict:
 
     # Return the result
     return out["result"]
+
+
+@cache.memoize()
+def extract_spectral_features(filepath) -> dict[str, float]:
+    from backend.crud import load_audio
+
+    y = load_audio(filepath)
+    logger.info("Extracting spectral features")
+
+    # Compute magnitude spectrogram ONCE, using entire signal
+    s = np.abs(librosa.stft(y, n_fft=len(y), hop_length=len(y)))
+
+    res = {"spectral_centroid": float(
+        librosa.feature.spectral_centroid(S=s, sr=AUDIO_SAMPLE_RATE)[0, 0]
+    ), "spectral_bandwidth": float(
+        librosa.feature.spectral_bandwidth(S=s, sr=AUDIO_SAMPLE_RATE)[0, 0]
+    ), "spectral_rolloff": float(
+        librosa.feature.spectral_rolloff(S=s, sr=AUDIO_SAMPLE_RATE)[0, 0]
+    ), "spectral_contrast": float(
+        librosa.feature.spectral_contrast(S=s, sr=AUDIO_SAMPLE_RATE).mean()
+    ), "rms": float(
+        librosa.feature.rms(y=y, frame_length=len(y), hop_length=len(y))[0, 0]
+    )}
+
+    # RMS does NOT need STFT
+    return res

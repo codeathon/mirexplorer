@@ -1133,7 +1133,15 @@ function sendUserMessage(text) {
             li.className = "flex justify-start";
             const div = document.createElement("div");
             div.className = "chat-assistant-message relative";
-            div.textContent = asstResponse
+
+            // goodbye message has two parts
+            if (asstResponse.startsWith("It's been great chatting with you about this recording!")) {
+                const [asstResponse2, _] = asstResponse.split("===")
+                div.textContent = asstResponse2
+            } else {
+                div.textContent = asstResponse
+            }
+
             li.appendChild(div);
             messageContainer.appendChild(li);
 
@@ -1151,7 +1159,8 @@ function sendUserMessage(text) {
 
             // disable the reply button and input if the message is a goodbye
             // console.log(asstResponse, asstResponse.startsWith("It's been great chatting with you about this recording!"), asstResponse.startsWith("It's been great chatting with you"))
-            if (asstResponse.startsWith("It's been great chatting with you about this recording! To continue the conversation, try pasting")) {
+            if (asstResponse.startsWith("It's been great chatting with you about this recording!")) {
+                const [_, copier] = asstResponse.split("===")
                 const userReplyInput = document.getElementById("chat-userreply")
 
                 // copy text button for goodbye message
@@ -1159,7 +1168,7 @@ function sendUserMessage(text) {
                 copyTextButton.innerText = "Copy text"
                 copyTextButton.addEventListener("click", () => {
                     copyTextButton.innerText = "Copied!"
-                    navigator.clipboard.writeText(asstResponse);
+                    navigator.clipboard.writeText(copier);
                 })
 
                 messageContainer.appendChild(copyTextButton)
