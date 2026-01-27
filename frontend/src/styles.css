@@ -44,6 +44,14 @@
     @apply bg-gray-200;
 }
 
+.dropzone-container {
+    @apply w-screen h-screen flex flex-col items-center justify-center space-y-4 bg-gray-100 transition-all duration-300 ease-in-out opacity-100 scale-100
+}
+
+.dropzone-page-exit {
+    @apply opacity-0 translate-y-5;
+}
+
 .dropzone-content {
     @apply flex flex-col items-center justify-center text-center pt-5 pb-6;
 }
@@ -56,10 +64,6 @@
     @apply mb-2 text-2xl font-display text-center;
 }
 
-.dropzone-text-sub {
-    @apply text-base font-accent text-gray-500 text-center;
-}
-
 .hidden-input {
     @apply hidden;
 }
@@ -69,11 +73,10 @@
 }
 
 .dropzone-links {
-    @apply absolute bottom-6 justify-center
+    @apply absolute bottom-16 justify-center
 }
-
-.dropzone-links-text {
-    @apply text-gray-500 hover:underline font-display mx-10 text-lg
+.dropzone-links a {
+    @apply text-gray-500 hover:underline font-display mx-10 text-base
 }
 
 .dropzone-header-main {
@@ -100,6 +103,16 @@
 .dropzone-header-main:hover::after,
 .dropzone-header-main:hover::before {
     transform: scaleX(1);
+}
+
+.dropzone-footer {
+    @apply absolute bottom-4 z-50 mt-0 mb-0 p-0
+}
+.dropzone-footer a {
+    @apply hover:underline z-50
+}
+.dropzone-footer p {
+    @apply text-sm font-accent text-gray-500 text-center mt-0 mb-0 p-0;
 }
 
 .wave-container {
@@ -464,4 +477,19 @@
 
 .explorer-lyrics-label {
     @apply bottom-[-320px] font-display text-lg absolute pointer-events-none left-1
+}
+
+.about-page-text-content {
+    @apply z-50 max-w-[30%] flex flex-col items-center text-center space-y-4
+}
+
+.about-page-text-content a {
+    @apply text-blue-500 hover:underline
+}
+
+.about-page-text-content p {
+    @apply font-accent text-gray-800 text-base
+}
+.about-page-text-content span {
+    @apply font-accent text-gray-600 text-sm
 }

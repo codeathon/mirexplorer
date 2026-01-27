@@ -21,6 +21,20 @@ function mobileWarning() {
     }
 }
 
+function playExitTransition(callback, delay = 500) {
+    const page = document.getElementById("dropzone-container");
+    if (!page) {
+        callback();
+        return;
+    }
+
+    page.classList.add("dropzone-page-exit");
+
+    setTimeout(() => {
+        callback();
+    }, delay);
+}
+
 
 function prepareUpload() {
     const selector = document.getElementById("example-selector")
@@ -33,7 +47,9 @@ function prepareUpload() {
     const form = document.getElementById("upload-form");
     const continueButton = document.getElementById("copyright-continue-button")
 
-    continueButton.addEventListener("click", () => {form.submit()})
+    continueButton.addEventListener("click", () => {
+        form.submit()
+    })
 }
 
 
@@ -80,12 +96,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 prepareUpload()
             }
         });
-
-        // Submit on file selection
-        dropzone.addEventListener("change", () => {
-            if (dropzone.files.length > 0) {
-                prepareUpload()
-            }
-        });
     }
+
+    const page = document.getElementById("dropzone-container");
+    document.querySelectorAll("a[href]").forEach(link => {
+        // Ignore external links & mailto
+        if (
+            link.target === "_blank" ||
+            link.href.startsWith("mailto:")
+            // link.href.startsWith("http")
+        ) return;
+
+        link.addEventListener("click", e => {
+            e.preventDefault();
+            const href = link.getAttribute("href");
+
+            page.classList.add("dropzone-page-exit");
+
+            setTimeout(() => {
+                window.location.href = href;
+            }, 300); // match Tailwind duration
+        });
+    });
 });

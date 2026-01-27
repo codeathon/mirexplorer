@@ -1,10 +1,109 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-    <h1>{{ app_data['description'] }}</h1>
-    <h2>About page</h2>
+    {% if is_development %}
+        <script>console.log("DEV")</script>
+        <script type="module" src="http://localhost:3000/@vite/client"></script>
+        <script type="module" src="http://localhost:3000/main.jsx"></script>
+    {% else %}
+        <script>console.log("PROD")</script>
 
-    <p class="lead">Use this document as a way to quickly start any new project.
-        <br> All you get is this text and a mostly barebones HTML document.</p>
-    <div> Now updated to Bootstrap (Version 5.3.0) and jQuery 3.6.3</div>
+        {# Main app JS + CSS #}
+        {% set main = vite_asset('main.jsx') %}
+        <script>console.log("Loading main.js")</script>
+        <script type="module" src="{{ url_for('static', filename='dist/' ~ main.file) }}"></script>
+        {% for css_file in main.css %}
+            <link rel="stylesheet" href="{{ url_for('static', filename='dist/' ~ css_file) }}">
+        {% endfor %}
+
+    {% endif %}
+
+    <div id="dropzone-container"
+         class="relative w-screen h-screen flex flex-col items-center justify-center space-y-4 bg-gray-100 overflow-hidden">
+
+        <!-- SVG background -->
+        <svg
+                class="absolute inset-0 z-0 w-full h-full opacity-60 pointer-events-none"
+                viewBox="0 0 300 300"
+                preserveAspectRatio="xMidYMid meet"
+        >
+            <defs>
+                <linearGradient id="animatedGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#ff6b6b">
+                        <animate attributeName="stop-color"
+                                 values="#ff6b6b;#6b83ff;#ff6b6b"
+                                 dur="5s" repeatCount="indefinite"/>
+                    </stop>
+                    <stop offset="100%" stop-color="#f7d794">
+                        <animate attributeName="stop-color"
+                                 values="#f7d794;#6bffb3;#f7d794"
+                                 dur="5s" repeatCount="indefinite"/>
+                    </stop>
+                </linearGradient>
+
+                <!-- Fixed mask -->
+                <radialGradient id="topSideFade" cx="50%" cy="50%" r="40%">
+                    <stop offset="0%" stop-color="white" stop-opacity="1"/>
+                    <stop offset="100%" stop-color="white" stop-opacity="0"/>
+                </radialGradient>
+
+                <mask id="maskFade">
+                    <rect x="0" y="0" width="300" height="300" fill="url(#topSideFade)"/>
+                </mask>
+            </defs>
+
+            <ellipse cx="150" cy="150" rx="120" ry="120"
+                     fill="url(#animatedGradient)" mask="url(#maskFade)"/>
+        </svg>
+
+
+        <div class="about-page-text-content">
+            <h1 class="relative z-10 text-5xl text-gray-600 font-accent">
+                AI Music Explorer
+            </h1>
+            <p>
+                This web application allows you to <strong>explore music using AI</strong> (artificial intelligence)
+                technology. You can
+                either <strong>record yourself</strong> singing or playing an instrument, or <strong>upload a
+                recording</strong> made on another device
+                like a phone. <strong>We never store
+                your recordings or use them to train AI models.</strong>
+            </p>
+            <p>
+                The <em>AI Music Explorer</em> was developed in 2026 by <a href="https://huwcheston.github.io">Dr. Huw
+                Cheston</a> from the <a
+                    href="https://www.c4dm.eecs.qmul.ac.uk/">Centre for Digital Music</a> at <a
+                    href="https://qmul.ac.uk">Queen
+                Mary University of London</a>, as part of the <a href="https://www.ukri.org/councils/epsrc/">Engineering
+                and Physical Sciences Research Council</a> project <em>AI Skills Through Music</em>. The principal
+                investigators were <a href="https://iranroman.github.io/">Dr. Iran Roman</a> and <a
+                    href="https://www.qmul.ac.uk/eecs/people/profiles/curzonpaul.html">Prof. Paul Curzon</a>.
+            </p>
+            <p>
+                The source code is available <strong>free and open-source</strong> on <a
+                    href="https://github.com/musicinformationretrieval/mirexplorer/">GitHub</a>. The example recordings
+                are taken from the <a href="https://freemusicarchive.org/">Free Music Archive</a> and are distributed
+                here under the terms of the <a
+                    href="https://creativecommons.org/licenses/by-nc-sa/3.0/">CC BY-NC-SA 3.0</a> license. Full
+                attributions for each recording can be found <a
+                    href="https://github.com/musicinformationretrieval/mirexplorer/blob/master/example_audio_licenses.json">at this link</a>.
+            </p>
+            <span>
+                If you found this web application useful, please <strong>consider donating</strong> to help fund maintenance and server upkeep costs:
+            </span>
+            <a href="https://buymeacoffee.com/">
+                <img src="{{ url_for('static', filename='BMAC_logo_red.png') }}"
+                     alt="BuyMeACoffee Logo" class="max-w-[164px] h-auto opacity-80 mb-8 mt-0;"/>
+            </a>
+
+        </div>
+
+        <div>
+            <a href="{{ url_for('main.index') }}" class="hover:underline font-display text-xl text-gray-600">Go Back</a>
+        </div>
+
+    </div>
+
+
+
 {% endblock %}

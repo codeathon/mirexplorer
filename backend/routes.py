@@ -144,6 +144,7 @@ def explorer():
 
 @main_routes.route("/about")
 def about():
+    logger.info("clicked about")
     return render_template("about.html", app_data=app_data)
 
 
