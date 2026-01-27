@@ -19,6 +19,7 @@ yarl = "*"
 pydantic-ai = "*"
 flask-limiter = "^4.1.1"
 gunicorn = "^23.0.0"
+mutagen = "^1.47.0"
 
 [build-system]
 requires = ["poetry-core"]
