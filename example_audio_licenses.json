@@ -1,0 +1,42 @@
+{
+  "folk_ukraine.mp3": {
+    "title": "Welsinsni Melodyi",
+    "artist": "Hutzl Ukranian Ensemble",
+    "album": "Black Mirror: Reflections In Global Musics (1915-1955)",
+    "year": 1940,
+    "description": "Folk (no vocals, flute, from Ukraine)",
+    "license": "Attribution-NonCommercial-ShareAlike 3.0 United States"
+  },
+  "folk_zanzibar.mp3": {
+    "title": "Mapenzi Matamu",
+    "artist": "Sounds of Taraab",
+    "album": "Zanzibar, New York",
+    "year": 2008,
+    "description": "Folk (female vocals, accordion, from Zanzibar)",
+    "license": "Attribution-NonCommercial-ShareAlike 3.0 United States"
+  },
+  "pop.mp3": {
+    "title": "So High",
+    "artist": "Softboiled Eggies",
+    "album": "Egg Soldiers",
+    "year": 2007,
+    "description": "Pop (female vocals, guitar, drum kit)",
+    "license": "Attribution-NonCommercial-ShareAlike 3.0 United States"
+  },
+  "rap.mp3": {
+    "title": "Height_With_Friends_-_05_-_Cavalcade_Lagoons.MP3",
+    "artist": "Height With Friends",
+    "album": "Live at WFMU on Keili's Show 1/25/09",
+    "year": 2009,
+    "description": "Rap (male vocals, electronic drums)",
+    "license": "Attribution-NonCommercial-ShareAlike 3.0 United States"
+  },
+  "rock.mp3": {
+    "title": "Or So I've Been Told",
+    "artist": "Jad Fair and Jason Willett",
+    "album": "The Sounds of Megaphone Unlimited",
+    "year": 1995,
+    "description": "Rock (male vocals, keyboard, drum kit)",
+    "license": "Attribution-NonCommercial-ShareAlike 3.0 Unported"
+  }
+}
