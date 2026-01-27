@@ -182,6 +182,9 @@ async def send_message():
     message_history = data.get("message_history")
     full_path = UPLOADS_FOLDER / Path(filepath).name
 
+    _, track, artist, album, date = full_path.stem.split("_")
+    logger.info(track + artist + album + date)
+
     # create dependencies
     deps = {
         "filename": full_path,
@@ -193,6 +196,10 @@ async def send_message():
         "era": data.get("era"),
         "lyrics": data.get("lyrics"),
         "chords": data.get("chords"),
+        "track": track.replace("-", " "),
+        "artist": artist.replace("-", " "),
+        "album": album.replace("-", " "),
+        "date": date.replace("-", " "),
     }
 
     # create the chat completion

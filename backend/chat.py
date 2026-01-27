@@ -36,6 +36,10 @@ MAX_USER_TURNS = 3
 
 def get_musical_piece_information(deps: dict[str, str], skip_long: bool = False) -> str:
     st = f"""
+    Title/Name of Recording: {deps.get("title")}
+    Artist: {deps.get("artist")}
+    Album: {deps.get("album")}
+    Date: {deps.get("date")}
     Time Signature: {deps.get("time_signature", "")}
     Key: {deps.get("key", "")}
     Genres: {deps.get("genres", "")}
