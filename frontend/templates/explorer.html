@@ -52,15 +52,57 @@
         <aside id="sidebar"
                class="explorer-sidebar-container transform transition-transform duration-300 translate-x-0 absolute left-0 top-0 z-50 bg-white">
 
-            <div class="px-12 py-6">
+            <div class="px-12 py-4">
                 <a href="#" class="explorer-sidebar-header">AI Music Explorer</a>
             </div>
 
-            <nav id="sidebar-analyser" class="flex-1 px-4 py-6">
-                <ul class="flex flex-col gap-5">
+            <nav id="sidebar-analyser" class="flex-1 px-4 py-2">
+                <ul class="flex flex-col gap-3">
+                    <li class="relative" id="explorer-about-your-recording">
+                        <button class="explorer-dropdown-button explorer-sidebar-parent-label w-full text-left flex justify-between items-center">
+                            <span class="flex items-center gap-3">
+                               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5"
+                                    stroke="currentColor" class="explorer-sidebar-icon">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                              d="m9 9 10.5-3m0 6.553v3.75a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a1.803 1.803 0 1 1-.99-3.467l2.31-.66a2.25 2.25 0 0 0 1.632-2.163Zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a1.803 1.803 0 0 1-.99-3.467l2.31-.66A2.25 2.25 0 0 0 9 15.553Z"/>
+                                </svg>
+                                About your Recording
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 class="explorer-dropdown-chevron w-4 h-4 transition-transform duration-200" fill="none"
+                                 viewBox="0 0 24 24"
+                                 stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <ul class="explorer-sidebar-dropdown">
+                            <li>
+                                <a id="explorer-track-metadata-sidebar" href="#" class="explorer-sidebar-labels-nointeract mt-4">
+                                    Track: Unknown
+                                </a>
+                            </li>
+                            <li>
+                                <a id="explorer-artist-metadata-sidebar" href="#" class="explorer-sidebar-labels-nointeract">
+                                    Artist: Unknown
+                                </a>
+                            </li>
+                            <li>
+                                <a id="explorer-album-metadata-sidebar" href="#" class="explorer-sidebar-labels-nointeract">
+                                    Album: Unknown
+                                </a>
+                            </li>
+                            <li>
+                                <a id="explorer-year-metadata-sidebar" href="#" class="explorer-sidebar-labels-nointeract">
+                                    Year: Unknown
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
                     <li class="relative">
                         <button class="explorer-dropdown-button explorer-sidebar-parent-label w-full text-left flex justify-between items-center">
-                            <span class="flex items-center gap-4">
+                            <span class="flex items-center gap-3">
                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                     stroke-width="1.5"
                                     stroke="currentColor" class="explorer-sidebar-icon">
@@ -97,7 +139,7 @@
 
                     <li class="relative">
                         <button class="explorer-dropdown-button explorer-sidebar-parent-label w-full text-left flex justify-between items-center">
-                            <span class="flex items-center gap-4">
+                            <span class="flex items-center gap-3">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                      stroke-width="1.5"
                                      stroke="currentColor" class="explorer-sidebar-icon">
@@ -139,7 +181,7 @@
 
                     <li class="relative">
                         <button class="explorer-dropdown-button explorer-sidebar-parent-label w-full text-left flex justify-between items-center">
-                            <span class="flex items-center gap-4">
+                            <span class="flex items-center gap-3">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                      stroke-width="1.5"
                                      stroke="currentColor" class="explorer-sidebar-icon">
@@ -169,7 +211,7 @@
                         </ul>
                     </li>
                     <li>
-                        <a href="#" class="explorer-sidebar-labels">
+                        <a href="#" class="explorer-sidebar-labels !text-xl">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                  stroke="currentColor" class="explorer-sidebar-icon">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -180,8 +222,8 @@
                     </li>
                 </ul>
             </nav>
-            <div id="sidebar-help" class="px-4 py-6">
-                <ul class="flex flex-col gap-5">
+            <div id="sidebar-help" class="px-4 py-3">
+                <ul class="flex flex-col gap-3">
                     <li>
                         <a href="#" class="explorer-sidebar-parent-label" id="explorer-show-info-popup">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"

@@ -149,7 +149,10 @@
 }
 
 .explorer-sidebar-labels {
-    @apply flex font-accent items-center gap-4 text-xl
+    @apply flex font-accent items-center gap-4 text-base
+}
+.explorer-sidebar-labels-nointeract {
+    @apply flex font-accent items-center gap-4 text-base pointer-events-none
 }
 
 .explorer-sidebar-parent-label {

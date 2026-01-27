@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from io import BytesIO
 from pathlib import Path
 
@@ -8,6 +9,7 @@ import soundfile as sf
 from loguru import logger
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired, FileAllowed, FileSize
+from mutagen.easyid3 import EasyID3
 from werkzeug.datastructures import FileStorage
 from wtforms import SubmitField, HiddenField
 from wtforms.validators import ValidationError
@@ -29,6 +31,8 @@ DEFAULT_FILE_TTL_HOURS = 2  # files live for 2 hours
 @cache.memoize()
 def load_audio(stream) -> np.ndarray:
     y, sr = librosa.load(stream, sr=AUDIO_SAMPLE_RATE, offset=0, mono=True, duration=MAX_AUDIO_DURATION)
+    # Normalize the audio with librosa
+    y = librosa.util.normalize(y)
     return y
 
 
@@ -109,6 +113,68 @@ def pad_or_truncate_array(y: np.ndarray, val: int) -> np.ndarray:
         return y[:val]
     else:
         return y
+
+
+def format_string(s: str) -> str:
+    keep = "1234567890QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm -"
+    return ''.join(ch for ch in s if ch in keep).replace(" ", "-")
+
+
+def format_audio_metadata(audio_path: str) -> str:
+    try:
+        res = {}
+        fields = ["title", "artist", "album", "date"]
+
+        id3 = EasyID3(audio_path)
+
+        for field in fields:
+            # Fields should be a list of strings if present
+            got = id3.get(field, None)
+
+            # Just grab the first entry
+            if got is not None and isinstance(got, list):
+                got = got[0]
+
+            # Will be None if field not present
+            res[field] = got
+
+        # Fill in any blanks
+        for field in fields:
+            if field not in res:
+                res[field] = None
+
+        # Try and parse the date field if present
+        if res["date"] is not None:
+            try:
+                res["date"] = str(datetime.strptime(res["date"], "%Y-%m-%d %H:%M:%S").year)
+            except:
+                # Sometimes the date is just the year, so try grabbing this
+                if isinstance(res["date"], str) and len(res["date"]) == 4:
+                    res["date"] = res["date"][:4]
+                else:
+                    logger.exception(f"Failed to parse date from audio metadata")
+                    res["date"] = None
+
+        # Final loop
+        for f, v in res.items():
+            # Replace None with string representation
+            if v is None:
+                res[f] = "None"
+
+            # Strip non-alphanumeric characters, truncate to given length, replace space with "-"
+            else:
+                fmtted = format_string(v)
+                res[f] = fmtted
+
+        # Combine everything into a big string, strip out alphanumeric
+        tit, art, alb, yr = res["title"], res["artist"], res["album"], res["date"]
+        out = "_".join([tit, art, alb, yr])
+
+        return out
+
+    except:
+        logger.exception(f"Failed to grab audio metadata")
+        return "None_None_None_None"
 
 
 def preprocess_audio_on_upload(audio_stream) -> np.ndarray:

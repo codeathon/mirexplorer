@@ -1333,6 +1333,8 @@ function addFuncsToSidebarLinks() {
     // for each
     const sidebarLinks = document.querySelectorAll('.explorer-sidebar-labels');
     sidebarLinks.forEach(link => {
+
+
         link.addEventListener('click', async function (e) {
             e.preventDefault();
             const action = this.innerText.trim();
@@ -1435,6 +1437,39 @@ function manageClearPluginsButton() {
 
 }
 
+function toTitleCase(str) {
+    return str.replace(
+        /\w\S*/g,
+        text => text.charAt(0).toUpperCase() + text.substring(1).toLowerCase()
+    );
+}
+
+
+function updateSidebarTrackMetadata() {
+    const parts = window.audio_url.split('/');
+    const filenameWithExt = parts.pop();
+    const [filename, _] = filenameWithExt.split('.');
+
+    let els = ["track", "artist", "album", "year"]
+    let idx = 0
+    filename.split('_').slice(1, 5).forEach(el => {
+        let elFmt = el.replaceAll("-", " ")
+        if (elFmt.length > 50) {
+            elFmt = elFmt.slice(0, 50) + "..."
+        }
+
+        let elType = els[idx]
+        let sidebarElId = `explorer-${els[idx]}-metadata-sidebar`
+        let sidebarEl = document.getElementById(sidebarElId)
+
+        if (sidebarEl) {
+            sidebarEl.innerText = toTitleCase(`${elType}: `) + elFmt
+        }
+
+        idx ++
+    })
+}
+
 
 globalThis.createWave = createWave;
 window.colourChanged = colourChanged;
@@ -1533,6 +1568,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // dynamically set hover style for all labels
     const elements = document.querySelectorAll('.explorer-sidebar-labels');
     elements.forEach(hoverElement => addHoverStyle(hoverElement));
+    const elements__ = document.querySelectorAll('.explorer-sidebar-labels-nointeract');
+    elements__.forEach(hoverElement => addHoverStyle(hoverElement));
     const elements_ = document.querySelectorAll('.explorer-sidebar-parent-label');
     elements_.forEach(hoverElement => addHoverStyle(hoverElement));
 
@@ -1545,6 +1582,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // start with a waveform by default
     if (window.audio_url) {
+        updateSidebarTrackMetadata()
         createWave(window.audio_url);
     }
 

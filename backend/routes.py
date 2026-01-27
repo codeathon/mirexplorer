@@ -9,7 +9,7 @@ from werkzeug.utils import secure_filename
 from loguru import logger
 
 from backend import app_data
-from backend.crud import AudioUpload, preprocess_audio_on_upload, save_audio, ROOT_DIR, UPLOADS_FOLDER, load_audio
+from backend.crud import AudioUpload, preprocess_audio_on_upload, save_audio, ROOT_DIR, UPLOADS_FOLDER, load_audio, format_audio_metadata
 from backend.extensions import limiter
 
 # Create a blueprint
@@ -31,11 +31,13 @@ def index():
         path = ROOT_DIR / "frontend/static/example_audio" / example_key
 
         try:
+            # Reuse preprocessing logic
+            meta = format_audio_metadata(path)
+
             # Generate temp filename exactly like uploads
-            temp_filename = f"{uuid4()}.wav"
+            temp_filename = f"{uuid4()}_{meta}.wav"
             save_path = os.path.join(UPLOADS_FOLDER, temp_filename)
 
-            # Reuse  preprocessing logic
             file_prep = preprocess_audio_on_upload(path)
             save_audio(file_prep, save_path)
 
@@ -54,16 +56,21 @@ def index():
     if filo and filo.filename == "recorded_audio.webm":
         filename = secure_filename(filo.filename)
         ext = Path(filename).suffix.lower()
-        temp_filename = str(uuid4()) + ext
+        uu = uuid4()
+        temp_filename = str(uu) + ext
         save_path = os.path.join(UPLOADS_FOLDER, temp_filename)
 
         filo.save(save_path)
 
+        meta = format_audio_metadata(save_path)
+        temp_filename_new = UPLOADS_FOLDER / f"{uu}_{meta}.wav"
+
         try:
             file_prep = preprocess_audio_on_upload(save_path)
-            save_audio(file_prep, Path(save_path).with_suffix(".wav"))
+            save_audio(file_prep, temp_filename_new)
             os.remove(save_path)
-            return redirect(url_for("main.explorer", filename=str(Path(temp_filename).with_suffix(".wav"))))
+
+            return redirect(url_for("main.explorer", filename=temp_filename_new.name))
 
         except Exception as e:
             flash(f"Error processing audio file: {e}", category="danger")
@@ -75,13 +82,19 @@ def index():
             file = form.file.data
             filename = secure_filename(file.filename)
             ext = Path(filename).suffix.lower()
-            temp_filename = str(uuid4()) + ext
+            uu = uuid4()
+            temp_filename = str(uu) + ext
             save_path = os.path.join(UPLOADS_FOLDER, temp_filename)
 
+            filo.save(save_path)
+            meta = format_audio_metadata(save_path)
+            temp_filename_new = UPLOADS_FOLDER / f"{uu}_{meta}.wav"
+
             try:
-                file_prep = preprocess_audio_on_upload(BytesIO(file.read()))
-                save_audio(file_prep, save_path)
-                return redirect(url_for("main.explorer", filename=temp_filename))
+                file_prep = preprocess_audio_on_upload(save_path)
+                os.remove(save_path)
+                save_audio(file_prep, temp_filename_new)
+                return redirect(url_for("main.explorer", filename=temp_filename_new.name))
             except Exception as e:
                 flash(f"Error processing audio file: {e}", category="danger")
                 logger.error(f"Error processing audio file: {e}")
