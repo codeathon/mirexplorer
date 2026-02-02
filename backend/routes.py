@@ -157,7 +157,6 @@ def explorer():
 
 @main_routes.route("/about")
 def about():
-    logger.info("clicked about")
     return render_template("about.html", app_data=app_data)
 
 
@@ -187,7 +186,6 @@ async def send_message():
 
     # compute spectral features
     spectral_feats = extract_spectral_features(full_path)
-    logger.info(spectral_feats)
 
     # create dependencies
     deps = {
