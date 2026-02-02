@@ -55,6 +55,21 @@ let loopRegion = RegionsPlugin.create()
 let maxUserTurns = 4
 
 
+let allExamplePrompts = [
+    "What time signature is this recording in?",
+    "Can you describe the timbre of this recording?",
+    "Who is this recording by?",
+    "What genre is this recording?",
+    "What key is this recording in?",
+    "When was this recording made?",
+    "What instruments appear in this recording?",
+    "What is the name of this recording?",
+    "What album is this recording from?",
+    "Can you describe the lyrics used in this recording?",
+    "Can you describe the chords in this recording?"
+]
+
+
 function cleanContainer() {
     // Destroy previous instances if it exists
     if (wavesurfer) {
@@ -1065,6 +1080,12 @@ function sendUserMessage(text) {
     li.appendChild(div);
     messageContainer.appendChild(li);
 
+    // remove example prompts
+    let examplePrompts = document.getElementById("chat-example-prompt-container")
+    if (examplePrompts) {
+        examplePrompts.remove()
+    }
+
     // show typing indicator for assistant response
     const typingLi = document.createElement("li");
     typingLi.className = "chat-typing-indicator";
@@ -1242,6 +1263,30 @@ function startChat(response = null) {
         </li>
     `;
 
+    // example prompts
+    const examplePrompts = document.createElement("ul");
+    examplePrompts.className = "chat-example-prompt-container";
+    examplePrompts.id = "chat-example-prompt-container";
+
+    const li = document.createElement("li");
+    li.id = "example-prompt-container";
+    examplePrompts.appendChild(li);
+
+    function getRandomPrompts(arr, count = 3) {
+        return [...arr]
+            .sort(() => Math.random() - 0.5)
+            .slice(0, count);
+    }
+
+    let randomPrompts = getRandomPrompts(allExamplePrompts)
+    randomPrompts.forEach(prompt => {
+        const div = document.createElement("div");
+        div.className = "chat-example-prompt";
+        div.textContent = prompt;
+        div.addEventListener("click", () => {sendUserMessage(prompt)})
+        li.appendChild(div);
+    });
+
     // Reply
     const inputWrapper = document.createElement('div');
     inputWrapper.className = "chat-reply-container";
@@ -1256,7 +1301,7 @@ function startChat(response = null) {
             </svg>
         </button>
     `;
-    chatContainer.append(header, messages, inputWrapper);
+    chatContainer.append(header, messages, examplePrompts, inputWrapper);
 
     // Blur content
     document.body.appendChild(chatContainer)
@@ -1475,7 +1520,7 @@ function updateSidebarTrackMetadata() {
             sidebarEl.innerText = toTitleCase(`${elType}: `) + elFmt
         }
 
-        idx ++
+        idx++
     })
 }
 

@@ -372,6 +372,14 @@
     @apply bg-gray-100 px-3 py-2 rounded-lg max-w-[70%] text-left font-accent rounded-t-lg rounded-tr-lg rounded-br-lg rounded-bl-none relative;
 }
 
+.chat-example-prompt-container {
+    @apply flex-1 min-h-0 overflow-y-auto border-t border-gray-200 px-[10%] py-3 items-center text-center;
+}
+
+.chat-example-prompt {
+    @apply bg-gray-200 px-3 py-2 mb-2 text-sm rounded-lg items-center max-w-[100%] text-center font-accent relative hover:bg-gray-300 hover:text-blue-600 duration-75 hover:cursor-pointer;
+}
+
 .chat-reply-container {
     @apply mt-auto relative flex-shrink-0 px-5 py-3 border-t border-gray-200 z-10;
 }
