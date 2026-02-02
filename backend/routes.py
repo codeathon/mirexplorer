@@ -1,7 +1,6 @@
 import os
 from pathlib import Path
 from uuid import uuid4
-from io import BytesIO
 
 from flask import render_template, request, redirect, url_for, send_from_directory, Blueprint, flash, jsonify
 from werkzeug.exceptions import HTTPException
@@ -9,7 +8,7 @@ from werkzeug.utils import secure_filename
 from loguru import logger
 
 from backend import app_data
-from backend.crud import AudioUpload, preprocess_audio_on_upload, save_audio, ROOT_DIR, UPLOADS_FOLDER, load_audio, format_audio_metadata
+from backend.crud import AudioUpload, save_audio, ROOT_DIR, UPLOADS_FOLDER, load_audio, format_audio_metadata
 from backend.extensions import limiter
 
 # Create a blueprint
@@ -17,9 +16,19 @@ main_routes = Blueprint("main", __name__)
 
 
 @main_routes.route("/uploads/<filename>")
-# TODO: add rate limit here
 def uploaded_file(filename):
-    return send_from_directory(UPLOADS_FOLDER, filename)
+    dev_env = os.getenv("DEVELOPMENT_ENV", None)
+
+    if dev_env == "false":
+        # Local file serving for development
+        return send_from_directory(UPLOADS_FOLDER, filename)
+    elif dev_env == "true":
+        # Production: redirect to GCS
+        logger.info("GCS redirect")
+        gcs_url = f"https://storage.googleapis.com/mirexplorer/{filename}"
+        return redirect(gcs_url)
+    else:
+        raise ValueError
 
 
 @main_routes.route("/", methods=["GET", "POST"])
@@ -36,13 +45,11 @@ def index():
 
             # Generate temp filename exactly like uploads
             temp_filename = f"{uuid4()}_{meta}.wav"
-            save_path = os.path.join(UPLOADS_FOLDER, temp_filename)
 
-            file_prep = preprocess_audio_on_upload(path)
-            save_audio(file_prep, save_path)
+            save_audio(path, temp_filename)
 
             return redirect(
-                url_for("main.explorer", filename=temp_filename)
+                url_for("main.explorer", filename=temp_filename, development_env=os.environ["DEVELOPMENT_ENV"])
             )
 
         except Exception as e:
@@ -60,17 +67,19 @@ def index():
         temp_filename = str(uu) + ext
         save_path = os.path.join(UPLOADS_FOLDER, temp_filename)
 
+        # need to save temporary file, grab audio metadata
         filo.save(save_path)
 
         meta = format_audio_metadata(save_path)
-        temp_filename_new = UPLOADS_FOLDER / f"{uu}_{meta}.wav"
+        temp_filename_new = f"{uu}_{meta}.wav"
 
         try:
-            file_prep = preprocess_audio_on_upload(save_path)
-            save_audio(file_prep, temp_filename_new)
+            save_audio(save_path, temp_filename_new)
+
+            # remove temporary file
             os.remove(save_path)
 
-            return redirect(url_for("main.explorer", filename=temp_filename_new.name))
+            return redirect(url_for("main.explorer", filename=temp_filename_new, development_env=os.environ["DEVELOPMENT_ENV"]))
 
         except Exception as e:
             flash(f"Error processing audio file: {e}", category="danger")
@@ -88,13 +97,11 @@ def index():
 
             filo.save(save_path)
             meta = format_audio_metadata(save_path)
-            temp_filename_new = UPLOADS_FOLDER / f"{uu}_{meta}.wav"
+            temp_filename_new = f"{uu}_{meta}.wav"
 
             try:
-                file_prep = preprocess_audio_on_upload(save_path)
-                os.remove(save_path)
-                save_audio(file_prep, temp_filename_new)
-                return redirect(url_for("main.explorer", filename=temp_filename_new.name))
+                save_audio(save_path, temp_filename_new)
+                return redirect(url_for("main.explorer", filename=temp_filename_new, development_env=os.environ["DEVELOPMENT_ENV"]))
             except Exception as e:
                 flash(f"Error processing audio file: {e}", category="danger")
                 logger.error(f"Error processing audio file: {e}")
@@ -148,11 +155,15 @@ def explorer():
     Page that displays waveform and analyser
     """
     filename = request.args.get("filename")
+    dev_env = request.args.get("development_env")
     if not filename:
         return redirect(url_for("main.index"))
 
     audio_url = url_for("main.uploaded_file", filename=filename)
-    return render_template("explorer.html", app_data=app_data, audio_url=audio_url)
+    return render_template(
+        "explorer.html", app_data=app_data, audio_url=audio_url,
+        development_env=dev_env,
+    )
 
 
 @main_routes.route("/about")

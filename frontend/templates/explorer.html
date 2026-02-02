@@ -368,10 +368,12 @@
         {% if audio_url %}
             <script>
                 window.audio_url = {{ audio_url|tojson }};
+                window.development_env = {{ development_env|tojson }};
             </script>
         {% else %}
             <script>
                 window.audio_url = null;
+                window.development_env = null
             </script>
         {% endif %}
     </div>

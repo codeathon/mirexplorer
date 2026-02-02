@@ -6,32 +6,34 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from loguru import logger
 
 
-def clear_old_uploads():
+def clear_uploads():
     """
-    Clears files in the UPLOADS_FOLDER older than 'hours' hours.
+    Clears ALL uploaded files, without checking TTL
     """
-    from backend.crud import UPLOADS_FOLDER, DEFAULT_FILE_TTL_HOURS
+    from backend.crud import UPLOADS_FOLDER, get_bucket
 
-    logger.info("Clearing old uploads...")
+    dev_env = os.environ.get("DEVELOPMENT_ENV", None)
 
-    now = datetime.now()
-    cutoff = now - timedelta(hours=DEFAULT_FILE_TTL_HOURS)
+    # development environment: all files saved locally
+    if dev_env == "true":
+        for file_path in Path(UPLOADS_FOLDER).iterdir():
+            if file_path.is_file():
+                os.remove(file_path)
+                logger.info(f"Deleted {file_path}")
 
-    for file_path in Path(UPLOADS_FOLDER).iterdir():
-        if file_path.is_file():
-            file_mtime = datetime.fromtimestamp(file_path.stat().st_mtime)
-            if file_mtime < cutoff:
-                try:
-                    os.remove(file_path)
-                    logger.info(f"Deleted {file_path}")
-                except Exception as e:
-                    logger.error(f"Failed to delete {file_path}: {e}")
+    # production environment, all files saved on GCS
+    elif dev_env == "false":
+        blobs = get_bucket().list_blobs()
+        for blob in blobs:
+            blob.delete()
+            logger.info(f"Deleted {blob.name}")
 
-    logger.info("Finished clearing old uploads!")
+    else:
+        raise ValueError(f"Unknown DEVELOPMENT_ENV: {dev_env}")
 
 
 TASKS = [
-    (clear_old_uploads, dict(hours=6))
+    (clear_uploads, dict(hours=1))
 ]
 
 

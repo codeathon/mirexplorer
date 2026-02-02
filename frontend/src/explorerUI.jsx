@@ -350,6 +350,11 @@ async function createWave(audioFile) {
         height: defaultHeight,
         sampleRate: sampleRate,
     });
+    if (window.development_env === "true") {
+        audioFile = audioFile.replace("/uploads/", "https://storage.googleapis.com/mirexplorer/")
+    }
+
+    console.log(audioFile)
     await wavesurfer.load(audioFile);
     await finaliseSurfer(wavesurfer)
 }

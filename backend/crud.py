@@ -9,6 +9,9 @@ import soundfile as sf
 from loguru import logger
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired, FileAllowed, FileSize
+from google.api_core.retry import Retry
+from google.cloud import storage
+from google.oauth2 import service_account
 from mutagen.easyid3 import EasyID3
 from werkzeug.datastructures import FileStorage
 from wtforms import SubmitField, HiddenField
@@ -27,13 +30,91 @@ ROOT_DIR = Path(__file__).parent.parent
 UPLOADS_FOLDER = ROOT_DIR / "uploads"
 DEFAULT_FILE_TTL_HOURS = 2  # files live for 2 hours
 
+# Define retrying logic for GCS downloads
+NUM_RETRIES = 10
+RETRY_WAIT = 10
+RETRYING = Retry(
+    # Initial wait time between retries (in seconds)
+    initial=float(RETRY_WAIT),
+    # Maximum wait time between retries (in seconds)
+    maximum=60.0,
+    # Factor by which the wait time is multiplied after each retry
+    multiplier=2.0,
+    # Total time (in seconds) before giving up
+    deadline=300.0
+)
+
 
 @cache.memoize()
-def load_audio(stream) -> np.ndarray:
-    y, sr = librosa.load(stream, sr=AUDIO_SAMPLE_RATE, offset=0, mono=True, duration=MAX_AUDIO_DURATION)
+def load_audio(filepath) -> np.ndarray:
+    # Development environment: saved locally
+    dev_env = os.environ.get("DEVELOPMENT_ENV", None)
+    if dev_env == "false":
+        y, sr = librosa.load(filepath, sr=AUDIO_SAMPLE_RATE, offset=0, mono=True, duration=MAX_AUDIO_DURATION)
+
+    # Production environment: saved on GCS bucket
+    elif dev_env == "true":
+        # grab blob from bucket
+        bucket = get_bucket()
+        filo = bucket.blob(filepath)
+
+        # load blob from bucket as raw bytestream
+        #  Very rarely getting a `DataCorruption` error when downloading a file that is otherwise healthy;
+        #  solution apparently is to disable computing the checksum used to verify the integrity of a file
+        #  Will try to download the file for a maximum of five minutes before giving up
+        bio = BytesIO(filo.download_as_bytes(checksum=None, retry=RETRYING))
+
+        # load up in librosa as before
+        y, sr = librosa.load(bio, sr=AUDIO_SAMPLE_RATE, offset=0, mono=True, duration=MAX_AUDIO_DURATION)
+
+    # Unknown environment
+    else:
+        raise ValueError(f"Unknown DEVELOPMENT_ENV: {dev_env}")
+
     # Normalize the audio with librosa
     y = librosa.util.normalize(y)
     return y
+
+
+# @cache.memoize()
+def get_client():
+    service_account_info = {
+        "type": os.getenv("GCP_TYPE"),
+        "project_id": os.getenv("GCP_PROJECT_ID"),
+        "private_key_id": os.getenv("GCP_PRIVATE_KEY_ID"),
+        "private_key": os.getenv("GCP_PRIVATE_KEY").replace("\\n", "\n"),
+        "client_email": os.getenv("GCP_CLIENT_EMAIL"),
+        "client_id": os.getenv("GCP_CLIENT_ID"),
+        "auth_uri": os.getenv("GCP_AUTH_URI"),
+        "token_uri": os.getenv("GCP_TOKEN_URI"),
+    }
+    credentials = service_account.Credentials.from_service_account_info(
+        service_account_info
+    )
+    return storage.Client(
+        project=os.getenv("GCP_PROJECT_ID"),
+        credentials=credentials
+    )
+
+
+# @cache.memoize()
+def get_bucket():
+    cl = get_client()
+    bu = cl.get_bucket("mirexplorer")
+
+    # need to patch CORS
+    bu.cors = [
+        {
+            "origin": ["*"],
+            "method": ["GET", "HEAD"],
+            "responseHeader": ["Content-Type", "Accept-Ranges"],
+            "maxAgeSeconds": 3600
+        }
+    ]
+    bu.patch()
+    logger.info(f"CORS: {bu.cors}")
+
+    return bu
 
 
 class FileAudioValid:
@@ -177,30 +258,35 @@ def format_audio_metadata(audio_path: str) -> str:
         return "None_None_None_None"
 
 
-def preprocess_audio_on_upload(audio_stream) -> np.ndarray:
-    """
-    Preprocess an uploaded audio file: convert to mono, resample, and trim to maximum duration
-    """
-    # Audio should have been validated beforehand, so we know that it is safe
-    y = load_audio(audio_stream)
-    # Truncate or pad audio to match desired number of samples
-    return truncate_array(y, MAX_AUDIO_SAMPLES)
-
-
-def save_audio(y: np.ndarray, filepath: str) -> np.ndarray:
+def save_audio(temp_filepath: str, out_filepath: str) -> np.ndarray:
     """
     Save numpy array of audio to file
     """
-    logger.info(f"Writing audio file '{filepath}'")
-    sf.write(filepath, y, AUDIO_SAMPLE_RATE, )
+    # Load up temp saved file
+    y, sr = librosa.load(temp_filepath, sr=AUDIO_SAMPLE_RATE, offset=0, mono=True, duration=MAX_AUDIO_DURATION)
+    # Truncate to 30 seconds
+    y = pad_or_truncate_array(y, MAX_AUDIO_SAMPLES)
 
+    logger.info(f"Writing audio file temp '{temp_filepath}' to {out_filepath}")
 
-def clear_uploads():
-    """
-    Clears ALL uploaded files, without checking TTL
-    """
+    # Development environment: save locally
+    dev_env = os.environ.get("DEVELOPMENT_ENV", None)
+    if dev_env == "false":
+        sf.write(UPLOADS_FOLDER / out_filepath, y, AUDIO_SAMPLE_RATE, )
 
-    for file_path in Path(UPLOADS_FOLDER).iterdir():
-        if file_path.is_file():
-            os.remove(file_path)
-            logger.info(f"Deleted {file_path}")
+    # Production environment: save on GCS bucket
+    elif dev_env == "true":
+        bucket = get_bucket()
+        blob = bucket.blob(out_filepath)
+
+        # Convert NumPy array to WAV in-memory
+        audio_bytes_io = BytesIO()
+        sf.write(audio_bytes_io, y, AUDIO_SAMPLE_RATE, format='WAV')
+        audio_bytes_io.seek(0)  # rewind to start
+
+        # Upload to GCS
+        blob.upload_from_file(audio_bytes_io, content_type="audio/wav")
+
+    # Unknown environment
+    else:
+        raise ValueError(f"Unknown DEVELOPMENT_ENV: {dev_env}")

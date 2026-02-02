@@ -20,7 +20,8 @@ pydantic-ai = "*"
 flask-limiter = "^4.1.1"
 gunicorn = "^23.0.0"
 mutagen = "^1.47.0"
-gcloud = "^0.18.3"
+setuptools = "^80.10.2"
+google-cloud-storage = "^3.8.0"
 
 [build-system]
 requires = ["poetry-core"]
