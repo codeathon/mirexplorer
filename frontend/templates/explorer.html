@@ -1,6 +1,19 @@
 {% extends 'layout.html' %}
 
 {% block body %}
+    {% if audio_url %}
+        <script>
+            console.log("setting audio URL")
+            window.audio_url = {{ audio_url|tojson }};
+            window.development_env = {{ development_env|tojson }};
+        </script>
+    {% else %}
+        <script>
+            window.audio_url = null;
+            window.development_env = null
+        </script>
+    {% endif %}
+
     {% if is_development %}
         <script type="module" src="http://localhost:3000/@vite/client"></script>
         <script type="module" src="http://localhost:3000/main.jsx"></script>
@@ -78,22 +91,26 @@
                         </button>
                         <ul class="explorer-sidebar-dropdown">
                             <li>
-                                <a id="explorer-track-metadata-sidebar" href="#" class="explorer-sidebar-labels-nointeract mt-4">
+                                <a id="explorer-track-metadata-sidebar" href="#"
+                                   class="explorer-sidebar-labels-nointeract mt-4">
                                     Track: Unknown
                                 </a>
                             </li>
                             <li>
-                                <a id="explorer-artist-metadata-sidebar" href="#" class="explorer-sidebar-labels-nointeract">
+                                <a id="explorer-artist-metadata-sidebar" href="#"
+                                   class="explorer-sidebar-labels-nointeract">
                                     Artist: Unknown
                                 </a>
                             </li>
                             <li>
-                                <a id="explorer-album-metadata-sidebar" href="#" class="explorer-sidebar-labels-nointeract">
+                                <a id="explorer-album-metadata-sidebar" href="#"
+                                   class="explorer-sidebar-labels-nointeract">
                                     Album: Unknown
                                 </a>
                             </li>
                             <li>
-                                <a id="explorer-year-metadata-sidebar" href="#" class="explorer-sidebar-labels-nointeract">
+                                <a id="explorer-year-metadata-sidebar" href="#"
+                                   class="explorer-sidebar-labels-nointeract">
                                     Year: Unknown
                                 </a>
                             </li>
@@ -364,18 +381,6 @@
         </button>
 
         <div id="plugins-interface" class="plugins-container"></div>
-
-        {% if audio_url %}
-            <script>
-                window.audio_url = {{ audio_url|tojson }};
-                window.development_env = {{ development_env|tojson }};
-            </script>
-        {% else %}
-            <script>
-                window.audio_url = null;
-                window.development_env = null
-            </script>
-        {% endif %}
     </div>
 
 {% endblock %}

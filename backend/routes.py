@@ -19,12 +19,11 @@ main_routes = Blueprint("main", __name__)
 def uploaded_file(filename):
     dev_env = os.getenv("DEVELOPMENT_ENV", None)
 
-    if dev_env == "false":
+    if dev_env == "true":
         # Local file serving for development
         return send_from_directory(UPLOADS_FOLDER, filename)
-    elif dev_env == "true":
+    elif dev_env == "false":
         # Production: redirect to GCS
-        logger.info("GCS redirect")
         gcs_url = f"https://storage.googleapis.com/mirexplorer/{filename}"
         return redirect(gcs_url)
     else:
@@ -77,7 +76,7 @@ def index():
             save_audio(save_path, temp_filename_new)
 
             # remove temporary file
-            os.remove(save_path)
+            # os.remove(save_path)
 
             return redirect(url_for("main.explorer", filename=temp_filename_new, development_env=os.environ["DEVELOPMENT_ENV"]))
 
@@ -136,7 +135,7 @@ def trigger_action():
     js = request.get_json()
     caller = route_to_function(js["action"])
 
-    audio_fpath = Path(UPLOADS_FOLDER) / Path(js["audio_url"]).name
+    audio_fpath = Path(js["audio_url"]).name
     audio_loaded = load_audio(audio_fpath)
 
     # Make the call

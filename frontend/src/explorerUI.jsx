@@ -1,3 +1,5 @@
+console.log("🔥 explorerUI loaded");
+
 import WaveSurfer from 'wavesurfer.js';
 import Spectrogram from 'wavesurfer.js/dist/plugins/spectrogram.esm.js';
 import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.esm.js';
@@ -350,11 +352,9 @@ async function createWave(audioFile) {
         height: defaultHeight,
         sampleRate: sampleRate,
     });
-    if (window.development_env === "true") {
+    if (window.development_env === "false") {
         audioFile = audioFile.replace("/uploads/", "https://storage.googleapis.com/mirexplorer/")
     }
-
-    console.log(audioFile)
     await wavesurfer.load(audioFile);
     await finaliseSurfer(wavesurfer)
 }
@@ -396,6 +396,9 @@ async function createSpect(audioFile, spectFMin = defaultFMin, spectFMax = defau
         gainDB: 5,
     })
     wavesurfer.registerPlugin(spectsurfer)
+    if (window.development_env === "false") {
+        audioFile = audioFile.replace("/uploads/", "https://storage.googleapis.com/mirexplorer/")
+    }
     await wavesurfer.load(audioFile);
 
     await finaliseSurfer(wavesurfer)
@@ -1504,10 +1507,11 @@ function toTitleCase(str) {
 }
 
 
-function updateSidebarTrackMetadata() {
-    const parts = window.audio_url.split('/');
-    const filenameWithExt = parts.pop();
-    const [filename, _] = filenameWithExt.split('.');
+function updateSidebarTrackMetadata(fp) {
+    console.log("🔥 updateSidebarTrackMetadata called");
+
+    const audioUrl = fp.replace("/uploads/", "")
+    const [filename, _] = audioUrl.split('.');
 
     let els = ["track", "artist", "album", "year"]
     let idx = 0
@@ -1531,10 +1535,14 @@ function updateSidebarTrackMetadata() {
 
 
 globalThis.createWave = createWave;
+globalThis.updateSidebarTrackMetadata = updateSidebarTrackMetadata;
 window.colourChanged = colourChanged;
 
+function initExplorer() {
+    globalThis.createWave = createWave;
+    globalThis.updateSidebarTrackMetadata = updateSidebarTrackMetadata;
+    window.colourChanged = colourChanged;
 
-document.addEventListener('DOMContentLoaded', () => {
     // sidebar open/close button
     // const toggleBtn = document.getElementById("toggleSidebar");
     // toggleBtn.addEventListener("click", () => toggleSidebar());
@@ -1640,10 +1648,8 @@ document.addEventListener('DOMContentLoaded', () => {
     observer.observe(waveformContainer);
 
     // start with a waveform by default
-    if (window.audio_url) {
-        updateSidebarTrackMetadata()
-        createWave(window.audio_url);
-    }
+    updateSidebarTrackMetadata(window.audio_url);
+    createWave(window.audio_url);
 
     // observe spectrogram labels, change font size
     modifySpectLabels();
@@ -1653,4 +1659,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // manage clear plugins button: show when plugins added, hide otherwise
     manageClearPluginsButton()
-});
+}
+
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initExplorer);
+} else {
+    initExplorer();
+}

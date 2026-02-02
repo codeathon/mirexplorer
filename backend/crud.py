@@ -47,16 +47,18 @@ RETRYING = Retry(
 
 @cache.memoize()
 def load_audio(filepath) -> np.ndarray:
+    filename = Path(filepath).name
+
     # Development environment: saved locally
     dev_env = os.environ.get("DEVELOPMENT_ENV", None)
-    if dev_env == "false":
-        y, sr = librosa.load(filepath, sr=AUDIO_SAMPLE_RATE, offset=0, mono=True, duration=MAX_AUDIO_DURATION)
+    if dev_env == "true":
+        y, sr = librosa.load(UPLOADS_FOLDER / filename, sr=AUDIO_SAMPLE_RATE, offset=0, mono=True, duration=MAX_AUDIO_DURATION)
 
     # Production environment: saved on GCS bucket
-    elif dev_env == "true":
+    elif dev_env == "false":
         # grab blob from bucket
         bucket = get_bucket()
-        filo = bucket.blob(filepath)
+        filo = bucket.blob(filename)
 
         # load blob from bucket as raw bytestream
         #  Very rarely getting a `DataCorruption` error when downloading a file that is otherwise healthy;
@@ -112,7 +114,6 @@ def get_bucket():
         }
     ]
     bu.patch()
-    logger.info(f"CORS: {bu.cors}")
 
     return bu
 
@@ -262,24 +263,38 @@ def save_audio(temp_filepath: str, out_filepath: str) -> np.ndarray:
     """
     Save numpy array of audio to file
     """
-    # Load up temp saved file
-    y, sr = librosa.load(temp_filepath, sr=AUDIO_SAMPLE_RATE, offset=0, mono=True, duration=MAX_AUDIO_DURATION)
-    # Truncate to 30 seconds
-    y = pad_or_truncate_array(y, MAX_AUDIO_SAMPLES)
+    if isinstance(temp_filepath, (str, Path)):
+        logger.info(f"Writing audio file temp '{temp_filepath}' to {out_filepath}")
 
-    logger.info(f"Writing audio file temp '{temp_filepath}' to {out_filepath}")
+        # Load up temp saved file
+        y, sr = librosa.load(temp_filepath, sr=AUDIO_SAMPLE_RATE, offset=0, mono=True, duration=MAX_AUDIO_DURATION)
+        # Truncate to 30 seconds
+        y = pad_or_truncate_array(y, MAX_AUDIO_SAMPLES)
+        # Delete temporary file now it's in memory
+        if "example_audio" not in str(temp_filepath):
+            logger.info(f"Removing {temp_filepath}")
+            os.remove(temp_filepath)
+
+    elif isinstance(temp_filepath, np.ndarray):
+        y = temp_filepath
+
+    else:
+        raise TypeError("Expected str or Path or array, got {}".format(type(temp_filepath)))
 
     # Development environment: save locally
     dev_env = os.environ.get("DEVELOPMENT_ENV", None)
-    if dev_env == "false":
+    if dev_env == "true":
         sf.write(UPLOADS_FOLDER / out_filepath, y, AUDIO_SAMPLE_RATE, )
 
     # Production environment: save on GCS bucket
-    elif dev_env == "true":
+    elif dev_env == "false":
+        logger.info("get bucket")
         bucket = get_bucket()
-        blob = bucket.blob(out_filepath)
+        logger.info("create blob")
+        blob = bucket.blob(str(out_filepath))
 
         # Convert NumPy array to WAV in-memory
+        logger.info("upload audio to bucket")
         audio_bytes_io = BytesIO()
         sf.write(audio_bytes_io, y, AUDIO_SAMPLE_RATE, format='WAV')
         audio_bytes_io.seek(0)  # rewind to start

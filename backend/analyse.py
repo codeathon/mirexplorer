@@ -57,10 +57,11 @@ def beat_track(audio, filename):
 
     # also render a click track that we can display on the frontend
     clicked = pad_or_truncate_array(librosa.clicks(times=beats, sr=AUDIO_SAMPLE_RATE), len(audio))
-    clicked_fpath = filename.parent / Path(str(filename.stem) + "_clicks" + str(filename.suffix))
+    logger.info("Creating filename")
+    clicked_fpath = Path(str(Path(filename).stem) + "_clicks" + str(Path(filename).suffix))
+    logger.info(f"Writing clicks to {clicked_fpath}")
 
-    if not clicked_fpath.exists():
-        save_audio(audio + clicked, clicked_fpath)
+    save_audio(audio + clicked, clicked_fpath)
 
     return beats.tolist()
 
@@ -288,7 +289,12 @@ def _upload_audio_to_moises(filepath: str, upload_url: str) -> None:
     """
     Uploads audio to Moises at a given URL
     """
+    from backend.crud import UPLOADS_FOLDER
+
+    assert os.environ["DEVELOPMENT_ENV"] == "true", "Should only be used with a development env!"
+
     # Upload the audio file
+    filepath = UPLOADS_FOLDER / Path(filepath).name
     with open(filepath, "rb") as f_in:
         response_upload = requests.put(
             upload_url,
@@ -398,10 +404,23 @@ def upload_audio_to_moises(filename: str) -> str:
     """
     Uploads given audio to Moises, returns URL to download (required for processors)
     """
-    # Request URLs to upload to Moises
-    upload_url, download_url = _request_moises_upload_urls()
-    # Do the upload
-    _upload_audio_to_moises(filename, upload_url)
+    dev_env = os.environ["DEVELOPMENT_ENV"]
+
+    # Development environment: need publicly accessible URL
+    if dev_env == "true":
+        # Request URLs to upload to Moises
+        upload_url, download_url = _request_moises_upload_urls()
+        # Do the upload
+        _upload_audio_to_moises(filename, upload_url)
+
+    # Production environment: we can just use the public GCS link
+    elif dev_env == "false":
+        filename = filename.replace("/uploads/", "")
+        download_url = f"https://storage.googleapis.com/mirexplorer/{filename}"
+
+    else:
+        raise ValueError(f"Unknown environment '{dev_env}'")
+
     return download_url
 
 

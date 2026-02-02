@@ -8,7 +8,7 @@ install:
 	cd frontend && npm install
 
 # Development (local only)
-dev: install
+dev: build
 	@echo "Starting frontend + backend for development..."
 	@trap "kill 0" EXIT; \
 	   cd frontend && npm run dev & \
