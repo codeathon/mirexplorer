@@ -6,7 +6,7 @@
 @tailwind utilities;
 
 .dropzone-brand-logos {
-    @apply max-w-[228px] h-auto opacity-40 mb-8 mt-0;
+    @apply max-w-[228px] h-auto opacity-70 mb-8 mt-0;
 }
 
 .dropzone-popup {
@@ -33,7 +33,7 @@
 }
 
 .dropzone-label {
-    @apply flex flex-col items-center justify-center w-72 md:w-96 h-48 bg-gray-100 border-2 border-dashed border-gray-400 rounded-lg cursor-pointer transition-colors duration-200;
+    @apply flex z-50  flex-col items-center justify-center w-72 md:w-96 h-48 bg-gray-100 border-2 border-dashed border-gray-400 rounded-lg cursor-pointer transition-colors duration-200;
 }
 
 .dropzone-label.dragover {
@@ -41,7 +41,48 @@
 }
 
 .dropzone-label:hover {
-    @apply bg-gray-200;
+    @apply hover:text-blue-600/70 duration-75 hover:cursor-pointer hover:border-blue-600/70 hover:border-[3px] hover:bg-red-100;
+}
+.group:hover .dropzone-icon {
+    @apply text-blue-600/70 hover:text-blue-600/70 duration-75 hover:cursor-pointer hover:border-blue-600/70;
+}
+
+.dropzone-label-example:hover {
+    @apply hover:text-blue-600/70 duration-75 hover:cursor-pointer hover:border-blue-600/70 hover:bg-red-100 hover:border-[3px];
+}
+.group:hover .dropzone-icon {
+    @apply text-blue-600/70 hover:text-blue-600/70 duration-75 hover:cursor-pointer hover:border-blue-600/70;
+}
+
+#example-selector {
+    @apply text-center;
+    appearance: none; /* Remove default arrow */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    background-color: #f9f9f9; /* Light background for clarity */
+    border: 1px solid #cbd5e0; /* Soft border to show it’s clickable */
+    border-radius: 0.5rem; /* Rounded corners */
+    padding: 0.25rem 0.5rem; /* Add padding for comfort */
+    font-size: 1rem;
+    color: #1a202c; /* Dark text for readability */
+    cursor: pointer; /* Show pointer to indicate interactivity */
+    transition: all 0.2s ease-in-out;
+    width: 100%; /* Full width for easier clicking */
+    background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>'); /* Arrow */
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1rem;
+}
+
+#example-selector:hover {
+    border-color: #63b3ed; /* Highlight on hover */
+}
+
+#example-selector:focus {
+    outline: none;
+    border-color: #3182ce; /* Stronger focus color */
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5); /* Nice focus ring */
 }
 
 .dropzone-container {
@@ -61,7 +102,10 @@
 }
 
 .dropzone-text-main {
-    @apply mb-2 text-2xl font-display text-center;
+    @apply mb-2 text-3xl font-display text-center;
+}
+.dropzone-text-sub {
+    @apply mb-2 text-lg font-accent text-center;
 }
 
 .hidden-input {
@@ -69,14 +113,14 @@
 }
 
 .dropzone-header-sub {
-    @apply text-5xl font-accent  text-gray-500
+    @apply text-5xl font-accent  text-gray-700
 }
 
 .dropzone-links {
     @apply absolute bottom-16 justify-center
 }
 .dropzone-links a {
-    @apply text-gray-500 hover:underline font-display mx-10 text-base
+    @apply text-gray-700 hover:underline font-display mx-10 text-base
 }
 
 .dropzone-header-main {
@@ -112,7 +156,7 @@
     @apply hover:underline z-50
 }
 .dropzone-footer p {
-    @apply text-sm font-accent text-gray-500 text-center mt-0 mb-0 p-0;
+    @apply text-sm font-accent text-gray-700 text-center mt-0 mb-0 p-0;
 }
 
 .wave-container {

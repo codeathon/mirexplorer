@@ -90,6 +90,8 @@
     </div>
 
     <div id="dropzone-container" class="dropzone-container">
+        <div class="absolute inset-0 -z-10 bg-[linear-gradient(to_right,#bbbbbb1a_1px,transparent_1px),linear-gradient(to_bottom,#bbbbbb1a_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_70%_35%_at_50%_0%,#000_70%,transparent_110%)]"></div>
+
         <div class="flex items-center justify-center space-x-12">
             <a href="https://www.qmul.ac.uk/">
                 <img src="{{ url_for('static', filename='QM_logo_Black.png') }}"
@@ -112,7 +114,7 @@
 
         <div class="flex flex-row justify-center items-center w-full space-x-10">
             <form id="record-form" method="POST" enctype="multipart/form-data" action="{{ url_for('main.index') }}">
-                <label id="record-label" class="dropzone-label cursor-pointer">
+                <label id="record-label" class="dropzone-label group cursor-pointer">
                     <div class="dropzone-content">
                         <svg id="mic-svg" class="dropzone-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                              stroke-width="1.5" stroke="currentColor">
@@ -153,7 +155,7 @@
 
             <form id="example-form" method="POST" class="flex justify-center" enctype="multipart/form-data">
                 {{ form.hidden_tag() }}
-                <label id="dropzone-label=example" class="dropzone-label-example">
+                <label id="dropzone-label=example" class="dropzone-label-example group">
                     <div class="dropzone-content">
                         <svg class="dropzone-icon" xmlns="http://www.w3.org/2000/svg" fill="none"
                              viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -163,7 +165,7 @@
                         <p class="dropzone-text-main">Use an example recording!</p>
                         {#                        <p class="dropzone-text-sub">Choose from one of our pre-selected files</p>#}
                         <select id="example-selector" name="example_file" class="z-50" onchange="this.form.submit()">
-                            <option value="" disabled selected>Choose from one of our example recordings!</option>
+                            <option value="" disabled selected>Select a recording</option>
                             <option value="rock.mp3">Rock (male vocals, keyboard, drum kit)</option>
                             <option value="folk_zanzibar.mp3">Folk (female vocals, accordion, from Zanzibar)</option>
                             <option value="pop.mp3">Pop (female vocals, guitar, drum kit)</option>
@@ -177,7 +179,7 @@
 
             <form id="upload-form" method="POST" class="flex justify-center" enctype="multipart/form-data">
                 {{ form.hidden_tag() }}
-                <label for="dropzone-file" id="dropzone-label" class="dropzone-label">
+                <label for="dropzone-file" id="dropzone-label" class="dropzone-label group">
                     <div class="dropzone-content">
                         <svg class="dropzone-icon" xmlns="http://www.w3.org/2000/svg" fill="none"
                              viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
