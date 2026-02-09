@@ -59,21 +59,31 @@
 
     <div id="copyright-warning"
          class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/70">
-        <div class="bg-white rounded-lg shadow-lg max-w-md p-6 text-center space-y-4">
+        <div class="relative bg-white rounded-lg shadow-lg max-w-md p-6 text-center space-y-4">
+            <button
+                    id="copyright-close-button"
+                    class="absolute top-2 right-4 text-gray-500 hover:text-gray-800"
+                    aria-label="Close"
+            >
+                ✕
+            </button>
+
             <h2 class="text-xl font-display text-gray-800">
                 Be Aware of Copyright!
             </h2>
             <p class="text-gray-700 font-accent">
-                This website <strong>only allows you to analyse music or recordings that you own the copyright to</strong>.
+                Please only use this site to analyze music or recordings <strong>you own the copyright to</strong>
             </p>
             <p class="text-gray-600 font-accent">
-                By clicking continue, you confirm that you <strong>are the legal owner</strong> of the recording you just uploaded.
+                By clicking continue, you confirm <strong>you are the legal owner</strong> of the uploaded recording.
             </p>
             <p class="text-gray-600 font-accent">
-                To find music with a <strong>permissive license</strong> that you can use on this website, take a look at the <a href="https://freemusicarchive.org/home" class="hover:underline text-blue-500">Free Music Archive</a>.
+                If you do not own the rights, please use music with a <strong>permissive license</strong>, such as
+                tracks from the <a href="https://freemusicarchive.org/home" class="hover:underline text-blue-500">Free
+                Music Archive</a>.
             </p>
             <p class="text-sm text-gray-500 font-accent">
-                If in doubt, please ask a parent or guardian to assist you.
+                If in doubt, please seek further guidance to ensure you have the necessary permissions.
             </p>
             <button id="copyright-continue-button" class="font-display border-2 rounded-lg p-1">Continue</button>
         </div>
@@ -143,7 +153,7 @@
 
             <form id="example-form" method="POST" class="flex justify-center" enctype="multipart/form-data">
                 {{ form.hidden_tag() }}
-                <label id="dropzone-label=example" class="dropzone-label-example" >
+                <label id="dropzone-label=example" class="dropzone-label-example">
                     <div class="dropzone-content">
                         <svg class="dropzone-icon" xmlns="http://www.w3.org/2000/svg" fill="none"
                              viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -151,7 +161,7 @@
                                   d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"/>
                         </svg>
                         <p class="dropzone-text-main">Use an example recording!</p>
-{#                        <p class="dropzone-text-sub">Choose from one of our pre-selected files</p>#}
+                        {#                        <p class="dropzone-text-sub">Choose from one of our pre-selected files</p>#}
                         <select id="example-selector" name="example_file" class="z-50" onchange="this.form.submit()">
                             <option value="" disabled selected>Choose from one of our example recordings!</option>
                             <option value="rock.mp3">Rock (male vocals, keyboard, drum kit)</option>

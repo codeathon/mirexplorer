@@ -47,6 +47,13 @@ function prepareUpload() {
     const form = document.getElementById("upload-form");
     const continueButton = document.getElementById("copyright-continue-button")
 
+    const closeButton = document.getElementById("copyright-close-button")
+    closeButton.addEventListener("click", () => {
+        confirmPopup.classList.add("hidden")
+        selector.classList.remove("bg-black/10")
+        selector.disabled = false
+    })
+
     continueButton.addEventListener("click", () => {
         form.submit()
     })
