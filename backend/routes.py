@@ -125,7 +125,7 @@ def handle_exception(e):
 
 
 @main_routes.route("/trigger_action", methods=["POST"])
-@limiter.limit("15 per hour")
+@limiter.limit("30 per hour")
 def trigger_action():
     """
     Handles actions within the explorer: route to the correct function and return results to frontend as a JSON
@@ -181,7 +181,7 @@ def contact():
 
 
 @main_routes.route("/send_message", methods=["POST"])
-@limiter.limit("15 per hour")
+@limiter.limit("30 per hour")
 async def send_message():
     from backend.analyse import extract_spectral_features
     from backend.chat import route_chat_response
