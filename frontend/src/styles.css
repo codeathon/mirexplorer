@@ -173,7 +173,7 @@
 }
 
 .waveform-time {
-    @apply text-xl font-accent text-white absolute z-10 top-[25%] left-[97.5%] pointer-events-none bg-black bg-opacity-50;
+    @apply text-xl font-accent text-white absolute z-10 top-[25%] pointer-events-none bg-black bg-opacity-50;
 }
 
 .explorer-sidebar-container {
@@ -189,7 +189,7 @@
 }
 
 .explorer-sidebar-header {
-    @apply text-3xl font-display
+    @apply text-3xl font-display transition-all hover:scale-105 duration-200
 }
 
 .explorer-sidebar-labels {
@@ -200,7 +200,7 @@
 }
 
 .explorer-sidebar-parent-label {
-    @apply flex font-accent items-center gap-4 text-xl
+    @apply flex font-accent items-center gap-4 text-xl transition-all duration-200 hover:scale-105 active:scale-100
 }
 
 .explorer-sidebar-icon {
@@ -208,15 +208,19 @@
 }
 
 .explorer-viewas-button {
-    @apply fixed bottom-6 right-6 px-4 py-3 rounded-lg bg-gray-200 border-2 border-gray-300 hover:bg-gray-300 shadow-lg z-50 flex font-accent items-center gap-4 text-xl
+    @apply fixed bottom-6 right-6 px-4 py-3 rounded-lg bg-gray-200 border-2 border-gray-300 hover:bg-gray-300 hover:scale-105 active:scale-95 transition-all duration-200 shadow-lg z-50 flex font-display items-center gap-4 text-xl
+}
+
+.explorer-axislabel {
+    @apply absolute font-display text-lg px-2 py-1 border border-gray-500 border-dashed rounded transition-all duration-200 cursor-pointer hover:bg-black/5 hover:scale-110 active:scale-95 hover:border-solid hover:rounded-lg;
 }
 
 .explorer-clear-plugins-button {
-    @apply fixed top-16 right-6 px-4 py-3 rounded-lg bg-gray-200 border-2 border-gray-300 hover:bg-gray-300 shadow-lg z-50 flex font-accent items-center gap-4 text-xl hidden
+    @apply fixed top-16 right-6 px-4 py-3 rounded-lg bg-gray-200 border-2 border-gray-300 hover:bg-gray-300 shadow-lg z-50 flex font-display items-center gap-4 text-xl hidden hover:scale-110 active:scale-95 transition-all duration-200;
 }
 
 .explorer-viewas-option {
-    @apply px-3 py-2 rounded hover:bg-gray-100 text-sm block
+    @apply px-3 py-2 rounded hover:bg-gray-100 text-sm block hover:scale-110 active:scale-95 transition-all duration-200;
 }
 
 .explorer-spectoptions-label {
@@ -236,7 +240,7 @@
 }
 
 .explorer-gridline-vertical-text {
-    @apply z-50 absolute font-accent text-white text-center flex justify-center items-center font-[16px] w-[2em] h-[24px] left-[0.5em] pointer-events-none;
+    @apply z-50 absolute font-accent text-black text-right flex justify-center items-center font-[16px] w-[2em] h-[24px] left-[2.5em] pointer-events-none;
 }
 
 .explorer-gridline-minor {
@@ -244,11 +248,7 @@
 }
 
 .explorer-gridline-text {
-    @apply z-50 absolute font-accent text-lg top-[217px] inline-block;
-}
-
-.explorer-axislabel {
-    @apply absolute font-display text-xl flex justify-center z-50;
+    @apply z-50 absolute font-accent font-[16px] top-[217px] inline-block;
 }
 
 .alert-danger {
@@ -260,7 +260,7 @@
 }
 
 .explorer-plugin-pill {
-    @apply inline-flex flex-nowrap items-center bg-white border border-gray-200 pl-3 rounded-full p-1.5 pe-3
+    @apply inline-flex flex-nowrap items-center bg-white hover:bg-gray-100 border-gray-500 border-dashed pl-3 rounded-full border p-1.5 pe-3 transition-all hover:scale-105 duration-200 hover:border-solid
 }
 
 .explorer-plugin-pill-text {
@@ -280,7 +280,7 @@
 }
 
 .info-popup {
-    @apply flex flex-col fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-5 w-[1000px] min-h-[100px] text-left rounded-lg shadow-lg z-[1000];
+    @apply flex flex-col fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-teal-300 p-5 w-[1000px] min-h-[100px] text-left rounded-lg shadow-lg z-[1000] text-white shadow-teal-100 shadow-pulse;
 }
 
 .info-popup h2 {
@@ -357,7 +357,7 @@
 }
 
 .close-button {
-    @apply font-accent text-lg p-0 ml-[4px] cursor-pointer bg-transparent border-none absolute right-10 top-5
+    @apply font-accent text-lg px-2 py-1 ml-[4px] cursor-pointer border-white bg-transparent absolute right-10 top-5 border border-dashed rounded-md transition-all duration-200 hover:bg-black/5 hover:scale-125 active:scale-95 hover:border-solid hover:rounded-lg;
 }
 
 .pagination-buttons {
@@ -365,11 +365,11 @@
 }
 
 .next-page-button {
-    @apply font-accent items-center justify-center text-lg
+  @apply font-accent items-center justify-center text-lg px-3 py-2 border border-dashed rounded transition-all duration-200 cursor-pointer hover:bg-black/5 hover:scale-125 active:scale-95 hover:border-solid hover:rounded-lg;
 }
 
 .prev-page-button {
-    @apply font-accent items-center justify-center text-lg
+  @apply font-accent items-center justify-center text-lg px-3 py-2 border border-dashed rounded transition-all duration-200 cursor-pointer hover:bg-black/5 hover:scale-125 active:scale-95 hover:border-solid hover:rounded-lg;
 }
 
 .chat-container {
@@ -461,6 +461,10 @@
 .typing-dot {
     @apply w-2 h-2 bg-current rounded-full;
     animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.explorer-currentshown-label {
+    @apply absolute right-[150px] bottom-9 text-xl font-display px-2 py-1 border border-gray-500 border-dashed rounded transition-all duration-200 cursor-pointer hover:bg-black/5 hover:scale-110 active:scale-95 hover:border-solid hover:rounded-lg
 }
 
 @keyframes bounce {

@@ -23,21 +23,17 @@ function getArrowPosition() {
 
     // waveform positioning different
     if (targetElements[0].id === "waveform") {
-        return {x: centerX, y: rect.top - 120, angle: 180};
-    }
-    else if (targetElements[0].id === "sidebar-analyser") {
-        console.log(targetElements[0].getBoundingClientRect())
+        return {x: centerX, y: rect.bottom, angle: 0};
+    } else if (targetElements[0].id === "sidebar-analyser") {
         return {x: rect.right + 90, y: centerY, angle: 270}
     }
-    // sidebar position different
-    console.log(targetElements[0].id)
 
     // Original logic for small elements
     const corners = [
-        { x: rect.left, y: rect.top },
-        { x: rect.right, y: rect.top },
-        { x: rect.left, y: rect.bottom },
-        { x: rect.right, y: rect.bottom }
+        {x: rect.left, y: rect.top},
+        {x: rect.right, y: rect.top},
+        {x: rect.left, y: rect.bottom},
+        {x: rect.right, y: rect.bottom}
     ];
 
     let closestCorner = corners[0];
@@ -72,12 +68,13 @@ function showInfoPopup() {
         title: "AI Music Explorer", content: `
             <p>Welcome to the <strong>AI Music Explorer!</strong></p>
             <p>You can use this application to <em>learn more about music</em> using AI.</p>
+            <p>Let’s start with a brief <strong>interactive walkthrough</strong>.</p>
             <p><strong>Press the arrow button below.</strong></p>
         `
     }, {
         title: "Look at your Recording", content: `
-            <p>The graph you are currently looking at <strong>shows your recording</strong>.</p>
-            <p>Can you recognise any parts of it?</p>
+            <p>The graph highlighted with red is the <strong>audio in your recording</strong>.</p>
+            <p>It shows how the audio waves <strong>moved over time</strong>.</p>
         `, flasher: "waveform",
     }, {
         title: "Look at your Recording", content: `
@@ -90,8 +87,9 @@ function showInfoPopup() {
         `, flasher: "explorer-yaxis-text",
     }, {
         title: "Changing the View", content: `
-            <p>Click the <strong>View As</strong> button to try out <em>different ways</em> of viewing your recording.</p>
-            <p>You can always go back to the <strong>Waveform</strong> later.</p>
+            <p>Hover over the <strong>"View as"</strong> icon to reveal a menu of options to flip your recording into a completely different view. 
+            This will let you uncover <em>hidden information</em> in the audio that a regular waveform cannot show.
+            You can also always hover over again to go back and view the Waveform.</p>
         `, flasher: "viewAsBtn"
     }, {
         title: "Changing the View", content: `
@@ -111,33 +109,37 @@ function showInfoPopup() {
         `, flasher: "explorer-rewind-icon",
     }, {
         title: "Loop your Recording", content: `
-            <p>Click this button to <strong>Loop</strong> sections of your recording.</p>
+            <p>Click this button to <strong>Loop</strong> your recording.</p>
         `, flasher: "explorer-loop-icon",
     }, {
-        title: "Loop your Recording", content: `
-            <p>To control which sections get looped, <strong>click and drag on the waveform</strong>.</p>
-            <p><strong>Double click</strong> on the loop to remove it.</p>
+        title: "Create Sections", content: `
+            <p>To highlight a section of your recording, <strong>click and drag on the graph</strong>.</p>
         `, flasher: "waveform",
     }, {
-        title: "Analysing your Audio", content: `
+        title: "Create Sections", content: `
+            <p><strong>Double-click</strong> on the loop to remove it.</p>
+      `, flasher: "waveform"
+    },
+        {
+            title: "Analysing your Audio", content: `
             <p>You can use any of these buttons to <strong>analyse</strong> your audio with <strong>AI</strong>.</p>
             <p>For instance, <strong>Classification</strong> uses AI to <em>sort your audio</em> into different groups, like musical <strong>genres</strong>.</p>
         `, flasher: "sidebar-analyser"
-    }, {
-        title: "Analysing your Audio", content: `
+        }, {
+            title: "Analysing your Audio", content: `
             <p>Once you've run some analysis, the results will be shown as <strong>icons</strong>.</p>
             <p>You can click each <strong>icon</strong> to learn more about the results.</p>
         `, flasher: "plugin-genre-Rock", func: addGenrePills, args: {"out": ["Rock"]}
-    }, {
-        title: "Analysing your Audio", content: `
+        }, {
+            title: "Analysing your Audio", content: `
             <p>To clear all the <strong>icons</strong> from the screen, click <strong>'Clear Plugins'</strong>.</p>
         `, flasher: "clear-plugins-button", func: addGenrePills, args: {"out": ["Rock"]}
-    }, {
-        title: "Done!", content: `
+        }, {
+            title: "Done!", content: `
             <p>That's the end of the tutorial! Click the <strong>×</strong> button to close.</p>
             <p>To go through the tutorial again, click <strong>'Help'</strong>. Or, to analyse a different recording, click <strong>'Exit'</strong>.</p>
         `, flasher: "sidebar-help"
-    }];
+        }];
 
     let modifyElements = []
     tutorialPages.forEach(elm => {
@@ -149,6 +151,11 @@ function showInfoPopup() {
     let currentPage = 0
 
     function renderPage() {
+        const asdf = document.getElementsByClassName("info-popup asdf")
+        Array.from(asdf).forEach(elm => {
+            elm.remove()
+        })
+
         const pluginClosers = document.getElementsByClassName("explorer-plugin-pill-close")
         if (pluginClosers) {
             Array.from(pluginClosers).forEach(btn => {
@@ -267,20 +274,15 @@ function showInfoPopup() {
 
 function showCurrentViewPopup() {
     const viewPopup = createPopup()
+    viewPopup.classList.add("asdf")
 
     if (getState() === "wave") {
         viewPopup.innerHTML = `
     <h2>Waveform</h2>
-    <p>
-        A waveform shows us the <strong>shape of a sound</strong> as it moves over time.
-    </p>
-    <p>
-        It captures how <em>loud</em> or <em>soft</em> the sound is at each moment and how it changes. 
-        The <strong>peaks</strong> are the loud parts, and the <strong>valleys</strong> are the quiet parts.
-    </p>
-    <p>
-        By looking at the waveform on the screen, you can see the sound's <strong>rhythm</strong> and <strong>patterns</strong>, almost like a picture of the music or noise.
-    </p>
+    <p>A waveform is a visual graph showing the <strong>shape of a sound over time</strong>.</p>
+    <p><strong>Left to Right (Time):</strong> Shows how the sound moves from start to finish.</p>
+    <p><strong>Up and Down (Loudness):</strong> The flat line in the middle is silence. The further the wave stretches up or down from that center line, the louder the sound is.</p>
+    <p>By looking at a waveform on the screen, you can see the sound's rhythm, find the loud beats, and spot the quiet pauses.</p>
 `;
     } else {
         viewPopup.innerHTML = `
@@ -308,15 +310,19 @@ function showYAxisPopup() {
         viewPopup.innerHTML = `
     <h2>Amplitude</h2>
     <p>
-        We use a <em>microphone</em> to record sound.
+        When you speak into a microphone, your voice travels through the air as <em>invisible pressure waves</em>.
     </p>
     <p>
-        Inside a microphone is a thin sheet of metal called a <em>membrane</em>. 
-        When sound moves through the air, it makes the membrane move.
+        Inside the microphone is a thin, flexible membrane called a <em>diaphragm</em>. 
+        When sound waves hit it, the diaphragm vibrates back and forth.
+
     </p>
     <p>
-        The size of this movement is called the <strong>amplitude</strong>, and it shows how <strong>loud</strong> the sound is.
-        What you see on the screen is the amplitude of the sound the microphone recorded.
+        <strong>Loud sounds:</strong> Strong air pressure makes the diaphragm move a large distance = high amplitude.
+        <strong>Quiet sounds:</strong> Weak air pressure makes the diaphragm move a small distance = low amplitude.
+    </p>
+    <p>
+        The height of the waveform on your screen represents <strong>amplitude over time</strong>. 
     </p>
     `;
     } else {
@@ -454,7 +460,6 @@ function showLyricsPopup() {
 }
 
 function showGenrePopup(pillId) {
-    console.log(pillId)
 
     const genrePill = document.getElementById(pillId)
     const pillText = genrePill.innerText.replace("Genre: ", "").replace("×", "").replace(/\s+$/, '')

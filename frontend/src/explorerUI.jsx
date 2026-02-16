@@ -88,13 +88,18 @@ function cleanContainer() {
 
 function handlePlayButton() {
     const playIcon = document.getElementById("explorer-play-icon");
+    let d = null
+
     if (wavesurfer.isPlaying()) {
         playIcon.style.strokeWidth = "1.5";
+        d = "M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z"
         wavesurfer.pause()
     } else {
         playIcon.style.strokeWidth = "2.5";
+        d = "M15.75 5.25v13.5m-7.5-13.5v13.5"
         wavesurfer.play()
     }
+    playIcon.children[0].setAttribute("d", d)
 }
 
 function handleLoopButton() {
@@ -113,7 +118,7 @@ function addGrid() {
     // all of this handles horizontal (time) grid
     const waveformContainer = document.querySelector('.waveform-container');
     const duration = wavesurfer.getDuration();
-    const containerWidth = waveformContainer.offsetWidth;
+    const containerWidth = waveformContainer.offsetWidth - (4 * 20);
 
     const waveYAxBack = document.getElementById("wave-yaxis-backing")
     waveYAxBack.hidden = state.currentShown === "spect";
@@ -132,13 +137,13 @@ function addGrid() {
 
         const line = document.createElement('div');
         line.classList.add('explorer-gridline-major');
-        line.style.left = `${position}px`;
+        line.style.left = `${position + 80}px`;
         waveformContainer.appendChild(line);
 
         const lineText = document.createElement("div");
         lineText.classList.add("explorer-gridline-text");
         lineText.innerText = String(currentTime);
-        lineText.style.left = `${position + 5}px`;
+        lineText.style.left = `${position + 85}px`;
         waveformContainer.appendChild(lineText);
 
         currentTime += gridResolutionSecs;
@@ -151,7 +156,7 @@ function addGrid() {
 
             const lineMinor = document.createElement('div');
             lineMinor.classList.add('explorer-gridline-minor');
-            lineMinor.style.left = `${position}px`;
+            lineMinor.style.left = `${position + 80}px`;
 
             waveformContainer.appendChild(lineMinor);
         }
@@ -213,13 +218,13 @@ async function finaliseSurfer(surfer) {
         const shadow = document.querySelector('#waveform > div').shadowRoot;
         const regionContent = shadow.querySelector('[part="region-content"]');
         if (regionContent) {
-            regionContent.textContent = "Loop"
+            // regionContent.textContent = "Loop"
             regionContent.style.fontFamily = '"TASA Orbiter Display", serif'
             regionContent.style.fontWeight = "400"
 
             // automatically set looping to true
-            looping = false
-            handleLoopButton()
+            // looping = false
+            // handleLoopButton()
         }
 
     });
@@ -227,8 +232,8 @@ async function finaliseSurfer(surfer) {
     // double click of loop region: remove all regions and turn off looping
     loopRegion.on("region-double-clicked", () => {
         loopRegion.clearRegions()
-        looping = true
-        handleLoopButton()
+        // looping = true
+        // handleLoopButton()
     })
 
     // time functionality
@@ -239,14 +244,25 @@ async function finaliseSurfer(surfer) {
     let handIcons = document.getElementsByClassName("hand-marker");
 
     surfer.on('timeupdate', (currentTime) => {
+        timeEl.classList.remove("hidden")
+        // Get the WaveSurfer container element
+        const waveformDiv = document.getElementById('waveform').querySelector('div');
+        const shadowRoot = waveformDiv.shadowRoot;
+        const cursor = shadowRoot.querySelector('.cursor');
+        const leftPosPerc = parseFloat(cursor.style.left)
+
         const duration = surfer.getDuration();
         const containerWidth = waveformContainer.clientWidth;
         let leftPos = (currentTime / duration) * containerWidth;
-        leftPos = Math.min(leftPos, containerWidth - timeEl.offsetWidth - 1);
+        leftPos = Math.min(leftPos, containerWidth - timeEl.offsetWidth + 20);
 
+        const wrapperDiv = shadowRoot.querySelector('.wrapper');
+        const waveformWidth = wrapperDiv.offsetWidth;
+        const leftPosPixels = (leftPosPerc / 100) * waveformWidth;
+        const leftMargin = (4 * 20);
+        const finalLeftPos = leftMargin + leftPosPixels - (timeEl.offsetWidth / 2);
         timeEl.textContent = String(Math.round(currentTime));
-        timeEl.style.position = 'absolute';
-        timeEl.style.left = `${leftPos}px`;
+        timeEl.style.left = `${finalLeftPos}px`;
 
         // highlight closest beat hand if we have any
         if (handIcons.length > 0) {
@@ -277,15 +293,22 @@ async function finaliseSurfer(surfer) {
             }
         }
 
-        if (looping) {
-            let looper = loopRegion.regions[0]
-            if (currentTime < looper.start || currentTime > looper.end) {
-                surfer.seekTo(looper.start / duration)
-            }
-        }
+        // if (looping) {
+        //     // let looper = loopRegion.regions[0]
+        //     if (currentTime >= surfer.getDuration()) {
+        //         surfer.seekTo(0)
+        //         surfer.play()
+        //     }
+        // }
 
         if (currentTime >= duration) {
-            handlePlayButton()
+            if (looping) {
+                surfer.seekTo(0)
+                surfer.play()
+            }
+            else {
+                handlePlayButton()
+            }
         }
     });
 
@@ -1291,7 +1314,9 @@ function startChat(response = null) {
         const div = document.createElement("div");
         div.className = "chat-example-prompt";
         div.textContent = prompt;
-        div.addEventListener("click", () => {sendUserMessage(prompt)})
+        div.addEventListener("click", () => {
+            sendUserMessage(prompt)
+        })
         li.appendChild(div);
     });
 
