@@ -189,7 +189,7 @@
                         <p class="dropzone-text-main">Drag a file or click to upload!</p>
                         <p class="dropzone-text-sub">MP3, WAV, or FLAC (maximum file size 16MB)</p>
                     </div>
-                    {{ form.file(class="hidden-input", id="dropzone-file") }}
+                    {{ form.file(class="hidden-input", id="dropzone-file", accept=".mp3,.wav,.flac,.aac,.aiff,.m4a,.ogg,.webm,.wma")}}
                 </label>
             </form>
 
