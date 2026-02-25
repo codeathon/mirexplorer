@@ -108,8 +108,10 @@ function handleLoopButton() {
     looping = !looping
     if (looping) {
         loopIcon.style.strokeWidth = "2.5"
+        loopIcon.style.color = "green"
     } else {
         loopIcon.style.strokeWidth = "1.5"
+        loopIcon.style.color = "black"
     }
 
 }
@@ -218,7 +220,7 @@ async function finaliseSurfer(surfer) {
         const shadow = document.querySelector('#waveform > div').shadowRoot;
         const regionContent = shadow.querySelector('[part="region-content"]');
         if (regionContent) {
-            // regionContent.textContent = "Loop"
+            regionContent.textContent = "Loop"
             regionContent.style.fontFamily = '"TASA Orbiter Display", serif'
             regionContent.style.fontWeight = "400"
 
@@ -293,27 +295,29 @@ async function finaliseSurfer(surfer) {
                 }
             }
 
-
-            // if (looping) {
-            //     // let looper = loopRegion.regions[0]
-            //     if (currentTime >= surfer.getDuration()) {
-            //         surfer.seekTo(0)
-            //         surfer.play()
-            //     }
-            // }
-
-            if (currentTime >= duration) {
-                if (looping) {
-                    surfer.seekTo(0)
-                    surfer.play()
+            if (looping) {
+                if (loopRegion.regions.length > 0) {
+                    let looper = loopRegion.regions[0]
+                    if (currentTime < looper.start || currentTime > looper.end) {
+                        surfer.seekTo(looper.start / duration)
+                    }
                 } else {
-                    handlePlayButton()
+                    if (currentTime >= duration) {
+                        surfer.seekTo(0)
+                        surfer.play()
+                    }
                 }
             }
-        }
-    )
-    ;
 
+            if (currentTime >= duration && !looping) {
+                const playIcon = document.getElementById("explorer-play-icon");
+                let d = null
+                playIcon.style.strokeWidth = "1.5";
+                d = "M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z"
+                playIcon.children[0].setAttribute("d", d)
+            }
+        }
+    );
 
 // don't know why this needs to be added here
 // but the grid resizing breaks without it
