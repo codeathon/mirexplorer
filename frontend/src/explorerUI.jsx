@@ -230,6 +230,7 @@ async function finaliseSurfer(surfer) {
     });
 
     // double click of loop region: remove all regions and turn off looping
+    loopRegion.title = "Looped section"
     loopRegion.on("region-double-clicked", () => {
         loopRegion.clearRegions()
         // looping = true
@@ -242,82 +243,83 @@ async function finaliseSurfer(surfer) {
 
     // hand icons
     let handIcons = document.getElementsByClassName("hand-marker");
-
     surfer.on('timeupdate', (currentTime) => {
-        timeEl.classList.remove("hidden")
-        // Get the WaveSurfer container element
-        const waveformDiv = document.getElementById('waveform').querySelector('div');
-        const shadowRoot = waveformDiv.shadowRoot;
-        const cursor = shadowRoot.querySelector('.cursor');
-        const leftPosPerc = parseFloat(cursor.style.left)
+            timeEl.classList.remove("hidden");
 
-        const duration = surfer.getDuration();
-        const containerWidth = waveformContainer.clientWidth;
-        let leftPos = (currentTime / duration) * containerWidth;
-        leftPos = Math.min(leftPos, containerWidth - timeEl.offsetWidth + 20);
+            const waveformDiv = document.getElementById('waveform').querySelector('div');
+            const shadowRoot = waveformDiv.shadowRoot;
+            const cursor = shadowRoot.querySelector('.cursor');
+            const leftPosPerc = parseFloat(cursor.style.left);
 
-        const wrapperDiv = shadowRoot.querySelector('.wrapper');
-        const waveformWidth = wrapperDiv.offsetWidth;
-        const leftPosPixels = (leftPosPerc / 100) * waveformWidth;
-        const leftMargin = (4 * 20);
-        const finalLeftPos = leftMargin + leftPosPixels - (timeEl.offsetWidth / 2);
-        timeEl.textContent = String(Math.round(currentTime));
-        timeEl.style.left = `${finalLeftPos}px`;
+            const duration = surfer.getDuration();
+            const containerWidth = waveformContainer.clientWidth;
+            const PADDING = 80;
 
-        // highlight closest beat hand if we have any
-        if (handIcons.length > 0) {
-            let closestHand = null;
-            let minDistance = Infinity;
+            // Consistent position formula used for both time label and hand comparison
+            const leftPos = PADDING + (currentTime / duration) * (containerWidth - PADDING);
 
-            const containerRect = waveformContainer.getBoundingClientRect();
+            // Position the time label
+            const wrapperDiv = shadowRoot.querySelector('.wrapper');
+            const waveformWidth = wrapperDiv.offsetWidth;
+            const leftPosPixels = (leftPosPerc / 100) * waveformWidth;
+            const finalLeftPos = PADDING + leftPosPixels - (timeEl.offsetWidth / 2);
+            timeEl.textContent = String(Math.round(currentTime));
+            timeEl.style.left = `${finalLeftPos}px`;
 
-            for (let hi of handIcons) {
-                const handRect = hi.getBoundingClientRect();
-                const handLeft = handRect.left - containerRect.left;
-                const distance = leftPos - handLeft;
+            // Highlight closest beat hand
+            if (handIcons.length > 0) {
+                let closestHand = null;
+                let minDistance = Infinity;
 
-                const svgPath = hi.querySelector('svg path');
-                if (svgPath) svgPath.setAttribute('stroke', 'lightgray');
+                const containerRect = waveformContainer.getBoundingClientRect();
 
-                if (distance >= 0 && distance < minDistance) {  // only left-side hands
-                    minDistance = distance;
-                    closestHand = hi;
+                for (let hi of handIcons) {
+                    const handRect = hi.getBoundingClientRect();
+                    const handLeft = handRect.left - containerRect.left;
+                    const distance = leftPos - handLeft;
+
+                    const svgPath = hi.querySelector('svg path');
+                    if (svgPath) svgPath.setAttribute('stroke', 'lightgray');
+
+                    if (distance >= 0 && distance < minDistance) {
+                        minDistance = distance;
+                        closestHand = hi;
+                    }
+                }
+
+                if (closestHand) {
+                    const svgPath = closestHand.querySelector('svg path');
+                    if (svgPath) svgPath.setAttribute('stroke', hoverColour);
                 }
             }
 
 
-            if (closestHand) {
-                const svgPath = closestHand.querySelector('svg path');
-                // update using the hover colour
-                if (svgPath) svgPath.setAttribute('stroke', hoverColour);
+            // if (looping) {
+            //     // let looper = loopRegion.regions[0]
+            //     if (currentTime >= surfer.getDuration()) {
+            //         surfer.seekTo(0)
+            //         surfer.play()
+            //     }
+            // }
+
+            if (currentTime >= duration) {
+                if (looping) {
+                    surfer.seekTo(0)
+                    surfer.play()
+                } else {
+                    handlePlayButton()
+                }
             }
         }
-
-        // if (looping) {
-        //     // let looper = loopRegion.regions[0]
-        //     if (currentTime >= surfer.getDuration()) {
-        //         surfer.seekTo(0)
-        //         surfer.play()
-        //     }
-        // }
-
-        if (currentTime >= duration) {
-            if (looping) {
-                surfer.seekTo(0)
-                surfer.play()
-            }
-            else {
-                handlePlayButton()
-            }
-        }
-    });
+    )
+    ;
 
 
-    // don't know why this needs to be added here
-    // but the grid resizing breaks without it
+// don't know why this needs to be added here
+// but the grid resizing breaks without it
     addGrid()
 
-    // add beats if present
+// add beats if present
     addBeatMarkers()
 }
 
@@ -442,6 +444,12 @@ async function handleChangeView(selection) {
         state.currentShown = "spect"
         toggleSpectrogramOptions(true)
         await createSpect(window.audio_url)
+
+        const specLabelsCanvas = document.getElementById('waveform')
+            .querySelector('div')
+            .shadowRoot
+            .querySelector('canvas[part="spec-labels"]');
+        console.log(specLabelsCanvas)
     }
 
 }
@@ -665,6 +673,7 @@ function addBeatPluginPill() {
     textDiv.innerText = "Beats";
 
     const closeBtn = document.createElement("button");
+    closeBtn.text = "Delete"
     closeBtn.classList.add("explorer-plugin-pill-close")
     closeBtn.innerText = "×";
 
@@ -703,14 +712,18 @@ function removeBeatMarkers() {
     // spectsurfer.load(window.audio_url)
 }
 
-function addBeatHandMarkers() {
+function addBeatHandMarkers(beatsRegions) {
     removeBeatHandMarkers();
 
-    const container = document.getElementById("waveform-container");
-    const containerWidth = container.offsetWidth;
-    const duration = wavesurfer.getDuration();
+    const waveformContainer = document.getElementById("waveform-container");
+    const containerRect = waveformContainer.getBoundingClientRect();
 
-    beats.forEach(mark => {
+    beatsRegions.getRegions().forEach(b => {
+        const marker = b.element;
+        const leftPercent = parseFloat(marker.style.left) / 100;
+
+        const absoluteLeft = 80 + (containerRect.width - 80) * leftPercent;
+
         const hand = document.createElement("div");
         hand.className = "hand-marker";
         hand.innerHTML = `
@@ -718,13 +731,11 @@ function addBeatHandMarkers() {
                 <path stroke="lightgray" transform="scale(1, -1) translate(0, -16)" d="M6.75 1a0.75 0.75 0 0 1 0.75 0.75V8a0.5 0.5 0 0 0 1 0V5.467l0.086 -0.004c0.317 -0.012 0.637 -0.008 0.816 0.027 0.134 0.027 0.294 0.096 0.448 0.182 0.077 0.042 0.15 0.147 0.15 0.314V8a0.5 0.5 0 1 0 1 0V6.435l0.106 -0.01c0.316 -0.024 0.584 -0.01 0.708 0.04 0.118 0.046 0.3 0.207 0.486 0.43 0.081 0.096 0.15 0.19 0.2 0.259V8.5a0.5 0.5 0 0 0 1 0v-1h0.342a1 1 0 0 1 0.995 1.1l-0.271 2.715a2.5 2.5 0 0 1 -0.317 0.991l-1.395 2.442a0.5 0.5 0 0 1 -0.434 0.252H6.035a0.5 0.5 0 0 1 -0.416 -0.223l-1.433 -2.15a1.5 1.5 0 0 1 -0.243 -0.666l-0.345 -3.105a0.5 0.5 0 0 1 0.399 -0.546L5 8.11V9a0.5 0.5 0 0 0 1 0V1.75A0.75 0.75 0 0 1 6.75 1M8.5 4.466V1.75a1.75 1.75 0 1 0 -3.5 0v5.34l-1.2 0.24a1.5 1.5 0 0 0 -1.196 1.636l0.345 3.106a2.5 2.5 0 0 0 0.405 1.11l1.433 2.15A1.5 1.5 0 0 0 6.035 16h6.385a1.5 1.5 0 0 0 1.302 -0.756l1.395 -2.441a3.5 3.5 0 0 0 0.444 -1.389l0.271 -2.715a2 2 0 0 0 -1.99 -2.199h-0.581a5 5 0 0 0 -0.195 -0.248c-0.191 -0.229 -0.51 -0.568 -0.88 -0.716 -0.364 -0.146 -0.846 -0.132 -1.158 -0.108l-0.132 0.012a1.26 1.26 0 0 0 -0.56 -0.642 2.6 2.6 0 0 0 -0.738 -0.288c-0.31 -0.062 -0.739 -0.058 -1.05 -0.046zm2.094 2.025" stroke-width="1"></path>
             </svg>
         `;
-
-        const px = (mark / duration) * containerWidth;
         hand.style.position = "absolute";
-        hand.style.left = `${px - 5}px`;
+        hand.style.left = `${absoluteLeft}px`;
         hand.style.top = "-175px";
         hand.style.pointerEvents = "none";
-        container.appendChild(hand);
+        waveformContainer.appendChild(hand);
     });
 }
 
@@ -766,7 +777,7 @@ function addBeatMarkers(response = null) {
     // add hand icons, watch for resize
     const waveformContainer = document.querySelector('.waveform-container');
     const observer = new ResizeObserver(() => {
-        addBeatHandMarkers();
+        addBeatHandMarkers(beatsRegions);
     });
     observer.observe(waveformContainer);
 
@@ -855,59 +866,52 @@ function addKeyPill(response = null) {
 }
 
 function addChordMarkers() {
-    // check if we have chords
-    if (!chords) {
-        return
-    }
+    if (!chords) return;
 
-    // start by removing any existing chord markers
-    removeChordMarkers()
+    removeChordMarkers();
 
     const container = document.getElementById("waveform-container");
     const containerWidth = container.offsetWidth;
     const duration = wavesurfer.getDuration();
+    const PADDING = 80;
 
-    // add label for chords
-    const chordLabel = document.createElement("div")
-    chordLabel.className = "explorer-chord-label"
-    chordLabel.innerText = "Chords"
-    container.appendChild(chordLabel)
+    const chordLabel = document.createElement("div");
+    chordLabel.className = "explorer-chord-label";
+    chordLabel.innerText = "Chords";
+    container.appendChild(chordLabel);
 
-    let chordCounter = 0
+    let chordCounter = 0;
 
     chords.forEach(chord => {
-        let chordName = chord["chord_simple_pop"]
-        let chordStart = chord["start"]
-        let chordEnd = chord["end"]
+        let chordName = chord["chord_simple_pop"];
+        let chordStart = chord["start"];
+        let chordEnd = chord["end"];
         let chordId = `chord-label-${chordCounter}`;
 
-        // skip over creating chords that already exist
-        if (document.getElementById(chordId)) {
-            return
-        }
+        if (document.getElementById(chordId)) return;
+
+        const usableWidth = containerWidth - PADDING;
 
         let chordDiv = document.createElement("div");
-        chordDiv.id = chordId
-        chordDiv.className = "explorer-chord-marker"
+        chordDiv.id = chordId;
+        chordDiv.className = "explorer-chord-marker";
 
-        // add the chord label
-        const pxStart = (chordStart / duration) * containerWidth;
+        const pxStart = PADDING + (chordStart / duration) * usableWidth;
         chordDiv.style.left = `${pxStart}px`;
-        chordDiv.innerText = chordName
+        chordDiv.innerText = chordName;
 
         container.appendChild(chordDiv);
 
-        // add line connecting chords
         const chordRightPx = chordDiv.offsetLeft + chordDiv.offsetWidth + 5;
-        const pxEnd = (chordEnd / duration) * containerWidth;
+        const pxEnd = PADDING + (chordEnd / duration) * usableWidth;
         const chordLine = document.createElement("div");
         chordLine.className = "explorer-chord-horizontal-line";
         chordLine.style.left = `${chordRightPx}px`;
         chordLine.style.width = `${pxEnd - chordRightPx - 5}px`;
 
         container.appendChild(chordLine);
-        chordCounter++
-    })
+        chordCounter++;
+    });
 }
 
 function removeChordMarkers() {
@@ -954,26 +958,22 @@ function addChordPills(response = null) {
 }
 
 function addLyricMarkers() {
-    // check if we have chords
-    if (!lyrics) {
-        return
-    }
+    if (!lyrics) return;
 
-    // start by removing any existing chord markers
-    removeLyricsMarkers()
+    removeLyricsMarkers();
 
     const container = document.getElementById("waveform-container");
     const containerWidth = container.offsetWidth;
     const duration = wavesurfer.getDuration();
+    const PADDING = 80;
+    const usableWidth = containerWidth - PADDING;
 
-    // add label for lyrics
-    const lyricsLabel = document.createElement("div")
-    lyricsLabel.className = "explorer-lyrics-label"
-    lyricsLabel.innerText = "Lyrics"
-    container.appendChild(lyricsLabel)
+    const lyricsLabel = document.createElement("div");
+    lyricsLabel.className = "explorer-lyrics-label";
+    lyricsLabel.innerText = "Lyrics";
+    container.appendChild(lyricsLabel);
 
-    let wordCounter = 0
-
+    let wordCounter = 0;
     const markers = [];
 
     lyrics.forEach(word => {
@@ -981,13 +981,9 @@ function addLyricMarkers() {
         let wordStart = word.start;
         let wordEnd = word.end;
 
-        // skip words near the end of the excerpt
-        if (wordEnd > 29) {
-            return
-        }
+        if (wordEnd > 29) return;
 
         let wordId = `word-label-${wordCounter}`;
-
         if (document.getElementById(wordId)) return;
 
         const wordDiv = document.createElement("div");
@@ -995,10 +991,10 @@ function addLyricMarkers() {
         wordDiv.className = "explorer-lyrics-marker";
         wordDiv.innerText = wordName;
 
-        let x = (wordStart / duration) * containerWidth;
-
         container.appendChild(wordDiv);
         const width = wordDiv.offsetWidth;
+
+        let x = PADDING + (wordStart / duration) * usableWidth;
 
         let collision = true;
         while (collision) {
@@ -1015,15 +1011,14 @@ function addLyricMarkers() {
         }
 
         if (x > containerWidth) {
-            return
+            wordDiv.remove();
+            return;
         }
 
         wordDiv.style.left = `${x}px`;
-
         markers.push({x, width});
         wordCounter++;
     });
-
 }
 
 
@@ -1271,6 +1266,7 @@ function startChat(response = null) {
 `;
     const closeBtn = document.createElement("button")
     closeBtn.innerText = "×";
+    closeBtn.title = "Close"
     closeBtn.addEventListener("click", (e) => {
         // e.stopPropagation();
         // e.preventDefault();
@@ -1314,6 +1310,7 @@ function startChat(response = null) {
         const div = document.createElement("div");
         div.className = "chat-example-prompt";
         div.textContent = prompt;
+        div.title = "Click to send this message"
         div.addEventListener("click", () => {
             sendUserMessage(prompt)
         })
@@ -1325,8 +1322,8 @@ function startChat(response = null) {
     inputWrapper.className = "chat-reply-container";
     inputWrapper.innerHTML = `
         <div id="chat-message-counter">${maxUserTurns} messages left</div>
-        <input type="text" placeholder="Reply" id="chat-userreply"/>
-        <button id="chat-sendmessage-button">
+        <input type="text" placeholder="Reply" id="chat-userreply" title="Click to type your reply"/>
+        <button id="chat-sendmessage-button" title="Send">
             <svg xmlns="http://www.w3.org/2000/svg"
                  fill="currentColor"
                  viewBox="0 0 24 24">

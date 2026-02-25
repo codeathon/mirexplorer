@@ -527,7 +527,7 @@
 }
 
 .explorer-chord-label {
-    @apply bottom-[-260px] font-display text-lg absolute pointer-events-none left-1
+    @apply bottom-[-260px] font-display text-lg absolute pointer-events-none left-10
 }
 
 .explorer-lyrics-marker {
@@ -535,7 +535,7 @@
 }
 
 .explorer-lyrics-label {
-    @apply bottom-[-320px] font-display text-lg absolute pointer-events-none left-1
+    @apply bottom-[-320px] font-display text-lg absolute pointer-events-none left-10
 }
 
 .about-page-text-content {

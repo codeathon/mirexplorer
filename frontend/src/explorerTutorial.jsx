@@ -210,6 +210,7 @@ function showInfoPopup() {
         if (currentPage > 0) {
             const prevBtn = document.createElement("button");
             prevBtn.innerText = "←";
+            prevBtn.title = "Previous page"
             prevBtn.className = "prev-page-button";
             prevBtn.onclick = () => {
                 currentPage--;
@@ -222,6 +223,7 @@ function showInfoPopup() {
 
         if (currentPage < tutorialPages.length - 1) {
             const nextBtn = document.createElement("button");
+            nextBtn.title = "Next page"
             nextBtn.innerText = "→";
             nextBtn.className = "next-page-button";
             nextBtn.onclick = () => {
@@ -239,6 +241,7 @@ function showInfoPopup() {
         const closeBtn = document.createElement("button");
         closeBtn.innerText = "×";
         closeBtn.className = "close-button";
+        closeBtn.title = "Close"
         closeBtn.addEventListener("click", () => {
             infoPopup.style.display = 'none';
             document.body.removeChild(infoPopup);

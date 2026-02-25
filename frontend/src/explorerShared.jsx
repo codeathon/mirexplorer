@@ -73,6 +73,7 @@ export function createSpinner() {
     const spinner = document.createElement('div');
     spinner.classList.add('popup-spinner');
     spinner.id = ".popup-spinner"
+    spinner.title = "Please wait..."
     return spinner
 }
 
@@ -81,6 +82,7 @@ export function finalisePopup(popup, allowClose = true) {
         const closeBtn = document.createElement("button");
         closeBtn.innerText = "×";
         closeBtn.className = "close-button"
+        closeBtn.title = "Close"
         closeBtn.addEventListener("click", () => {
             closePopup(popup.id)
         });
