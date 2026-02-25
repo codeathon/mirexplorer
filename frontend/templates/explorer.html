@@ -65,14 +65,14 @@
         <aside id="sidebar"
                class="explorer-sidebar-container transform transition-transform duration-300 translate-x-0 absolute left-0 top-0 z-50 bg-white">
 
-            <div class="px-12 py-4 transition-all hover:scale-105 duration-200">
+            <div class="px-12 py-4 transition-all hover:scale-105 duration-200" title="AI Music Explorer">
                 <a href="#" class="explorer-sidebar-header">AI Music Explorer</a>
             </div>
 
             <nav id="sidebar-analyser" class="flex-1 px-4 py-2">
                 <ul class="flex flex-col gap-3">
                     <li class="relative" id="explorer-about-your-recording">
-                        <button class="explorer-dropdown-button explorer-sidebar-parent-label w-full text-left flex justify-between items-center">
+                        <button class="explorer-dropdown-button explorer-sidebar-parent-label w-full text-left flex justify-between items-center" title="Click to expand">
                             <span class="flex items-center gap-3">
                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                     stroke-width="1.5"
@@ -118,7 +118,7 @@
                     </li>
 
                     <li class="relative">
-                        <button class="explorer-dropdown-button explorer-sidebar-parent-label w-full text-left flex justify-between items-center">
+                        <button class="explorer-dropdown-button explorer-sidebar-parent-label w-full text-left flex justify-between items-center" title="Click to expand">
                             <span class="flex items-center gap-3">
                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                     stroke-width="1.5"
@@ -155,7 +155,7 @@
                     </li>
 
                     <li class="relative">
-                        <button class="explorer-dropdown-button explorer-sidebar-parent-label w-full text-left flex justify-between items-center">
+                        <button class="explorer-dropdown-button explorer-sidebar-parent-label w-full text-left flex justify-between items-center" title="Click to expand">
                             <span class="flex items-center gap-3">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                      stroke-width="1.5"
@@ -197,7 +197,7 @@
                     </li>
 
                     <li class="relative">
-                        <button class="explorer-dropdown-button explorer-sidebar-parent-label w-full text-left flex justify-between items-center">
+                        <button class="explorer-dropdown-button explorer-sidebar-parent-label w-full text-left flex justify-between items-center" title="Click to expand">
                             <span class="flex items-center gap-3">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                      stroke-width="1.5"
@@ -265,7 +265,7 @@
             </div>
         </aside>
 
-        <div id="explorer-current-shown-label" class="explorer-currentshown-label ">
+        <div id="explorer-current-shown-label" class="explorer-currentshown-label" title="Click to learn more">
             Waveform
         </div>
 
@@ -298,7 +298,7 @@
             </div>
         </div>
 
-        <div class="absolute top-4 right-8 flex items-center space-x-2" id="colour-picker-container">
+        <div class="absolute top-4 right-8 flex items-center space-x-2" id="colour-picker-container" title="Change colour">
             <button id="explorer-colour-picker" class="transition-all hover:scale-125 duration-200" data-jscolor="{
                 format:'hex',
                 backgroundColor:'rgba(245,245,245,1)',
@@ -326,7 +326,7 @@
         </button>
 
         <div class="explorer-play-pause-container" id="explorer-play-pause-container">
-            <button id="explorer-play-button" class="transition-all hover:scale-105 duration-200">
+            <button id="explorer-play-button" class="transition-all hover:scale-105 duration-200" title="Play/Pause">
                 <svg id="explorer-play-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                      stroke-width="1.5"
                      stroke="currentColor" class="size-8">
@@ -334,7 +334,7 @@
                           d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z"/>
                 </svg>
             </button>
-            <button id="explorer-rewind-button" class="transition-all hover:scale-105 duration-200">
+            <button id="explorer-rewind-button" class="transition-all hover:scale-105 duration-200" title="Rewind">
                 <svg id="explorer-rewind-icon" xmlns="http://www.w3.org/2000/svg"
                      fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                      stroke="currentColor" class="size-8">
@@ -345,7 +345,7 @@
                     </g>
                 </svg>
             </button>
-            <button id="explorer-loop-button" class="transition-all hover:scale-105 duration-200">
+            <button id="explorer-loop-button" class="transition-all hover:scale-105 duration-200" title="Loop">
                 <svg id="explorer-loop-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                      stroke-width="1.5"
                      stroke="currentColor" class="size-8">
@@ -355,7 +355,7 @@
             </button>
         </div>
 
-        <div id="waveform-container" class="waveform-container z-0">
+        <div id="waveform-container" class="waveform-container z-0" title="Click to fast-forward or rewind">
             <div class="w-full pl-20" id="waveform"></div>
             <div id="wave-yaxis-backing" class="z-30  w-20 absolute h-[670%] opacity-50 pointer-events-none"
                  style="left: 0; top: -160px"></div>
@@ -367,11 +367,11 @@
                 left: 80px;
                 top: -161px;
             "></div>
-            <div id="explorer-yaxis-text" class="explorer-axislabel ml-3 -rotate-90"
+            <div id="explorer-yaxis-text" class="explorer-axislabel ml-3 -rotate-90" title="Click to learn more"
                  style="left: -2.0em; top: 50%">Amplitude
             </div>
             <div class="waveform-time hidden" id="waveform-time">0</div>
-            <div id="explorer-xaxis-text" class="explorer-axislabel" style="top: 250px">Time
+            <div id="explorer-xaxis-text" class="explorer-axislabel" style="top: 250px" title="Click to learn more">Time
                 (seconds)
             </div>
         </div>

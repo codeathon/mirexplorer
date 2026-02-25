@@ -94,27 +94,29 @@
 
         <div class="flex items-center justify-center space-x-12">
             <a href="https://www.qmul.ac.uk/">
-                <img src="{{ url_for('static', filename='QM_logo_Black.png') }}"
+                <img src="{{ url_for('static', filename='QM_logo_Black.png') }}" title="Queen Mary University of London Logo"
                      alt="Queen Mary University of London Logo" class="dropzone-brand-logos"/>
             </a>
             <a href="https://www.ukri.org/councils/epsrc/">
                 <img src="{{ url_for('static', filename='EPSRC_logo_Black.png') }}"
+                     title="UKRI Engineering and Physical Sciences Research Council Logo"
                      alt="UKRI Engineering and Physical Sciences Research Council Logo"
                      class="dropzone-brand-logos"/>
             </a>
             <a href="https://www.c4dm.eecs.qmul.ac.uk/">
                 <img src="{{ url_for('static', filename='C4DM_logo.png') }}"
+                     title="Queen Mary University of London Centre for Digital Music Logo"
                      alt="Queen Mary University of London Centre for Digital Music Logo"
                      class="dropzone-brand-logos grayscale"/>
             </a>
         </div>
 
-        <h1 class="dropzone-header-main">AI Music Explorer</h1>
-        <h2 class="dropzone-header-sub">Analyse your music using AI!</h2>
+        <h1 class="dropzone-header-main" title="AI Music Explorer">AI Music Explorer</h1>
+        <h2 class="dropzone-header-sub" title="Analyse your music using AI!">Analyse your music using AI!</h2>
 
         <div class="flex flex-row justify-center items-center w-full space-x-10">
             <form id="record-form" method="POST" enctype="multipart/form-data" action="{{ url_for('main.index') }}">
-                <label id="record-label" class="dropzone-label group cursor-pointer">
+                <label id="record-label" class="dropzone-label group cursor-pointer" title="Click here to record up to 30 seconds of audio">
                     <div class="dropzone-content">
                         <svg id="mic-svg" class="dropzone-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                              stroke-width="1.5" stroke="currentColor">
@@ -155,7 +157,7 @@
 
             <form id="example-form" method="POST" class="flex justify-center" enctype="multipart/form-data">
                 {{ form.hidden_tag() }}
-                <label id="dropzone-label=example" class="dropzone-label-example group">
+                <label id="dropzone-label=example" class="dropzone-label-example group" title="Click here to use an example audio recording">
                     <div class="dropzone-content">
                         <svg class="dropzone-icon" xmlns="http://www.w3.org/2000/svg" fill="none"
                              viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -166,10 +168,10 @@
                         {#                        <p class="dropzone-text-sub">Choose from one of our pre-selected files</p>#}
                         <select id="example-selector" name="example_file" class="z-50" onchange="this.form.submit()">
                             <option value="" disabled selected>Select a recording</option>
-                            <option value="rock.mp3">Rock</option>
-                            <option value="folk_zanzibar.mp3">Folk</option>
-                            <option value="pop.mp3">Pop</option>
-                            <option value="rap.mp3">Rap</option>
+                            <option value="rock.mp3" title="Use an example Rock song">Rock</option>
+                            <option value="folk_zanzibar.mp3" title="Use an example Folk song">Folk</option>
+                            <option value="pop.mp3" title="Use an example Pop song">Pop</option>
+                            <option value="rap.mp3" title="Use an example Rap song">Rap</option>
 {#                            <option value="folk_ukraine.mp3">Folk (no vocals, flute, from Ukraine)</option>#}
                         </select>
                     </div>
@@ -179,7 +181,7 @@
 
             <form id="upload-form" method="POST" class="flex justify-center" enctype="multipart/form-data">
                 {{ form.hidden_tag() }}
-                <label for="dropzone-file" id="dropzone-label" class="dropzone-label group">
+                <label for="dropzone-file" id="dropzone-label" class="dropzone-label group" title="Click here to upload your own audio file">
                     <div class="dropzone-content">
                         <svg class="dropzone-icon" xmlns="http://www.w3.org/2000/svg" fill="none"
                              viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
