@@ -1,0 +1,1350 @@
+[
+  {
+    "out": [
+      "Or-So-Ive-Been-Told",
+      "Jad-Fair-and-Jason-Willett",
+      "The-Sounds-of-Megaphone-Unlimited"
+    ],
+    "genre": [
+      "Genre: Rock",
+      "Genre: Indie / Alternative"
+    ],
+    "mood": [
+      "Mood: Happy",
+      "Mood: Energetic"
+    ],
+    "instrument": [
+      "Instrument: Vocals",
+      "Instrument: Drums",
+      "Instrument: Keys"
+    ],
+    "era": [
+      "Mid 2000s / Late 2000s"
+    ],
+    "time_signature": [
+      "Time Signature: 4/4"
+    ],
+    "key": [
+      "Key: Ab Major"
+    ],
+    "chords": [
+      {
+        "chord_simple_pop": "F",
+        "end": 0.84,
+        "start": 0.4
+      },
+      {
+        "chord_simple_pop": "F",
+        "end": 2.68,
+        "start": 0.84
+      },
+      {
+        "chord_simple_pop": "Cm",
+        "end": 14.16,
+        "start": 2.68
+      },
+      {
+        "chord_simple_pop": "F",
+        "end": 16.92,
+        "start": 14.16
+      },
+      {
+        "chord_simple_pop": "Cm",
+        "end": 28.88,
+        "start": 16.92
+      },
+      {
+        "chord_simple_pop": "N",
+        "end": 29.8,
+        "start": 28.88
+      }
+    ],
+    "lyrics": [
+      {
+        "end": 0.1,
+        "score": 0.44,
+        "start": -0.03,
+        "word": "But"
+      },
+      {
+        "end": 0.2,
+        "score": 0.9,
+        "start": 0.14,
+        "word": "it's"
+      },
+      {
+        "end": 1.04,
+        "score": 0.93,
+        "start": 0.56,
+        "word": "cold"
+      },
+      {
+        "end": 1.84,
+        "score": 0.95,
+        "start": 1.71,
+        "word": "We"
+      },
+      {
+        "end": 2.15,
+        "score": 0.56,
+        "start": 2.02,
+        "word": "are"
+      },
+      {
+        "end": 2.85,
+        "score": 0.61,
+        "start": 2.44,
+        "word": "married"
+      },
+      {
+        "end": 3.06,
+        "score": 0.98,
+        "start": 2.96,
+        "word": "or"
+      },
+      {
+        "end": 3.55,
+        "score": 0.95,
+        "start": 3.41,
+        "word": "so"
+      },
+      {
+        "end": 4.1,
+        "score": 0.94,
+        "start": 3.8,
+        "word": "I've"
+      },
+      {
+        "end": 4.31,
+        "score": 0.99,
+        "start": 4.14,
+        "word": "been"
+      },
+      {
+        "end": 5.64,
+        "score": 0.42,
+        "start": 5.36,
+        "word": "Sweet"
+      },
+      {
+        "end": 6.02,
+        "score": 0.47,
+        "start": 5.68,
+        "word": "grand"
+      },
+      {
+        "end": 6.58,
+        "score": 0.49,
+        "start": 6.1,
+        "word": "married"
+      },
+      {
+        "end": 6.89,
+        "score": 0.84,
+        "start": 6.69,
+        "word": "from"
+      },
+      {
+        "end": 7.31,
+        "score": 0.91,
+        "start": 7.17,
+        "word": "far"
+      },
+      {
+        "end": 7.83,
+        "score": 0.54,
+        "start": 7.66,
+        "word": "from"
+      },
+      {
+        "end": 8.46,
+        "score": 0.5,
+        "start": 8.05,
+        "word": "old"
+      },
+      {
+        "end": 9.4,
+        "score": 0.37,
+        "start": 9.02,
+        "word": "Breathe"
+      },
+      {
+        "end": 9.64,
+        "score": 0.94,
+        "start": 9.51,
+        "word": "the"
+      },
+      {
+        "end": 10.41,
+        "score": 0.85,
+        "start": 9.79,
+        "word": "airy"
+      },
+      {
+        "end": 10.65,
+        "score": 0.92,
+        "start": 10.48,
+        "word": "or"
+      },
+      {
+        "end": 10.97,
+        "score": 0.99,
+        "start": 10.83,
+        "word": "so"
+      },
+      {
+        "end": 11.35,
+        "score": 0.98,
+        "start": 11.15,
+        "word": "I've"
+      },
+      {
+        "end": 11.63,
+        "score": 0.99,
+        "start": 11.39,
+        "word": "been"
+      },
+      {
+        "end": 12.26,
+        "score": 0.99,
+        "start": 11.7,
+        "word": "told"
+      },
+      {
+        "end": 12.74,
+        "score": 0.34,
+        "start": 12.64,
+        "word": "Pure"
+      },
+      {
+        "end": 13.3,
+        "score": 0.73,
+        "start": 12.75,
+        "word": "as"
+      },
+      {
+        "end": 13.65,
+        "score": 0.93,
+        "start": 13.37,
+        "word": "snow"
+      },
+      {
+        "end": 14.31,
+        "score": 0.36,
+        "start": 14.21,
+        "word": "my"
+      },
+      {
+        "end": 15.08,
+        "score": 0.36,
+        "start": 14.56,
+        "word": "head"
+      },
+      {
+        "end": 16.75,
+        "score": 0.94,
+        "start": 16.37,
+        "word": "Time"
+      },
+      {
+        "end": 16.96,
+        "score": 0.99,
+        "start": 16.86,
+        "word": "to"
+      },
+      {
+        "end": 17.2,
+        "score": 0.99,
+        "start": 17.07,
+        "word": "go"
+      },
+      {
+        "end": 17.76,
+        "score": 0.86,
+        "start": 17.41,
+        "word": "back"
+      },
+      {
+        "end": 17.93,
+        "score": 0.84,
+        "start": 17.8,
+        "word": "to"
+      },
+      {
+        "end": 18.49,
+        "score": 0.98,
+        "start": 18.04,
+        "word": "bed"
+      },
+      {
+        "end": 20.23,
+        "score": 0.82,
+        "start": 20.1,
+        "word": "Slow"
+      },
+      {
+        "end": 20.72,
+        "score": 0.97,
+        "start": 20.58,
+        "word": "slow"
+      },
+      {
+        "end": 21.28,
+        "score": 0.81,
+        "start": 21.04,
+        "word": "we've"
+      },
+      {
+        "end": 21.42,
+        "score": 0.99,
+        "start": 21.28,
+        "word": "been"
+      },
+      {
+        "end": 21.9,
+        "score": 0.75,
+        "start": 21.49,
+        "word": "led"
+      },
+      {
+        "end": 22.08,
+        "score": 0.59,
+        "start": 21.94,
+        "word": "Go"
+      },
+      {
+        "end": 22.39,
+        "score": 0.74,
+        "start": 22.15,
+        "word": "tell"
+      },
+      {
+        "end": 22.56,
+        "score": 0.79,
+        "start": 22.43,
+        "word": "Joe"
+      },
+      {
+        "end": 23.02,
+        "score": 0.97,
+        "start": 22.71,
+        "word": "we've"
+      },
+      {
+        "end": 23.19,
+        "score": 0.99,
+        "start": 23.06,
+        "word": "been"
+      },
+      {
+        "end": 23.61,
+        "score": 0.99,
+        "start": 23.3,
+        "word": "fed"
+      },
+      {
+        "end": 24.9,
+        "score": 0.92,
+        "start": 24.66,
+        "word": "Time"
+      },
+      {
+        "end": 25.04,
+        "score": 0.99,
+        "start": 24.9,
+        "word": "to"
+      },
+      {
+        "end": 25.28,
+        "score": 0.96,
+        "start": 25.18,
+        "word": "be"
+      },
+      {
+        "end": 25.84,
+        "score": 0.68,
+        "start": 25.63,
+        "word": "fun"
+      },
+      {
+        "end": 26.33,
+        "score": 0.84,
+        "start": 26.02,
+        "word": "friends"
+      },
+      {
+        "end": 27.44,
+        "score": 0.53,
+        "start": 27.31,
+        "word": "He"
+      },
+      {
+        "end": 27.82,
+        "score": 0.84,
+        "start": 27.62,
+        "word": "will"
+      },
+      {
+        "end": 28,
+        "score": 0.92,
+        "start": 27.86,
+        "word": "see"
+      },
+      {
+        "end": 28.24,
+        "score": 0.95,
+        "start": 28.14,
+        "word": "no"
+      },
+      {
+        "end": 28.59,
+        "score": 0.98,
+        "start": 28.39,
+        "word": "need"
+      },
+      {
+        "end": 28.73,
+        "score": 0.95,
+        "start": 28.6,
+        "word": "for"
+      },
+      {
+        "end": 29.22,
+        "score": 0.71,
+        "start": 28.84,
+        "word": "turns"
+      },
+      {
+        "end": 29.5,
+        "score": 0.83,
+        "start": 29.29,
+        "word": "on"
+      }
+    ]
+  },
+  {
+    "out": [
+      "Mapenzi-Matamu",
+      "Sounds-of-Taraab",
+      "Zanzibar-New-York"
+    ],
+    "genre": [
+      "Genre: Folk"
+    ],
+    "mood": [
+      "Mood: Melancholic"
+    ],
+    "instrument": [
+      "Instrument: Vocals",
+      "Instrument: Strings",
+      "Instrument: Wind"
+    ],
+    "era": [
+      "Late 1990s / Early 2000s"
+    ],
+    "time_signature": [
+      "Time Signature: 4/4"
+    ],
+    "key": [
+      "Key: D Minor"
+    ],
+    "chords": [
+      {
+        "chord_simple_pop": "Am",
+        "end": 4.92,
+        "start": 0.5
+      },
+      {
+        "chord_simple_pop": "Dm",
+        "end": 6.82,
+        "start": 4.92
+      },
+      {
+        "chord_simple_pop": "Am",
+        "end": 7.46,
+        "start": 6.82
+      },
+      {
+        "chord_simple_pop": "C",
+        "end": 8.08,
+        "start": 7.46
+      },
+      {
+        "chord_simple_pop": "Am",
+        "end": 9.32,
+        "start": 8.08
+      },
+      {
+        "chord_simple_pop": "A",
+        "end": 10.58,
+        "start": 9.32
+      },
+      {
+        "chord_simple_pop": "Dm",
+        "end": 11.84,
+        "start": 10.58
+      },
+      {
+        "chord_simple_pop": "Am",
+        "end": 13.1,
+        "start": 11.84
+      },
+      {
+        "chord_simple_pop": "Dm",
+        "end": 16.9,
+        "start": 13.1
+      },
+      {
+        "chord_simple_pop": "Am",
+        "end": 20.02,
+        "start": 16.9
+      },
+      {
+        "chord_simple_pop": "A",
+        "end": 20.64,
+        "start": 20.02
+      },
+      {
+        "chord_simple_pop": "Dm",
+        "end": 21.88,
+        "start": 20.64
+      },
+      {
+        "chord_simple_pop": "Am",
+        "end": 23.12,
+        "start": 21.88
+      },
+      {
+        "chord_simple_pop": "D7",
+        "end": 24.36,
+        "start": 23.12
+      },
+      {
+        "chord_simple_pop": "A7",
+        "end": 28.12,
+        "start": 24.36
+      },
+      {
+        "chord_simple_pop": "D7",
+        "end": 29.36,
+        "start": 28.12
+      },
+      {
+        "chord_simple_pop": "N",
+        "end": 29.98,
+        "start": 29.36
+      }
+    ],
+    "lyrics": [
+      {
+        "end": 2.78,
+        "score": 0.45,
+        "start": 0.8,
+        "word": "Zaniyamuhamu"
+      },
+      {
+        "end": 6.58,
+        "score": 0.5,
+        "start": 6.1,
+        "word": "konyu"
+      },
+      {
+        "end": 7.55,
+        "score": 0.88,
+        "start": 6.76,
+        "word": "mazi"
+      },
+      {
+        "end": 8.56,
+        "score": 0.63,
+        "start": 7.7,
+        "word": "konyuwa"
+      },
+      {
+        "end": 11.07,
+        "score": 0.51,
+        "start": 10.55,
+        "word": "Iyo"
+      },
+      {
+        "end": 12.53,
+        "score": 0.35,
+        "start": 11.39,
+        "word": "kwazani"
+      },
+      {
+        "end": 13.65,
+        "score": 0.84,
+        "start": 12.68,
+        "word": "kwahamu"
+      },
+      {
+        "end": 16.61,
+        "score": 0.69,
+        "start": 15.53,
+        "word": "Zasani"
+      },
+      {
+        "end": 16.96,
+        "score": 0.97,
+        "start": 16.82,
+        "word": "me"
+      },
+      {
+        "end": 18.63,
+        "score": 0.57,
+        "start": 17.41,
+        "word": "jatamuwa"
+      },
+      {
+        "end": 21.17,
+        "score": 0.53,
+        "start": 20.51,
+        "word": "Kwama"
+      },
+      {
+        "end": 23.12,
+        "score": 0.42,
+        "start": 21.49,
+        "word": "mapenzumatamo"
+      }
+    ]
+  },
+  {
+    "out": [
+      "So-High",
+      "Softboiled-Eggies",
+      "Egg-Soldiers"
+    ],
+    "genre": [
+      "Genre: Electronic / Dance"
+    ],
+    "mood": [
+      "Mood: Energetic",
+      "Mood: Uplifting"
+    ],
+    "instrument": [
+      "Instrument: Vocals",
+      "Instrument: Guitars",
+      "Instrument: Bass",
+      "Instrument: Drums",
+      "Instrument: Keys"
+    ],
+    "era": [
+      "Era: Contemporary"
+    ],
+    "time_signature": [
+      "Time Signature: 4/4"
+    ],
+    "key": [
+      "Key: C Major"
+    ],
+    "chords": [
+      {
+        "chord_simple_pop": "E",
+        "end": 2.16,
+        "start": 0.3
+      },
+      {
+        "chord_simple_pop": "F",
+        "end": 3.66,
+        "start": 2.16
+      },
+      {
+        "chord_simple_pop": "C",
+        "end": 5.14,
+        "start": 3.66
+      },
+      {
+        "chord_simple_pop": "E",
+        "end": 8.16,
+        "start": 5.14
+      },
+      {
+        "chord_simple_pop": "F",
+        "end": 9.66,
+        "start": 8.16
+      },
+      {
+        "chord_simple_pop": "C",
+        "end": 11.14,
+        "start": 9.66
+      },
+      {
+        "chord_simple_pop": "E",
+        "end": 14.16,
+        "start": 11.14
+      },
+      {
+        "chord_simple_pop": "F",
+        "end": 15.64,
+        "start": 14.16
+      },
+      {
+        "chord_simple_pop": "C",
+        "end": 17.14,
+        "start": 15.64
+      },
+      {
+        "chord_simple_pop": "E",
+        "end": 20.16,
+        "start": 17.14
+      },
+      {
+        "chord_simple_pop": "F",
+        "end": 21.64,
+        "start": 20.16
+      },
+      {
+        "chord_simple_pop": "C",
+        "end": 23.12,
+        "start": 21.64
+      },
+      {
+        "chord_simple_pop": "E",
+        "end": 26.14,
+        "start": 23.12
+      },
+      {
+        "chord_simple_pop": "B",
+        "end": 29.14,
+        "start": 26.14
+      },
+      {
+        "chord_simple_pop": "F",
+        "end": 29.9,
+        "start": 29.14
+      }
+    ],
+    "lyrics": [
+      {
+        "end": 0.17,
+        "score": 0.68,
+        "start": -0.03,
+        "word": "You'll"
+      },
+      {
+        "end": 0.87,
+        "score": 0.94,
+        "start": 0.59,
+        "word": "get"
+      },
+      {
+        "end": 1.18,
+        "score": 0.99,
+        "start": 1.04,
+        "word": "so"
+      },
+      {
+        "end": 1.67,
+        "score": 0.97,
+        "start": 1.57,
+        "word": "high"
+      },
+      {
+        "end": 2.15,
+        "score": 0.91,
+        "start": 1.88,
+        "word": "with"
+      },
+      {
+        "end": 2.43,
+        "score": 0.94,
+        "start": 2.33,
+        "word": "you"
+      },
+      {
+        "end": 6.96,
+        "score": 0.97,
+        "start": 6.83,
+        "word": "She's"
+      },
+      {
+        "end": 7.24,
+        "score": 0.95,
+        "start": 6.97,
+        "word": "gonna"
+      },
+      {
+        "end": 7.69,
+        "score": 0.76,
+        "start": 7.35,
+        "word": "get"
+      },
+      {
+        "end": 8.46,
+        "score": 0.96,
+        "start": 7.73,
+        "word": "real"
+      },
+      {
+        "end": 8.7,
+        "score": 0.98,
+        "start": 8.57,
+        "word": "high"
+      },
+      {
+        "end": 12.99,
+        "score": 0.98,
+        "start": 12.85,
+        "word": "She's"
+      },
+      {
+        "end": 13.27,
+        "score": 0.97,
+        "start": 12.99,
+        "word": "gonna"
+      },
+      {
+        "end": 13.61,
+        "score": 0.97,
+        "start": 13.34,
+        "word": "get"
+      },
+      {
+        "end": 13.86,
+        "score": 0.95,
+        "start": 13.76,
+        "word": "so"
+      },
+      {
+        "end": 14.59,
+        "score": 0.98,
+        "start": 14.45,
+        "word": "low"
+      },
+      {
+        "end": 18.98,
+        "score": 0.98,
+        "start": 18.84,
+        "word": "She's"
+      },
+      {
+        "end": 19.22,
+        "score": 0.97,
+        "start": 18.98,
+        "word": "gonna"
+      },
+      {
+        "end": 19.6,
+        "score": 0.98,
+        "start": 19.33,
+        "word": "get"
+      },
+      {
+        "end": 19.92,
+        "score": 0.99,
+        "start": 19.78,
+        "word": "so"
+      },
+      {
+        "end": 20.75,
+        "score": 0.98,
+        "start": 20.65,
+        "word": "high"
+      }
+    ]
+  },
+  {
+    "out": [
+      "HeightWithFriends-05-CavalcadeLagoonsMP3",
+      "Height-With-Friends",
+      "Live-at-WFMU-on-Keilis-Show-12509"
+    ],
+    "genre": [
+      "Genre: Rap & Hip-Hop"
+    ],
+    "mood": [
+      "Mood: Energetic",
+      "Mood: Dark",
+      "Mood: Tense"
+    ],
+    "instrument": [
+      "Instrument: Vocals",
+      "Instrument: Keys",
+      "Instrument: Drums"
+    ],
+    "era": [
+      "Era: Contemporary"
+    ],
+    "time_signature": [
+      "Time Signature: 4/4"
+    ],
+    "key": [
+      "Key: A Minor"
+    ],
+    "chords": [
+      {
+        "chord_simple_pop": "N",
+        "end": 2.34,
+        "start": 0.3
+      },
+      {
+        "chord_simple_pop": "Am",
+        "end": 7.12,
+        "start": 2.34
+      },
+      {
+        "chord_simple_pop": "A",
+        "end": 12.58,
+        "start": 7.12
+      },
+      {
+        "chord_simple_pop": "Am",
+        "end": 26.94,
+        "start": 12.58
+      },
+      {
+        "chord_simple_pop": "N",
+        "end": 29.68,
+        "start": 26.94
+      }
+    ],
+    "lyrics": [
+      {
+        "end": 0.13,
+        "score": 0.36,
+        "start": -0.03,
+        "word": "When"
+      },
+      {
+        "end": 0.24,
+        "score": 0.98,
+        "start": 0.14,
+        "word": "we"
+      },
+      {
+        "end": 0.48,
+        "score": 0.99,
+        "start": 0.28,
+        "word": "hit"
+      },
+      {
+        "end": 0.69,
+        "score": 0.95,
+        "start": 0.56,
+        "word": "the"
+      },
+      {
+        "end": 2.29,
+        "score": 0.55,
+        "start": 1.64,
+        "word": "fall"
+      },
+      {
+        "end": 2.78,
+        "score": 0.53,
+        "start": 2.68,
+        "word": "in"
+      },
+      {
+        "end": 2.89,
+        "score": 0.98,
+        "start": 2.79,
+        "word": "a"
+      },
+      {
+        "end": 3.2,
+        "score": 0.92,
+        "start": 2.96,
+        "word": "pit"
+      },
+      {
+        "end": 3.44,
+        "score": 0.93,
+        "start": 3.27,
+        "word": "with"
+      },
+      {
+        "end": 5.08,
+        "score": 0.48,
+        "start": 4.35,
+        "word": "Fast"
+      },
+      {
+        "end": 5.53,
+        "score": 0.48,
+        "start": 5.36,
+        "word": "when"
+      },
+      {
+        "end": 5.64,
+        "score": 0.97,
+        "start": 5.57,
+        "word": "I"
+      },
+      {
+        "end": 5.95,
+        "score": 0.96,
+        "start": 5.75,
+        "word": "dip"
+      },
+      {
+        "end": 6.16,
+        "score": 0.98,
+        "start": 6.03,
+        "word": "for"
+      },
+      {
+        "end": 6.61,
+        "score": 0.61,
+        "start": 6.3,
+        "word": "deep,"
+      },
+      {
+        "end": 7.83,
+        "score": 0.9,
+        "start": 7.04,
+        "word": "blast"
+      },
+      {
+        "end": 8.46,
+        "score": 0.97,
+        "start": 8.12,
+        "word": "people"
+      },
+      {
+        "end": 8.74,
+        "score": 0.54,
+        "start": 8.5,
+        "word": "out"
+      },
+      {
+        "end": 8.88,
+        "score": 0.53,
+        "start": 8.74,
+        "word": "to"
+      },
+      {
+        "end": 9.5,
+        "score": 0.5,
+        "start": 9.02,
+        "word": "sleep"
+      },
+      {
+        "end": 10.3,
+        "score": 0.86,
+        "start": 9.82,
+        "word": "Tight"
+      },
+      {
+        "end": 10.93,
+        "score": 0.99,
+        "start": 10.8,
+        "word": "for"
+      },
+      {
+        "end": 11.11,
+        "score": 0.95,
+        "start": 11.01,
+        "word": "my"
+      },
+      {
+        "end": 11.52,
+        "score": 0.96,
+        "start": 11.18,
+        "word": "last"
+      },
+      {
+        "end": 12.43,
+        "score": 0.64,
+        "start": 11.53,
+        "word": "surprise,"
+      },
+      {
+        "end": 12.99,
+        "score": 0.92,
+        "start": 12.57,
+        "word": "light"
+      },
+      {
+        "end": 13.82,
+        "score": 0.94,
+        "start": 13.55,
+        "word": "that'll"
+      },
+      {
+        "end": 14.28,
+        "score": 0.92,
+        "start": 13.93,
+        "word": "smash"
+      },
+      {
+        "end": 14.45,
+        "score": 0.98,
+        "start": 14.31,
+        "word": "your"
+      },
+      {
+        "end": 15.11,
+        "score": 0.35,
+        "start": 14.52,
+        "word": "eyes"
+      },
+      {
+        "end": 16.02,
+        "score": 0.93,
+        "start": 15.29,
+        "word": "Pounds"
+      },
+      {
+        "end": 16.64,
+        "score": 0.57,
+        "start": 16.3,
+        "word": "coming"
+      },
+      {
+        "end": 16.92,
+        "score": 0.97,
+        "start": 16.68,
+        "word": "out"
+      },
+      {
+        "end": 17.06,
+        "score": 0.95,
+        "start": 16.96,
+        "word": "the"
+      },
+      {
+        "end": 17.58,
+        "score": 0.9,
+        "start": 17.17,
+        "word": "dust,"
+      },
+      {
+        "end": 18.59,
+        "score": 0.93,
+        "start": 18.01,
+        "word": "sounds"
+      },
+      {
+        "end": 19.36,
+        "score": 0.93,
+        "start": 19.05,
+        "word": "coming"
+      },
+      {
+        "end": 19.71,
+        "score": 0.96,
+        "start": 19.43,
+        "word": "out"
+      },
+      {
+        "end": 19.85,
+        "score": 0.98,
+        "start": 19.75,
+        "word": "of"
+      },
+      {
+        "end": 20.27,
+        "score": 0.97,
+        "start": 19.96,
+        "word": "us"
+      },
+      {
+        "end": 20.86,
+        "score": 0.81,
+        "start": 20.76,
+        "word": "the"
+      },
+      {
+        "end": 21.1,
+        "score": 0.8,
+        "start": 20.86,
+        "word": "tension"
+      },
+      {
+        "end": 21.21,
+        "score": 0.92,
+        "start": 21.11,
+        "word": "to"
+      },
+      {
+        "end": 21.35,
+        "score": 0.97,
+        "start": 21.25,
+        "word": "the"
+      },
+      {
+        "end": 21.66,
+        "score": 0.58,
+        "start": 21.46,
+        "word": "flare,"
+      },
+      {
+        "end": 21.9,
+        "score": 0.96,
+        "start": 21.77,
+        "word": "dip"
+      },
+      {
+        "end": 22.08,
+        "score": 0.96,
+        "start": 21.94,
+        "word": "the"
+      },
+      {
+        "end": 22.29,
+        "score": 0.92,
+        "start": 22.15,
+        "word": "wick"
+      },
+      {
+        "end": 22.43,
+        "score": 0.95,
+        "start": 22.33,
+        "word": "in"
+      },
+      {
+        "end": 22.56,
+        "score": 0.96,
+        "start": 22.43,
+        "word": "the"
+      },
+      {
+        "end": 22.98,
+        "score": 0.99,
+        "start": 22.64,
+        "word": "wax"
+      },
+      {
+        "end": 23.44,
+        "score": 0.93,
+        "start": 23.16,
+        "word": "Tight"
+      },
+      {
+        "end": 23.85,
+        "score": 0.7,
+        "start": 23.68,
+        "word": "your"
+      },
+      {
+        "end": 24.31,
+        "score": 0.95,
+        "start": 24.17,
+        "word": "free,"
+      },
+      {
+        "end": 24.72,
+        "score": 0.84,
+        "start": 24.42,
+        "word": "taking"
+      },
+      {
+        "end": 24.9,
+        "score": 0.92,
+        "start": 24.73,
+        "word": "this"
+      },
+      {
+        "end": 25.46,
+        "score": 0.32,
+        "start": 25.36,
+        "word": "to"
+      },
+      {
+        "end": 25.8,
+        "score": 0.94,
+        "start": 25.46,
+        "word": "max"
+      },
+      {
+        "end": 26.08,
+        "score": 0.98,
+        "start": 25.95,
+        "word": "And"
+      },
+      {
+        "end": 26.22,
+        "score": 0.98,
+        "start": 26.09,
+        "word": "we"
+      },
+      {
+        "end": 26.43,
+        "score": 0.98,
+        "start": 26.26,
+        "word": "keep"
+      },
+      {
+        "end": 26.57,
+        "score": 0.96,
+        "start": 26.47,
+        "word": "the"
+      },
+      {
+        "end": 26.88,
+        "score": 0.9,
+        "start": 26.61,
+        "word": "beat"
+      },
+      {
+        "end": 27.23,
+        "score": 0.62,
+        "start": 26.92,
+        "word": "fleeing"
+      },
+      {
+        "end": 27.41,
+        "score": 0.9,
+        "start": 27.27,
+        "word": "like"
+      },
+      {
+        "end": 27.51,
+        "score": 0.94,
+        "start": 27.41,
+        "word": "a"
+      },
+      {
+        "end": 27.75,
+        "score": 0.99,
+        "start": 27.59,
+        "word": "fire"
+      },
+      {
+        "end": 28.07,
+        "score": 0.94,
+        "start": 27.9,
+        "word": "was"
+      },
+      {
+        "end": 28.49,
+        "score": 0.94,
+        "start": 28.11,
+        "word": "burning"
+      },
+      {
+        "end": 28.83,
+        "score": 0.89,
+        "start": 28.66,
+        "word": "Like"
+      },
+      {
+        "end": 28.97,
+        "score": 0.75,
+        "start": 28.87,
+        "word": "it"
+      },
+      {
+        "end": 29.25,
+        "score": 0.85,
+        "start": 29.01,
+        "word": "didn't"
+      },
+      {
+        "end": 29.43,
+        "score": 0.83,
+        "start": 29.33,
+        "word": "know"
+      },
+      {
+        "end": 29.81,
+        "score": 0.32,
+        "start": 29.64,
+        "word": "four"
+      }
+    ]
+  }
+]
