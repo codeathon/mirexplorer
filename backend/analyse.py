@@ -50,8 +50,36 @@ ROOT_NOTES = [
 LYRICS_THRESHOLD = 0.3  # words with confidence scores below this threshold will be rejected
 
 
+def try_get_precached_features(filepath: str, key: str):
+    from backend.crud import ROOT_DIR
+
+    precached_features_path = ROOT_DIR / "frontend/static/example_audio/precached_features.json"
+    with open(precached_features_path, "r") as js:
+        read = json.load(js)
+
+    fp_split = filepath.split(".")[0].split("_")[1:4]
+    match = []
+    for m in read:
+        if set(m["out"]) == set(fp_split):
+            match.append(m)
+    if len(match) == 0 or len(match) > 1:
+        return None
+
+    else:
+        try:
+            out = match[0][key]
+            logger.info(f"Matched {key}: {out}")
+            return out
+        except (IndexError, KeyError):
+            return None
+
+
 @cache.memoize()
 def beat_track(audio, filename):
+    pcache = try_get_precached_features(filename, "beats")
+    if pcache is not None:
+        return pcache
+
     logger.info("Starting beat track")
     _, beats = librosa.beat.beat_track(y=audio, sr=AUDIO_SAMPLE_RATE, units="time")
 
@@ -67,6 +95,11 @@ def beat_track(audio, filename):
 
 
 def genre_identification(_, filename) -> list[str]:
+
+    pcache = try_get_precached_features(filename, "genre")
+    if pcache is not None:
+        return pcache
+
     logger.info("Starting genre classification")
 
     download_url = upload_audio_to_moises(filename)
@@ -84,6 +117,10 @@ def genre_identification(_, filename) -> list[str]:
 def instrument_identification(_, filename) -> list[str]:
     logger.info("Starting instruments classification")
 
+    pcache = try_get_precached_features(filename, "instrument")
+    if pcache is not None:
+        return pcache
+
     download_url = upload_audio_to_moises(filename)
     out = process_audio_with_moises(download_url, workflow_slug=os.environ.get("MOISES_METADATA_WORKFLOW"))
     out = _decode_moises_metadata_results(out)
@@ -100,6 +137,10 @@ def instrument_identification(_, filename) -> list[str]:
 def mood_identification(_, filename) -> list[str]:
     logger.info("Starting mood classification")
 
+    pcache = try_get_precached_features(filename, "mood")
+    if pcache is not None:
+        return pcache
+
     download_url = upload_audio_to_moises(filename)
     out = process_audio_with_moises(download_url, workflow_slug=os.environ.get("MOISES_METADATA_WORKFLOW"))
     out = _decode_moises_metadata_results(out)
@@ -114,6 +155,10 @@ def mood_identification(_, filename) -> list[str]:
 
 def time_signature_detection(_, filename) -> str:
     logger.info("Starting time signature detection")
+
+    pcache = try_get_precached_features(filename, "time_signature")
+    if pcache is not None:
+        return pcache[0]
 
     download_url = upload_audio_to_moises(filename)
     out = process_audio_with_moises(download_url, workflow_slug=os.environ.get("MOISES_METADATA_WORKFLOW"))
@@ -136,6 +181,10 @@ def time_signature_detection(_, filename) -> str:
 def musical_era_detection(_, filename) -> str:
     logger.info("Starting musical era detection")
 
+    pcache = try_get_precached_features(filename, "era")
+    if pcache is not None:
+        return pcache[0]
+
     download_url = upload_audio_to_moises(filename)
     out = process_audio_with_moises(download_url, workflow_slug=os.environ.get("MOISES_METADATA_WORKFLOW"))
     out = _decode_moises_metadata_results(out)
@@ -146,6 +195,10 @@ def musical_era_detection(_, filename) -> str:
 
 def lyrics_transcription(_, filename) -> list[dict]:
     logger.info("Starting lyrics transcription")
+
+    pcache = try_get_precached_features(filename, "lyrics")
+    if pcache is not None:
+        return pcache
 
     download_url = upload_audio_to_moises(filename)
     out = process_audio_with_moises(download_url, workflow_slug=os.environ.get("MOISES_LYRICS_WORKFLOW"))
@@ -180,6 +233,10 @@ def lyrics_transcription(_, filename) -> list[dict]:
 
 
 def chord_transcription(_, filename) -> list[dict]:
+    pcache = try_get_precached_features(filename, "chords")
+    if pcache is not None:
+        return pcache
+
     # run the workflow
     logger.info("Starting chord transcription")
     download_url = upload_audio_to_moises(filename)
@@ -200,6 +257,10 @@ def chord_transcription(_, filename) -> list[dict]:
 
 def key_transcription(_, filename) -> str:
     logger.info("Starting key transcription")
+
+    pcache = try_get_precached_features(filename, "key")
+    if pcache is not None:
+        return pcache[0]
 
     # run the workflow
     #  the chord workflow returns both chords + key, so we can easily grab from this
