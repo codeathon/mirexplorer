@@ -94,7 +94,8 @@
 
         <div class="flex items-center justify-center space-x-12">
             <a href="https://www.qmul.ac.uk/">
-                <img src="{{ url_for('static', filename='QM_logo_Black.png') }}" title="Queen Mary University of London Logo"
+                <img src="{{ url_for('static', filename='QM_logo_Black.png') }}"
+                     title="Queen Mary University of London Logo"
                      alt="Queen Mary University of London Logo" class="dropzone-brand-logos"/>
             </a>
             <a href="https://www.ukri.org/councils/epsrc/">
@@ -122,7 +123,8 @@
 
         <div class="flex flex-row justify-center items-center w-full space-x-10">
             <form id="record-form" method="POST" enctype="multipart/form-data" action="{{ url_for('main.index') }}">
-                <label id="record-label" class="dropzone-label group cursor-pointer" title="Click here to record up to 30 seconds of audio">
+                <label id="record-label" class="dropzone-label group cursor-pointer"
+                       title="Click here to record up to 30 seconds of audio">
                     <div class="dropzone-content">
                         <svg id="mic-svg" class="dropzone-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                              stroke-width="1.5" stroke="currentColor">
@@ -163,7 +165,8 @@
 
             <form id="example-form" method="POST" class="flex justify-center" enctype="multipart/form-data">
                 {{ form.hidden_tag() }}
-                <label id="dropzone-label=example" class="dropzone-label-example group" title="Click here to use an example audio recording">
+                <label id="dropzone-label=example" class="dropzone-label-example group"
+                       title="Click here to use an example audio recording">
                     <div class="dropzone-content">
                         <svg class="dropzone-icon" xmlns="http://www.w3.org/2000/svg" fill="none"
                              viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -178,7 +181,7 @@
                             <option value="folk_zanzibar.mp3" title="Use an example Folk song">Folk</option>
                             <option value="pop.mp3" title="Use an example Pop song">Pop</option>
                             <option value="rap.mp3" title="Use an example Rap song">Rap</option>
-{#                            <option value="folk_ukraine.mp3">Folk (no vocals, flute, from Ukraine)</option>#}
+                            {#                            <option value="folk_ukraine.mp3">Folk (no vocals, flute, from Ukraine)</option>#}
                         </select>
                     </div>
                 </label>
@@ -187,7 +190,8 @@
 
             <form id="upload-form" method="POST" class="flex justify-center" enctype="multipart/form-data">
                 {{ form.hidden_tag() }}
-                <label for="dropzone-file" id="dropzone-label" class="dropzone-label group" title="Click here to upload your own audio file">
+                <label for="dropzone-file" id="dropzone-label" class="dropzone-label group"
+                       title="Click here to upload your own audio file">
                     <div class="dropzone-content">
                         <svg class="dropzone-icon" xmlns="http://www.w3.org/2000/svg" fill="none"
                              viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -197,7 +201,7 @@
                         <p class="dropzone-text-main">Drag a file or click to upload!</p>
                         <p class="dropzone-text-sub">MP3, WAV, or FLAC (maximum file size 16MB)</p>
                     </div>
-                    {{ form.file(class="hidden-input", id="dropzone-file", accept=".mp3,.wav,.flac,.aac,.aiff,.m4a,.ogg,.webm,.wma")}}
+                    {{ form.file(class="hidden-input", id="dropzone-file", accept=".mp3,.wav,.flac,.aac,.aiff,.m4a,.ogg,.webm,.wma") }}
                 </label>
             </form>
 
@@ -242,7 +246,7 @@
             <a href="{{ url_for('main.about') }}">About this Site</a>
             <a href="https://www.github.com/musicinformationretrieval/mirexplorer">View
                 Source Code</a>
-            <a href="https://www.github.com/musicinformationretrieval/mirexplorer/issues/new">Contact
+            <a href="mailto:explorer@musicinformationretrieval.com">Contact
                 Us</a>
         </div>
 
