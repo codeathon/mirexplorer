@@ -14,8 +14,8 @@ import requests
 from loguru import logger
 from yarl import URL
 
-from backend.crud import AUDIO_SAMPLE_RATE, save_audio, pad_or_truncate_array
-from backend.extensions import cache
+from mirexplorer_audio.storage import AUDIO_SAMPLE_RATE, save_audio, pad_or_truncate_array
+from mirexplorer_analysis.extensions import cache
 
 MOISES_URL = URL(r"https://api.music.ai/v1/")
 MOISES_HEADERS = {"Authorization": os.environ.get("MOISES_TOKEN")}
@@ -51,9 +51,9 @@ LYRICS_THRESHOLD = 0.3  # words with confidence scores below this threshold will
 
 
 def try_get_precached_features(filepath: str, key: str):
-    from backend.crud import ROOT_DIR
+    from mirexplorer_common.paths import repo_root
 
-    precached_features_path = ROOT_DIR / "frontend/static/example_audio/precached_features.json"
+    precached_features_path = repo_root() / "frontend/static/example_audio/precached_features.json"
     with open(precached_features_path, "r") as js:
         read = json.load(js)
 
@@ -350,7 +350,7 @@ def _upload_audio_to_moises(filepath: str, upload_url: str) -> None:
     """
     Uploads audio to Moises at a given URL
     """
-    from backend.crud import UPLOADS_FOLDER
+    from mirexplorer_audio.storage import UPLOADS_FOLDER
 
     assert os.environ["DEVELOPMENT_ENV"] == "true", "Should only be used with a development env!"
 
@@ -503,7 +503,7 @@ def process_audio_with_moises(download_url: str, workflow_slug: str) -> dict:
 
 @cache.memoize()
 def extract_spectral_features(filepath) -> dict[str, float]:
-    from backend.crud import load_audio
+    from mirexplorer_audio.storage import load_audio
 
     y = load_audio(filepath)
     logger.info("Extracting spectral features")

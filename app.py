@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-MIRExplorer main app
+MIRExplorer gateway entrypoint (Flask UI + BFF to internal services).
 """
 
 import json
@@ -9,15 +9,15 @@ import os
 
 from dotenv import load_dotenv, find_dotenv
 
-from backend import FLASK_APP, get_scheduler, app_data
-from backend.extensions import limiter
+from mirexplorer_gateway.app import FLASK_APP
+from mirexplorer_gateway.extensions import limiter
 
 
 def vite_asset(entry):
-    manifest_path = FLASK_APP.static_folder + "/dist/.vite/manifest.json"
-    with open(manifest_path) as f:
-        manifest = json.load(f)
-    return manifest[entry]
+	manifest_path = FLASK_APP.static_folder + "/dist/.vite/manifest.json"
+	with open(manifest_path) as f:
+		manifest = json.load(f)
+	return manifest[entry]
 
 
 # make gunicorn happy :)
@@ -26,17 +26,11 @@ app.jinja_env.globals["vite_asset"] = vite_asset
 
 
 if __name__ == "__main__":
-    # load env variables
-    load_dotenv(find_dotenv())
+	load_dotenv(find_dotenv())
 
-    DEVELOPMENT_ENV = os.getenv("DEVELOPMENT_ENV") == "true"
+	DEVELOPMENT_ENV = os.getenv("DEVELOPMENT_ENV") == "true"
 
-    # Start the task scheduler (runs in same process as app)
-    get_scheduler().start()
+	if DEVELOPMENT_ENV:
+		limiter.enabled = False
 
-    # Disable the limiter if running in a development environment
-    if DEVELOPMENT_ENV:
-        limiter.enabled = False
-
-    # Start the app
-    FLASK_APP.run(debug=DEVELOPMENT_ENV)
+	FLASK_APP.run(debug=DEVELOPMENT_ENV)

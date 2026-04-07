@@ -115,8 +115,8 @@ def convert_openai_to_pydantic(messages: list[dict]) -> list:
     return pydantic_messages
 
 
-async def create_goodbye_message(ctx: RunContext) -> str:
-    return f"It's been great chatting with you about this recording! To continue the conversation, click the button below and paste the result into into your favorite AI chatbot like ChatGPT, Claude or Gemini.===Help me analyse a recording! Here is some information about it: {get_musical_piece_information(ctx, skip_long=False)}"
+async def create_goodbye_message(deps: dict[str, str]) -> str:
+    return f"It's been great chatting with you about this recording! To continue the conversation, click the button below and paste the result into into your favorite AI chatbot like ChatGPT, Claude or Gemini.===Help me analyse a recording! Here is some information about it: {get_musical_piece_information(deps, skip_long=False)}"
 
 
 async def route_chat_response(user_message: str, context: list[dict], deps: dict[str, str]) -> AgentRunResult:
