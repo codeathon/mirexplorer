@@ -1,11 +1,15 @@
 """
-Smoke test: service packages import (run: python -m unittest test.test_imports).
+Smoke test: service packages import (run with project dependencies installed).
 """
 
+import os
 import unittest
 
+os.environ.setdefault("REDIS_URI", "memory://")
+os.environ.setdefault("DEVELOPMENT_ENV", "true")
 
-class TestServiceApps(unittest.TestCase):
+
+class TestServiceImports(unittest.TestCase):
 	def test_gateway_app_factory(self):
 		from mirexplorer_gateway.app import create_flask_app
 
