@@ -7,10 +7,15 @@ install:
 	poetry install --no-interaction
 	cd frontend && npm install
 
-# Development (local only)
+# Development (local only): starts audio, analysis, chat, Vite, then the Flask gateway (BFF).
 dev: build
-	@echo "Starting frontend + backend for development..."
+	@echo "Starting microservices + frontend + gateway..."
+	@echo "Ensure .env sets INTERNAL_SERVICE_TOKEN and AUDIO_/ANALYSIS_/CHAT_SERVICE_URL."
 	@trap "kill 0" EXIT; \
+	   poetry run python -m mirexplorer_audio & \
+	   poetry run python -m mirexplorer_analysis & \
+	   poetry run python -m mirexplorer_chat & \
+	   sleep 2; \
 	   cd frontend && npm run dev & \
 	   poetry run python app.py
 
