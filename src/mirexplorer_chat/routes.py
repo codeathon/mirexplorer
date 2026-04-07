@@ -23,13 +23,22 @@ def send_message():
 	if not _require_internal_token():
 		return jsonify(success=False, error="Unauthorized"), 403
 
-	data = request.get_json()
+	data = request.get_json() or {}
 	user_message = data.get("user_message")
 	filepath = data.get("filepath")
-	message_history = data.get("message_history")
+	message_history = data.get("message_history") or []
+	if not isinstance(message_history, list):
+		return jsonify(success=False, error="message_history must be a list"), 400
+	if not filepath:
+		return jsonify(success=False, error="Missing filepath"), 400
+	if not user_message:
+		return jsonify(success=False, error="Missing user_message"), 400
 	full_path = UPLOADS_FOLDER / Path(filepath).name
 
-	_, track, artist, album, date = full_path.stem.split("_")
+	try:
+		_, track, artist, album, date = full_path.stem.split("_")
+	except ValueError:
+		return jsonify(success=False, error="Invalid filepath metadata format"), 400
 
 	spectral_feats = extract_spectral_features(full_path)
 
